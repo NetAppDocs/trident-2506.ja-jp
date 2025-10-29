@@ -1,0 +1,100 @@
+---
+sidebar: sidebar 
+permalink: trident-use/manage-stor-class.html 
+keywords: storage class, manage storage class, storage classes, kubernetes storage classes 
+summary: 既存のストレージ クラスを表示したり、デフォルトのストレージ クラスを設定したり、ストレージ クラスのバックエンドを識別したり、ストレージ クラスを削除したりできます。 
+---
+= ストレージクラスの管理
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+既存のストレージ クラスを表示したり、デフォルトのストレージ クラスを設定したり、ストレージ クラスのバックエンドを識別したり、ストレージ クラスを削除したりできます。
+
+
+
+== 既存のストレージクラスを表示する
+
+* 既存の Kubernetes ストレージ クラスを表示するには、次のコマンドを実行します。
+
+
+[listing]
+----
+kubectl get storageclass
+----
+* Kubernetes ストレージ クラスの詳細を表示するには、次のコマンドを実行します。
+
+
+[listing]
+----
+kubectl get storageclass <storage-class> -o json
+----
+* Trident の同期されたストレージ クラスを表示するには、次のコマンドを実行します。
+
+
+[listing]
+----
+tridentctl get storageclass
+----
+* Trident の同期ストレージ クラスの詳細を表示するには、次のコマンドを実行します。
+
+
+[listing]
+----
+tridentctl get storageclass <storage-class> -o json
+----
+
+
+== デフォルトのストレージクラスを設定する
+
+Kubernetes 1.6 では、デフォルトのストレージ クラスを設定する機能が追加されました。これは、ユーザーが永続ボリューム要求 (PVC) でストレージ クラスを指定しない場合に、永続ボリュームをプロビジョニングするために使用されるストレージ クラスです。
+
+* アノテーションを設定してデフォルトのストレージクラスを定義します `storageclass.kubernetes.io/is-default-class`ストレージ クラス定義で true に設定します。仕様によれば、その他の値または注釈の欠如は false として解釈されます。
+* 次のコマンドを使用して、既存のストレージ クラスをデフォルトのストレージ クラスとして構成できます。
+
+
+[listing]
+----
+kubectl patch storageclass <storage-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+----
+* 同様に、次のコマンドを使用して、デフォルトのストレージ クラス注釈を削除できます。
+
+
+[listing]
+----
+kubectl patch storageclass <storage-class-name> -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"false"}}}'
+----
+Tridentインストーラー バンドルにも、この注釈を含む例があります。
+
+
+NOTE: クラスター内に一度に存在できるデフォルトのストレージ クラスは 1 つだけです。  Kubernetes では、技術的には複数のストレージ クラスを持つことを禁止していませんが、デフォルトのストレージ クラスがまったく存在しないかのように動作します。
+
+
+
+== ストレージクラスのバックエンドを識別する
+
+これはJSONで答えられる質問の例です。 `tridentctl` Tridentバックエンド オブジェクトの出力。これは、 `jq`ユーティリティを最初にインストールする必要がある場合があります。
+
+[listing]
+----
+tridentctl get storageclass -o json | jq  '[.items[] | {storageClass: .Config.name, backends: [.storage]|unique}]'
+----
+
+
+== ストレージクラスを削除する
+
+Kubernetes からストレージ クラスを削除するには、次のコマンドを実行します。
+
+[listing]
+----
+kubectl delete storageclass <storage-class>
+----
+`<storage-class>`ストレージ クラスに置き換える必要があります。
+
+このストレージ クラスを通じて作成された永続ボリュームはそのまま残り、 Tridentによって引き続き管理されます。
+
+
+NOTE: Tridentは空白を強制する `fsType`作成されるボリュームに対して。 iSCSIバックエンドの場合、強制することが推奨されます `parameters.fsType`StorageClass 内。既存のStorageClassesを削除して、 `parameters.fsType`指定された。

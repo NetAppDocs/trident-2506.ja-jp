@@ -1,0 +1,25 @@
+= 
+:allow-uri-read: 
+
+
+Trident protect 24.10 と 24.10.1 以降では、KubeVirt VM 上で実行されているアプリケーションを保護する場合の動作が異なります。どちらのバージョンでも、データ保護操作中にファイルシステムのフリーズとフリーズ解除を有効または無効にすることができます。
+
+
+NOTE: 復元操作中は、 `VirtualMachineSnapshots`仮想マシン (VM) 用に作成されたファイルは復元されません。
+
+.Tridentプロテクト 24.10
+Trident protect 24.10 は、データ保護操作中に KubeVirt VM ファイルシステムの一貫した状態を自動的に保証しません。 Trident protect 24.10 を使用して KubeVirt VM データを保護する場合は、データ保護操作の前に、ファイルシステムのフリーズ/アンフリーズ機能を手動で有効にする必要があります。これにより、ファイルシステムが一貫した状態になることが保証されます。
+
+Trident protect 24.10を設定して、データ保護操作中にVMファイルシステムの凍結と解凍を管理することができます。link:https://docs.openshift.com/container-platform/4.16/virt/install/installing-virt.html["仮想化の構成"^]そして次のコマンドを使用します。
+
+[source, console]
+----
+kubectl set env deployment/trident-protect-controller-manager NEPTUNE_VM_FREEZE=true -n trident-protect
+----
+.Trident Protect 24.10.1以降
+Trident protect 24.10.1 以降、 Trident protect はデータ保護操作中に KubeVirt ファイルシステムを自動的にフリーズおよびアンフリーズします。オプションで、次のコマンドを使用してこの自動動作を無効にすることができます。
+
+[source, console]
+----
+kubectl set env deployment/trident-protect-controller-manager NEPTUNE_VM_FREEZE=false -n trident-protect
+----

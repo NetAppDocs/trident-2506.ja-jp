@@ -1,0 +1,107 @@
+---
+sidebar: sidebar 
+permalink: trident-use/anf-prep.html 
+keywords: trident backend, azure netapp files, smb volumes, smb, windows, active directory, csi proxy, aks, managed identities 
+summary: Azure NetApp Filesバックエンドを構成する前に、次の要件が満たされていることを確認する必要があります。 
+---
+= Azure NetApp Filesバックエンドを構成する準備をする
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Azure NetApp Filesバックエンドを構成する前に、次の要件が満たされていることを確認する必要があります。
+
+
+
+== NFSおよびSMBボリュームの前提条件
+
+Azure NetApp Files を初めて使用するか、新しい場所で使用する場合は、Azure NetApp Files をセットアップして NFS ボリュームを作成するために、いくつかの初期構成が必要です。参照 https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-quickstart-set-up-account-create-volumes["Azure: Azure NetApp Files をセットアップして NFS ボリュームを作成する"^]。
+
+設定して使用するには https://azure.microsoft.com/en-us/services/netapp/["Azure NetApp Files"^]バックエンドでは、次のものが必要です。
+
+[NOTE]
+====
+* `subscriptionID`、 `tenantID` 、 `clientID` 、 `location` 、 そして `clientSecret`AKS クラスターでマネージド ID を使用する場合はオプションです。
+* `tenantID`、 `clientID` 、 そして `clientSecret`AKS クラスターでクラウド ID を使用する場合はオプションです。
+
+
+====
+* 容量プール。参照link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-set-up-capacity-pool["Microsoft: Azure NetApp Filesの容量プールを作成する"^]。
+* Azure NetApp Filesに委任されたサブネット。参照link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-delegate-subnet["Microsoft: Azure NetApp Filesにサブネットを委任する"^]。
+* `subscriptionID`Azure NetApp Filesが有効になっている Azure サブスクリプションから。
+* `tenantID`、 `clientID` 、 そして `clientSecret`からlink:https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-create-service-principal-portal["アプリ登録"^]Azure Active Directory で、 Azure NetApp Filesサービスに対する十分な権限を持っていること。アプリ登録では次のいずれかを使用する必要があります。
++
+** 所有者または貢献者の役割link:https://docs.microsoft.com/en-us/azure/role-based-access-control/built-in-roles["Azureによって事前定義済み"^]。
+** あlink:https://learn.microsoft.com/en-us/azure/role-based-access-control/custom-roles-portal["カスタム貢献者ロール"]サブスクリプションレベルで(`assignableScopes`) に、 Tridentに必要な権限のみに制限された以下の権限が付与されます。カスタムロールを作成したら、link:https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal["Azure ポータルを使用してロールを割り当てる"^] 。
++
+.カスタム貢献者ロール
+[%collapsible]
+====
+[source, JSON]
+----
+{
+  "id": "/subscriptions/<subscription-id>/providers/Microsoft.Authorization/roleDefinitions/<role-definition-id>",
+  "properties": {
+    "roleName": "custom-role-with-limited-perms",
+    "description": "custom role providing limited permissions",
+    "assignableScopes": [
+      "/subscriptions/<subscription-id>"
+    ],
+    "permissions": [
+      {
+        "actions": [
+          "Microsoft.NetApp/netAppAccounts/capacityPools/read",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/write",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/read",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/write",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/delete",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots/read",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots/write",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/snapshots/delete",
+          "Microsoft.NetApp/netAppAccounts/capacityPools/volumes/MountTargets/read",
+          "Microsoft.Network/virtualNetworks/read",
+          "Microsoft.Network/virtualNetworks/subnets/read",
+          "Microsoft.Features/featureProviders/subscriptionFeatureRegistrations/read",
+          "Microsoft.Features/featureProviders/subscriptionFeatureRegistrations/write",
+          "Microsoft.Features/featureProviders/subscriptionFeatureRegistrations/delete",
+          "Microsoft.Features/features/read",
+          "Microsoft.Features/operations/read",
+          "Microsoft.Features/providers/features/read",
+          "Microsoft.Features/providers/features/register/action",
+          "Microsoft.Features/providers/features/unregister/action",
+          "Microsoft.Features/subscriptionFeatureRegistrations/read"
+        ],
+        "notActions": [],
+        "dataActions": [],
+        "notDataActions": []
+      }
+    ]
+  }
+}
+----
+====
+
+
+* アズール `location`少なくとも1つを含む https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-delegate-subnet["委任されたサブネット"^]。Trident22.01の時点で、 `location`パラメータは、バックエンド構成ファイルの最上位レベルの必須フィールドです。仮想プールで指定された場所の値は無視されます。
+* 使用するには `Cloud Identity`、取得 `client ID`から https://learn.microsoft.com/en-us/entra/identity/managed-identities-azure-resources/how-manage-user-assigned-managed-identities["ユーザー割り当てマネージド ID"^]そしてそのIDを `azure.workload.identity/client-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx`。
+
+
+
+
+== SMBボリュームの追加要件
+
+SMB ボリュームを作成するには、次のものが必要です。
+
+* Active Directory が構成され、 Azure NetApp Filesに接続されています。参照link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/create-active-directory-connections["Microsoft: Azure NetApp Filesの Active Directory 接続の作成と管理"^]。
+* Linux コントローラー ノードと、Windows Server 2022 を実行する少なくとも 1 つの Windows ワーカー ノードを備えた Kubernetes クラスター。  Trident は、 Windows ノードで実行されているポッドにマウントされた SMB ボリュームのみをサポートします。
+* Azure NetApp Files がActive Directory に対して認証できるように、Active Directory 資格情報を含む少なくとも 1 つのTridentシークレット。秘密を生成する `smbcreds`:
++
+[listing]
+----
+kubectl create secret generic smbcreds --from-literal username=user --from-literal password='password'
+----
+* Windows サービスとして構成された CSI プロキシ。設定するには `csi-proxy`、参照link:https://github.com/kubernetes-csi/csi-proxy["GitHub: CSIプロキシ"^]またはlink:https://github.com/Azure/aks-engine/blob/master/docs/topics/csi-proxy-windows.md["GitHub: Windows 用 CSI プロキシ"^]Windows 上で実行されている Kubernetes ノード用。
+

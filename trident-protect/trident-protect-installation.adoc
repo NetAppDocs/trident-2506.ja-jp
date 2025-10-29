@@ -1,0 +1,136 @@
+---
+sidebar: sidebar 
+permalink: trident-protect/trident-protect-installation.html 
+keywords: install, trident, protect, requirements, registry 
+summary: 環境が要件を満たしている場合は、次の手順に従ってTrident Protect をインストールできます。 
+---
+= Trident Protectのインストールと設定
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+
+
+[role="lead"]
+環境がTrident protect の要件を満たしている場合は、次の手順に従ってクラスターにTrident protect をインストールできます。 Trident protect はNetAppから入手するか、独自のプライベート レジストリからインストールすることができます。クラスターがインターネットにアクセスできない場合は、プライベート レジストリからインストールすると便利です。
+
+
+
+== Trident Protectをインストールする
+
+[role="tabbed-block"]
+====
+.NetAppのTrident Protectをインストールする
+--
+.手順
+. Trident Helm リポジトリを追加します。
++
+[source, console]
+----
+helm repo add netapp-trident-protect https://netapp.github.io/trident-protect-helm-chart
+----
+. Helm を使用してTrident Protect をインストールします。交換する `<name-of-cluster>`クラスター名。このクラスター名はクラスターに割り当てられ、クラスターのバックアップとスナップショットを識別するために使用されます。
++
+[source, console]
+----
+helm install trident-protect netapp-trident-protect/trident-protect --set clusterName=<name-of-cluster> --version 100.2506.0 --create-namespace --namespace trident-protect
+----
+
+
+--
+.プライベートレジストリからTrident Protectをインストールする
+--
+Kubernetes クラスターがインターネットにアクセスできない場合は、プライベート イメージ レジストリからTrident Protect をインストールできます。これらの例では、括弧内の値を環境の情報に置き換えます。
+
+.手順
+. 次のイメージをローカル マシンにプルし、タグを更新して、プライベート レジストリにプッシュします。
++
+[source, console]
+----
+netapp/controller:25.06.0
+netapp/restic:25.06.0
+netapp/kopia:25.06.0
+netapp/trident-autosupport:25.06.0
+netapp/exechook:25.06.0
+netapp/resourcebackup:25.06.0
+netapp/resourcerestore:25.06.0
+netapp/resourcedelete:25.06.0
+bitnami/kubectl:1.30.2
+kubebuilder/kube-rbac-proxy:v0.16.0
+----
++
+例えば：
+
++
+[source, console]
+----
+docker pull netapp/controller:25.06.0
+----
++
+[source, console]
+----
+docker tag netapp/controller:25.06.0 <private-registry-url>/controller:25.06.0
+----
++
+[source, console]
+----
+docker push <private-registry-url>/controller:25.06.0
+----
+. Trident保護システム名前空間を作成します。
++
+[source, console]
+----
+kubectl create ns trident-protect
+----
+. レジストリにログインします。
++
+[source, console]
+----
+helm registry login <private-registry-url> -u <account-id> -p <api-token>
+----
+. プライベート レジストリ認証に使用するプル シークレットを作成します。
++
+[source, console]
+----
+kubectl create secret docker-registry regcred --docker-username=<registry-username> --docker-password=<api-token> -n trident-protect --docker-server=<private-registry-url>
+----
+. Trident Helm リポジトリを追加します。
++
+[source, console]
+----
+helm repo add netapp-trident-protect https://netapp.github.io/trident-protect-helm-chart
+----
+. という名前のファイルを作成します `protectValues.yaml`。次のTrident保護設定が含まれていることを確認します。
++
+[source, yaml]
+----
+---
+image:
+  registry: <private-registry-url>
+imagePullSecrets:
+  - name: regcred
+controller:
+  image:
+    registry: <private-registry-url>
+rbacProxy:
+  image:
+    registry: <private-registry-url>
+crCleanup:
+  imagePullSecrets:
+    - name: regcred
+webhooksCleanup:
+  imagePullSecrets:
+    - name: regcred
+----
+. Helm を使用してTrident Protect をインストールします。交換する `<name_of_cluster>`クラスター名。このクラスター名はクラスターに割り当てられ、クラスターのバックアップとスナップショットを識別するために使用されます。
++
+[source, console]
+----
+helm install trident-protect netapp-trident-protect/trident-protect --set clusterName=<name_of_cluster> --version 100.2506.0 --create-namespace --namespace trident-protect -f protectValues.yaml
+----
+
+
+--
+====

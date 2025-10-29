@@ -1,0 +1,339 @@
+---
+sidebar: sidebar 
+permalink: trident-use/ontap-san-prep.html 
+keywords: trident backend, ontap san, ontap-san, ontap-san-economy, fcp, asa r2, iscsi, nvme/tcp 
+summary: ONTAP SAN ドライバーを使用してONTAPバックエンドを構成するための準備方法について説明します。 
+---
+= ONTAP SAN ドライバーを使用してバックエンドを構成する準備をする
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+ONTAP SAN ドライバーを使用してONTAPバックエンドを構成するための要件と認証オプションを理解します。
+
+
+
+== 要件
+
+すべてのONTAPバックエンドでは、 Trident少なくとも 1 つのアグリゲートを SVM に割り当てる必要があります。
+
+
+NOTE: link:https://docs.netapp.com/us-en/asa-r2/get-started/learn-about.html["ASA r2 システム"^]ストレージ層の実装は他のONTAPシステム (ASA、 AFF、 FAS) とは異なります。 ASA r2 システムでは、集約の代わりにストレージ可用性ゾーンが使用されます。参照link:https://kb.netapp.com/on-prem/ASAr2/ASAr2_KBs/su_create_by_SVM_admin_using_CLI_fails_with_error_No_candidate_aggregates_are_available_for_storage_services["事項を"^]ASA r2 システムで SVM にアグリゲートを割り当てる方法に関するナレッジベースの記事。
+
+複数のドライバーを実行し、いずれかを指すストレージ クラスを作成することもできることに注意してください。例えば、 `san-dev`を使用するクラス `ontap-san`運転手と `san-default`を使用するクラス `ontap-san-economy`1つ。
+
+すべての Kubernetes ワーカーノードに適切な iSCSI ツールがインストールされている必要があります。参照 link:worker-node-prep.html["ワーカーノードを準備する"] 詳細については。
+
+
+
+== ONTAPバックエンドを認証する
+
+Trident は、 ONTAPバックエンドを認証する 2 つのモードを提供します。
+
+* 資格情報ベース: 必要な権限を持つONTAPユーザーのユーザー名とパスワード。次のような事前定義されたセキュリティログインロールを使用することをお勧めします。 `admin`または `vsadmin`ONTAPバージョンとの最大限の互換性を確保するためです。
+* 証明書ベース: Trident は、バックエンドにインストールされた証明書を使用してONTAPクラスターと通信することもできます。ここで、バックエンド定義には、クライアント証明書、キー、および信頼された CA 証明書（使用する場合、推奨）の Base64 エンコードされた値が含まれている必要があります。
+
+
+既存のバックエンドを更新して、資格情報ベースの方法と証明書ベースの方法間を切り替えることができます。ただし、一度にサポートされる認証方法は 1 つだけです。別の認証方法に切り替えるには、バックエンド構成から既存の方法を削除する必要があります。
+
+
+WARNING: *資格情報と証明書の両方* を提供しようとすると、構成ファイルに複数の認証方法が提供されているというエラーが発生し、バックエンドの作成が失敗します。
+
+
+
+=== 資格情報ベースの認証を有効にする
+
+Trident、 ONTAPバックエンドと通信するために、SVM スコープ/クラスタ スコープの管理者の認証情報が必要です。次のような標準の事前定義されたロールを利用することをお勧めします。 `admin`または `vsadmin`。これにより、将来のTridentリリースで使用される機能 API を公開する可能性のある将来のONTAPリリースとの前方互換性が確保されます。カスタム セキュリティ ログイン ロールを作成してTridentで使用することは可能ですが、お勧めしません。
+
+サンプルのバックエンド定義は次のようになります。
+
+[role="tabbed-block"]
+====
+.ヤムル
+--
+[source, yaml]
+----
+---
+version: 1
+backendName: ExampleBackend
+storageDriverName: ontap-san
+managementLIF: 10.0.0.1
+svm: svm_nfs
+username: vsadmin
+password: password
+----
+--
+.JSON
+--
+[source, json]
+----
+{
+  "version": 1,
+  "backendName": "ExampleBackend",
+  "storageDriverName": "ontap-san",
+  "managementLIF": "10.0.0.1",
+  "svm": "svm_nfs",
+  "username": "vsadmin",
+  "password": "password"
+}
+
+----
+--
+====
+バックエンド定義は、資格情報がプレーンテキストで保存される唯一の場所であることに留意してください。バックエンドが作成されると、ユーザー名とパスワードは Base64 でエンコードされ、Kubernetes シークレットとして保存されます。バックエンドの作成または更新は、資格情報に関する知識が必要となる唯一のステップです。したがって、これは Kubernetes/ストレージ管理者によって実行される管理者専用の操作です。
+
+
+
+=== 証明書ベースの認証の有効化
+
+新規および既存のバックエンドは証明書を使用してONTAPバックエンドと通信できます。バックエンド定義には 3 つのパラメータが必要です。
+
+* clientCertificate: クライアント証明書の Base64 エンコードされた値。
+* clientPrivateKey: 関連付けられた秘密キーの Base64 エンコードされた値。
+* trustedCACertificate: 信頼された CA 証明書の Base64 エンコードされた値。信頼できる CA を使用する場合は、このパラメータを指定する必要があります。信頼できる CA が使用されていない場合は、これを無視できます。
+
+
+一般的なワークフローには次の手順が含まれます。
+
+.手順
+. クライアント証明書とキーを生成します。生成時に、認証するONTAPユーザーに共通名 (CN) を設定します。
++
+[listing]
+----
+openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout k8senv.key -out k8senv.pem -subj "/C=US/ST=NC/L=RTP/O=NetApp/CN=admin"
+----
+. 信頼できる CA 証明書をONTAPクラスタに追加します。これはストレージ管理者によってすでに処理されている可能性があります。信頼できる CA が使用されていない場合は無視します。
++
+[listing]
+----
+security certificate install -type server -cert-name <trusted-ca-cert-name> -vserver <vserver-name>
+ssl modify -vserver <vserver-name> -server-enabled true -client-enabled true -common-name <common-name> -serial <SN-from-trusted-CA-cert> -ca <cert-authority>
+----
+. クライアント証明書とキー（手順 1 から）をONTAPクラスタにインストールします。
++
+[listing]
+----
+security certificate install -type client-ca -cert-name <certificate-name> -vserver <vserver-name>
+security ssl modify -vserver <vserver-name> -client-enabled true
+----
+. ONTAPセキュリティログインロールがサポートしていることを確認する `cert`認証方法。
++
+[listing]
+----
+security login create -user-or-group-name admin -application ontapi -authentication-method cert
+security login create -user-or-group-name admin -application http -authentication-method cert
+----
+. 生成された証明書を使用して認証をテストします。  < ONTAP Management LIF> と <vserver name> を管理 LIF IP と SVM 名に置き換えます。
++
+[listing]
+----
+curl -X POST -Lk https://<ONTAP-Management-LIF>/servlets/netapp.servlets.admin.XMLrequest_filer --key k8senv.key --cert ~/k8senv.pem -d '<?xml version="1.0" encoding="UTF-8"?><netapp xmlns="http://www.netapp.com/filer/admin" version="1.21" vfiler="<vserver-name>"><vserver-get></vserver-get></netapp>'
+----
+. 証明書、キー、および信頼された CA 証明書を Base64 でエンコードします。
++
+[listing]
+----
+base64 -w 0 k8senv.pem >> cert_base64
+base64 -w 0 k8senv.key >> key_base64
+base64 -w 0 trustedca.pem >> trustedca_base64
+----
+. 前の手順で取得した値を使用してバックエンドを作成します。
++
+[listing]
+----
+cat cert-backend.json
+{
+"version": 1,
+"storageDriverName": "ontap-san",
+"backendName": "SanBackend",
+"managementLIF": "1.2.3.4",
+"svm": "vserver_test",
+"clientCertificate": "Faaaakkkkeeee...Vaaalllluuuueeee",
+"clientPrivateKey": "LS0tFaKE...0VaLuES0tLS0K",
+"trustedCACertificate": "QNFinfO...SiqOyN",
+"storagePrefix": "myPrefix_"
+}
+
+tridentctl create backend -f cert-backend.json -n trident
++------------+----------------+--------------------------------------+--------+---------+
+|    NAME    | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
++------------+----------------+--------------------------------------+--------+---------+
+| SanBackend | ontap-san      | 586b1cd5-8cf8-428d-a76c-2872713612c1 | online |       0 |
++------------+----------------+--------------------------------------+--------+---------+
+----
+
+
+
+
+=== 認証方法を更新するか、資格情報をローテーションする
+
+既存のバックエンドを更新して、別の認証方法を使用したり、資格情報をローテーションしたりすることができます。これは両方向に機能します。ユーザー名/パスワードを使用するバックエンドは、証明書を使用するように更新できます。また、証明書を使用するバックエンドは、ユーザー名/パスワード ベースに更新できます。これを行うには、既存の認証方法を削除し、新しい認証方法を追加する必要があります。次に、必要なパラメータを含む更新されたbackend.jsonファイルを使用して実行します。 `tridentctl backend update` 。
+
+[listing]
+----
+cat cert-backend-updated.json
+{
+"version": 1,
+"storageDriverName": "ontap-san",
+"backendName": "SanBackend",
+"managementLIF": "1.2.3.4",
+"svm": "vserver_test",
+"username": "vsadmin",
+"password": "password",
+"storagePrefix": "myPrefix_"
+}
+
+#Update backend with tridentctl
+tridentctl update backend SanBackend -f cert-backend-updated.json -n trident
++------------+----------------+--------------------------------------+--------+---------+
+|    NAME    | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
++------------+----------------+--------------------------------------+--------+---------+
+| SanBackend | ontap-san      | 586b1cd5-8cf8-428d-a76c-2872713612c1 | online |       9 |
++------------+----------------+--------------------------------------+--------+---------+
+----
+
+NOTE: パスワードをローテーションする場合、ストレージ管理者はまずONTAP上のユーザーのパスワードを更新する必要があります。続いてバックエンドの更新が行われます。証明書をローテーションする場合、ユーザーに複数の証明書を追加できます。その後、バックエンドは新しい証明書を使用するように更新され、その後、古い証明書をONTAPクラスタから削除できます。
+
+バックエンドを更新しても、すでに作成されているボリュームへのアクセスは中断されず、その後に行われたボリューム接続にも影響はありません。バックエンドの更新が成功すると、 Trident がONTAPバックエンドと通信し、将来のボリューム操作を処理できることを示します。
+
+
+
+=== Trident用のカスタムONTAPロールを作成する
+
+最小限の権限を持つONTAPクラスタ ロールを作成すると、 Tridentで操作を実行するためにONTAP管理者ロールを使用する必要がなくなります。  Tridentバックエンド構成にユーザー名を含めると、 Trident は作成したONTAPクラスタ ロールを使用して操作を実行します。
+
+参照link:https://github.com/NetApp/trident/tree/master/contrib/ontap/trident_role["Tridentカスタムロールジェネレーター"]Tridentカスタム ロールの作成の詳細については、こちらをご覧ください。
+
+[role="tabbed-block"]
+====
+.ONTAP CLIの使用
+--
+. 次のコマンドを使用して新しいロールを作成します。
++
+`security login role create <role_name\> -cmddirname "command" -access all –vserver <svm_name\>`
+
+. Tridentユーザーのユーザー名を作成します。
++
+`security login create -username <user_name\> -application ontapi -authmethod <password\> -role <name_of_role_in_step_1\> –vserver <svm_name\> -comment "user_description"`
+
+. ロールをユーザーにマップします。
++
+`security login modify username <user_name\> –vserver <svm_name\> -role <role_name\> -application ontapi -application console -authmethod <password\>`
+
+
+
+--
+.System Managerを使用
+--
+ONTAP System Manager で次の手順を実行します。
+
+. *カスタムロールを作成する*:
++
+.. クラスター レベルでカスタム ロールを作成するには、*クラスター > 設定* を選択します。
++
+（または）SVMレベルでカスタムロールを作成するには、*ストレージ > ストレージVM > を選択します。 `required SVM` > 設定 > ユーザーとロール*。
+
+.. *ユーザーとロール*の横にある矢印アイコン (*->*) を選択します。
+.. *役割*の下の*+追加*を選択します。
+.. ロールのルールを定義し、「*保存*」をクリックします。
+
+
+. *役割をTridentユーザーにマップします*: + *ユーザーと役割* ページで次の手順を実行します。
++
+.. *ユーザー*の下の追加アイコン*+*を選択します。
+.. 必要なユーザー名を選択し、*役割*のドロップダウン メニューで役割を選択します。
+.. *保存*をクリックします。
+
+
+
+
+--
+====
+詳細については、次のページを参照してください。
+
+* link:https://kb.netapp.com/on-prem/ontap/Ontap_OS/OS-KBs/FAQ__Custom_roles_for_administration_of_ONTAP["ONTAPの管理用のカスタム ロール"^]またはlink:https://docs.netapp.com/us-en/ontap/authentication/define-custom-roles-task.html["カスタム ロールの定義"^]
+* link:https://docs.netapp.com/us-en/ontap-automation/rest/rbac_roles_users.html#rest-api["役割とユーザーを操作する"^]
+
+
+
+
+== 双方向CHAPによる接続の認証
+
+Tridentは、双方向CHAPを使用してiSCSIセッションを認証できます。 `ontap-san`そして `ontap-san-economy`ドライバー。これには、 `useCHAP`バックエンド定義のオプション。に設定すると `true`Trident は、SVM のデフォルトのイニシエータ セキュリティを双方向 CHAP に設定し、バックエンド ファイルからユーザー名とシークレットを設定します。 NetApp、接続の認証に双方向 CHAP を使用することを推奨しています。次のサンプル構成を参照してください。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: ontap-san
+backendName: ontap_san_chap
+managementLIF: 192.168.0.135
+svm: ontap_iscsi_svm
+useCHAP: true
+username: vsadmin
+password: password
+chapInitiatorSecret: cl9qxIm36DKyawxy
+chapTargetInitiatorSecret: rqxigXgkesIpwxyz
+chapTargetUsername: iJF4heBRT0TCwxyz
+chapUsername: uh2aNCLSd6cNwxyz
+----
+
+WARNING: その `useCHAP`パラメータは一度だけ設定できるブールオプションです。デフォルトでは false に設定されています。  true に設定した後は、false に設定することはできません。
+
+に加えて `useCHAP=true`、 `chapInitiatorSecret` 、 `chapTargetInitiatorSecret` 、 `chapTargetUsername` 、 そして `chapUsername`フィールドはバックエンド定義に含める必要があります。バックエンドを作成した後、次のコマンドを実行することでシークレットを変更できます。 `tridentctl update` 。
+
+
+
+=== 仕組み
+
+設定により `useCHAP`true に設定すると、ストレージ管理者はTrident にストレージ バックエンドで CHAP を構成するように指示します。これには次のものが含まれます。
+
+* SVM で CHAP を設定する:
++
+** SVMのデフォルトのイニシエータセキュリティタイプがnone（デフォルトで設定）であり、かつボリューム内に既存のLUNが存在しない場合、 Tridentはデフォルトのセキュリティタイプを次のように設定します。 `CHAP` CHAP イニシエーターとターゲットのユーザー名とシークレットの構成に進みます。
+** SVM に LUN が含まれている場合、 Trident はSVM 上で CHAP を有効にしません。これにより、SVM 上にすでに存在する LUN へのアクセスが制限されなくなります。
+
+
+* CHAP イニシエーターとターゲットのユーザー名とシークレットを構成します。これらのオプションは、バックエンド構成で指定する必要があります (上記を参照)。
+
+
+バックエンドが作成されると、 Tridentは対応する `tridentbackend`CRD は、CHAP シークレットとユーザー名を Kubernetes シークレットとして保存します。このバックエンドでTridentによって作成されるすべての PV は、CHAP 経由でマウントおよび接続されます。
+
+
+
+=== 認証情報をローテーションしてバックエンドを更新する
+
+CHAP認証情報を更新するには、CHAPパラメータを更新します。 `backend.json`ファイル。これにはCHAPシークレットを更新し、 `tridentctl update`これらの変更を反映するコマンド。
+
+
+WARNING: バックエンドのCHAPシークレットを更新する場合は、 `tridentctl`バックエンドを更新します。  Trident はこれらの変更を取得できないため、 ONTAP CLI またはONTAP System Manager を使用してストレージ クラスターの資格情報を更新しないでください。
+
+[listing]
+----
+cat backend-san.json
+{
+    "version": 1,
+    "storageDriverName": "ontap-san",
+    "backendName": "ontap_san_chap",
+    "managementLIF": "192.168.0.135",
+    "svm": "ontap_iscsi_svm",
+    "useCHAP": true,
+    "username": "vsadmin",
+    "password": "password",
+    "chapInitiatorSecret": "cl9qxUpDaTeD",
+    "chapTargetInitiatorSecret": "rqxigXgkeUpDaTeD",
+    "chapTargetUsername": "iJF4heBRT0TCwxyz",
+    "chapUsername": "uh2aNCLSd6cNwxyz",
+}
+
+./tridentctl update backend ontap_san_chap -f backend-san.json -n trident
++----------------+----------------+--------------------------------------+--------+---------+
+|   NAME         | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
++----------------+----------------+--------------------------------------+--------+---------+
+| ontap_san_chap | ontap-san      | aa458f3b-ad2d-4378-8a33-1a472ffbeb5c | online |       7 |
++----------------+----------------+--------------------------------------+--------+---------+
+----
+既存の接続は影響を受けません。SVM 上のTridentによって資格情報が更新されると、既存の接続は引き続きアクティブなままになります。新しい接続では更新された資格情報が使用され、既存の接続は引き続きアクティブなままになります。古い PV を切断して再接続すると、更新された資格情報が使用されるようになります。

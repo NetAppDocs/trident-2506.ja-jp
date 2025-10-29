@@ -1,0 +1,57 @@
+---
+sidebar: sidebar 
+permalink: trident-managing-k8s/upgrade-operator-overview.html 
+keywords: upgrade, trident, operator, helm, controller, daemonset, node pods, rolling upgrade, zero downtime 
+summary: Tridentオペレーターを使用してTrident をアップグレードする前に、アップグレード中に発生するバックグラウンド プロセスを理解しておく必要があります。これには、ローリング アップデートを有効にするTridentコントローラー、コントローラー Pod とノード Pod、およびノー​​ド DaemonSet への変更が含まれます。 
+---
+= オペレーターのアップグレードワークフローを理解する
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Tridentオペレーターを使用してTrident をアップグレードする前に、アップグレード中に発生するバックグラウンド プロセスを理解しておく必要があります。これには、ローリング アップデートを有効にするTridentコントローラー、コントローラー Pod とノード Pod、およびノー​​ド DaemonSet への変更が含まれます。
+
+
+
+== Tridentオペレーターのアップグレード処理
+
+数ある中の一つlink:../trident-get-started/kubernetes-deploy.html["Tridentオペレータを使用する利点"]Trident をインストールおよびアップグレードすると、既存のマウントされたボリュームを中断することなく、 Tridentおよび Kubernetes オブジェクトが自動的に処理されます。このようにして、Tridentはダウンタイムなしでアップグレードをサポートできます。link:https://kubernetes.io/docs/tutorials/kubernetes-basics/update/update-intro/["_ローリングアップデート_"^] 。特に、 Tridentオペレーターは Kubernetes クラスターと通信して次の操作を行います。
+
+* Tridentコントローラーのデプロイメントとノード DaemonSet を削除して再作成します。
+* Tridentコントローラー ポッドとTridentノード ポッドを新しいバージョンに置き換えます。
++
+** 1 つのノードが更新されない場合でも、残りのノードの更新は妨げられません。
+** 実行中のTrident Node Pod を持つノードのみがボリュームをマウントできます。
+
+
+
+
+
+TIP: Kubernetesクラスタ上のTridentアーキテクチャの詳細については、以下を参照してください。link:../trident-get-started/architecture.html["Tridentアーキテクチャ"^] 。
+
+
+
+== オペレーターのアップグレードワークフロー
+
+Tridentオペレータを使用してアップグレードを開始すると、次のようになります。
+
+. *トライデントTrident*:
++
+.. 現在インストールされているTridentのバージョン (バージョン _n_) を検出します。
+.. CRD、RBAC、 Trident SVC を含むすべての Kubernetes オブジェクトを更新します。
+.. バージョン _n_ のTridentコントローラーのデプロイメントを削除します。
+.. バージョン _n+1_ のTridentコントローラーのデプロイメントを作成します。
+
+
+. *Kubernetes* は _n+1_ 用のTridentコントローラー ポッドを作成します。
+. *トライデントTrident*:
++
+.. _n_ のTrident Node DaemonSet を削除します。オペレーターはノード ポッドの終了を待機しません。
+.. _n+1_ のTrident Node Daemonset を作成します。
+
+
+. *Kubernetes* は、 Trident Node Pod _n_ を実行していないノードにTrident Node Pod を作成します。これにより、ノード上に任意のバージョンのTrident Node Pod が 1 つしか存在しないことが保証されます。
+

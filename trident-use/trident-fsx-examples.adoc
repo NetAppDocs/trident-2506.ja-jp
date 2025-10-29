@@ -1,0 +1,212 @@
+---
+sidebar: sidebar 
+permalink: trident-use/trident-fsx-examples.html 
+keywords: map backends, storage classes, trident backend, ontap-nas, ontap-nas-economy, ontap-nas-flexgroups, options, storageclasses, fsx 
+summary: Amazon FSx for ONTAPのバックエンド構成オプションについて説明します。このセクションでは、バックエンドの構成例を示します。 
+---
+= FSx for ONTAP の構成オプションと例
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Amazon FSx for ONTAPのバックエンド構成オプションについて説明します。このセクションでは、バックエンドの構成例を示します。
+
+
+
+== バックエンド構成オプション
+
+バックエンドの構成オプションについては、次の表を参照してください。
+
+[cols="3"]
+|===
+| パラメータ | 説明 | 例 
+
+
+| `version` |  | 常に1 
+
+
+| `storageDriverName` | ストレージ ドライバーの名前 | `ontap-nas`、 `ontap-nas-economy` 、 `ontap-nas-flexgroup` 、 `ontap-san` 、 `ontap-san-economy` 
+
+
+| `backendName` | カスタム名またはストレージバックエンド | ドライバー名 + "_" + dataLIF 
+
+
+| `managementLIF` | クラスタまたは SVM 管理 LIF の IP アドレス。完全修飾ドメイン名 (FQDN) を指定できます。  Trident がIPv6 フラグを使用してインストールされている場合は、IPv6 アドレスを使用するように設定できます。  IPv6 アドレスは、[28e8:d9fb:a825:b7bf:69a8:d02f:9e7b:3555] のように角括弧で定義する必要があります。 | "10.0.0.1"、"[2001:1234:abcd::fefe]" 
+
+
+| `dataLIF` | プロトコル LIF の IP アドレス。 * ONTAP NAS ドライバー*: NetApp、 dataLIF を指定することを推奨しています。指定されない場合、 Trident はSVM から dataLIF を取得します。 NFS マウント操作に使用する完全修飾ドメイン名 (FQDN) を指定できるため、複数のデータ LIF 間で負荷分散を行うラウンドロビン DNS を作成できます。初期設定後も変更可能です。参照。  * ONTAP SAN ドライバー*: iSCSI の場合は指定しないでください。  Trident はONTAP選択的 LUN マップを使用して、マルチパス セッションを確立するために必要な iSCI LIF を検出します。  dataLIF が明示的に定義されている場合、警告が生成されます。  Trident がIPv6 フラグを使用してインストールされている場合は、IPv6 アドレスを使用するように設定できます。  IPv6 アドレスは、[28e8:d9fb:a825:b7bf:69a8:d02f:9e7b:3555] のように角括弧で定義する必要があります。 |  
+
+
+| `autoExportPolicy` | 自動エクスポート ポリシーの作成と更新を有効にします [ブール値]。使用して `autoExportPolicy`そして `autoExportCIDRs`オプションを使用すると、 Trident はエクスポート ポリシーを自動的に管理できます。 | `false` 
+
+
+| `autoExportCIDRs` | KubernetesのノードIPをフィルタリングするためのCIDRのリスト `autoExportPolicy`が有効になります。使用して `autoExportPolicy`そして `autoExportCIDRs`オプションを使用すると、 Trident はエクスポート ポリシーを自動的に管理できます。 | "["0.0.0.0/0", "::/0"]" 
+
+
+| `labels` | ボリュームに適用する任意の JSON 形式のラベルのセット | "" 
+
+
+| `clientCertificate` | クライアント証明書の Base64 エンコードされた値。証明書ベースの認証に使用 | "" 
+
+
+| `clientPrivateKey` | クライアント秘密キーの Base64 エンコードされた値。証明書ベースの認証に使用 | "" 
+
+
+| `trustedCACertificate` | 信頼された CA 証明書の Base64 エンコードされた値。オプション。証明書ベースの認証に使用されます。 | "" 
+
+
+| `username` | クラスタまたは SVM に接続するためのユーザー名。資格情報ベースの認証に使用されます。たとえば、vsadmin。 |  
+
+
+| `password` | クラスターまたは SVM に接続するためのパスワード。資格情報ベースの認証に使用されます。 |  
+
+
+| `svm` | 使用するストレージ仮想マシン | SVM 管理 LIF が指定されている場合に派生されます。 
+
+
+| `storagePrefix` | SVM で新しいボリュームをプロビジョニングするときに使用されるプレフィックス。作成後は変更できません。このパラメータを更新するには、新しいバックエンドを作成する必要があります。 | `trident` 
+
+
+| `limitAggregateUsage` | * Amazon FSx for NetApp ONTAPには指定しないでください。*提供された `fsxadmin`そして `vsadmin`集計使用量を取得し、 Trident を使用して制限するために必要な権限が含まれていません。 | 使用しないでください。 
+
+
+| `limitVolumeSize` | 要求されたボリューム サイズがこの値を超える場合、プロビジョニングは失敗します。また、qtreeとLUNを管理するボリュームの最大サイズを制限し、 `qtreesPerFlexvol`オプションにより、 FlexVol volumeあたりの qtree の最大数をカスタマイズできます。 | "" (デフォルトでは強制されません) 
+
+
+| `lunsPerFlexvol` | Flexvolあたりの最大LUN数は、[50、200]の範囲にする必要があります。  SANのみ。 | `100` 
+
+
+| `debugTraceFlags` | トラブルシューティング時に使用するデバッグ フラグ。例: {"api":false, "method":true} 使用しないでください `debugTraceFlags`ただし、トラブルシューティングを行っており、詳細なログ ダンプが必要な場合を除きます。 | ヌル 
+
+
+| `nfsMountOptions` | NFS マウント オプションのコンマ区切りリスト。 Kubernetes 永続ボリュームのマウント オプションは通常、ストレージ クラスで指定されますが、ストレージ クラスでマウント オプションが指定されていない場合、 Tridentはストレージ バックエンドの構成ファイルで指定されたマウント オプションを使用します。ストレージ クラスまたは構成ファイルにマウント オプションが指定されていない場合、 Trident は関連付けられた永続ボリュームにマウント オプションを設定しません。 | "" 
+
+
+| `nasType` | NFS または SMB ボリュームの作成を構成します。オプションは `nfs`、 `smb` 、または null。  *設定する必要があります `smb`SMB ボリュームの場合。*  null に設定すると、デフォルトで NFS ボリュームになります。 | `nfs` 
+
+
+| `qtreesPerFlexvol` | FlexVolあたりの最大Qtree数は、[50, 300]の範囲でなければなりません | `200` 
+
+
+| `smbShare` | 次のいずれかを指定できます: Microsoft 管理コンソールまたはONTAP CLI を使用して作成された SMB 共有の名前、またはTrident がSMB 共有を作成できるようにするための名前。このパラメータは、 Amazon FSx for ONTAPバックエンドに必須です。 | `smb-share` 
+
+
+| `useREST` | ONTAP REST API を使用するためのブール パラメーター。 `useREST`に設定すると `true`、 TridentはONTAP REST APIを使用してバックエンドと通信します。 `false` Trident は、バックエンドとの通信に ONTAPI (ZAPI) 呼び出しを使用します。この機能にはONTAP 9.11.1 以降が必要です。さらに、使用するONTAPログインロールには、 `ontapi`応用。これは、事前に定義された `vsadmin`そして `cluster-admin`役割。  Trident 24.06リリースおよびONTAP 9.15.1以降では、 `useREST`設定されている `true`デフォルト; 変更 `useREST`に `false`ONTAPI (ZAPI) 呼び出しを使用します。 | `true`ONTAP 9.15.1以降の場合、それ以外の場合 `false`。 
+
+
+| `aws` | AWS FSx for ONTAPの設定ファイルでは以下を指定できます。 `fsxFilesystemID` : AWS FSx ファイルシステムの ID を指定します。  - `apiRegion` : AWS API リージョン名。  - `apikey` : AWS API キー。  - `secretKey` : AWS 秘密キー。 | ``
+`` 
+`""`
+`""`
+`""` 
+
+
+| `credentials` | AWS Secrets Manager に保存する FSx SVM 認証情報を指定します。  - `name` : SVM の認証情報が含まれるシークレットの Amazon リソースネーム (ARN)。 - `type` : に設定 `awsarn`。参照link:https://docs.aws.amazon.com/secretsmanager/latest/userguide/create_secret.html["AWS Secrets Managerシークレットを作成する"^]詳細についてはこちらをご覧ください。 |  
+|===
+
+
+=== アップデート `dataLIF`初期設定後
+
+次のコマンドを実行して、更新された dataLIF を含む新しいバックエンド JSON ファイルを提供することにより、初期構成後に dataLIF を変更できます。
+
+[source, console]
+----
+tridentctl update backend <backend-name> -f <path-to-backend-json-file-with-updated-dataLIF>
+----
+
+NOTE: PVC が 1 つまたは複数のポッドに接続されている場合、新しい dataLIF を有効にするには、対応するすべてのポッドを停止してから再度起動する必要があります。
+
+
+
+== ボリュームのプロビジョニングのためのバックエンド構成オプション
+
+デフォルトのプロビジョニングは、以下のオプションを使用して制御できます。 `defaults`構成のセクション。例については、以下の構成例を参照してください。
+
+[cols="3"]
+|===
+| パラメータ | 説明 | デフォルト 
+
+
+| `spaceAllocation` | LUNのスペース割り当て | `true` 
+
+
+| `spaceReserve` | スペース予約モード。「なし」（薄い）または「ボリューム」（厚い） | `none` 
+
+
+| `snapshotPolicy` | 使用するスナップショットポリシー | `none` 
+
+
+| `qosPolicy` | 作成されたボリュームに割り当てる QoS ポリシー グループ。ストレージ プールまたはバックエンドごとに qosPolicy または adaptiveQosPolicy のいずれかを選択します。 Tridentで QoS ポリシー グループを使用するには、 ONTAP 9.8 以降が必要です。共有されていない QoS ポリシー グループを使用し、ポリシー グループが各構成要素に個別に適用されるようにする必要があります。共有 QoS ポリシー グループは、すべてのワークロードの合計スループットの上限を適用します。 | "" 
+
+
+| `adaptiveQosPolicy` | 作成されたボリュームに割り当てるアダプティブ QoS ポリシー グループ。ストレージ プールまたはバックエンドごとに qosPolicy または adaptiveQosPolicy のいずれかを選択します。  ontap-nas-economy ではサポートされていません。 | "" 
+
+
+| `snapshotReserve` | スナップショット用に予約されているボリュームの割合「0」 | もし `snapshotPolicy`は `none`、 `else` 「」 
+
+
+| `splitOnClone` | クローン作成時に親からクローンを分割する | `false` 
+
+
+| `encryption` | 新しいボリュームでNetAppボリューム暗号化（NVE）を有効にします。デフォルトは `false`。このオプションを使用するには、NVE のライセンスを取得し、クラスターで有効にする必要があります。バックエンドで NAE が有効になっている場合、 Tridentでプロビジョニングされたすべてのボリュームで NAE が有効になります。詳細については、以下を参照してください。link:../trident-reco/security-reco.html["Trident がNVE および NAE と連携する仕組み"] 。 | `false` 
+
+
+| `luksEncryption` | LUKS 暗号化を有効にします。参照link:../trident-reco/security-reco.html#Use-Linux-Unified-Key-Setup-(LUKS)["Linux Unified Key Setup (LUKS) を使用する"]。  SANのみ。 | "" 
+
+
+| `tieringPolicy` | 使用する階層化ポリシー	`none` |  
+
+
+| `unixPermissions` | 新しいボリュームのモード。  *SMB ボリュームの場合は空白のままにします。* | "" 
+
+
+| `securityStyle` | 新しいボリュームのセキュリティ スタイル。  NFSサポート `mixed`そして `unix`セキュリティ スタイル。  SMBサポート `mixed`そして `ntfs`セキュリティ スタイル。 | NFSのデフォルトは `unix`。  SMBのデフォルトは `ntfs`。 
+|===
+
+
+== 構成例
+
+.SMBボリュームのストレージクラスの構成
+[%collapsible]
+====
+使用 `nasType`、 `node-stage-secret-name` 、 そして `node-stage-secret-namespace`、SMB ボリュームを指定し、必要な Active Directory 資格情報を提供できます。  SMBボリュームは、 `ontap-nas`ドライバーのみ。
+
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nas-smb-sc
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "ontap-nas"
+  trident.netapp.io/nasType: "smb"
+  csi.storage.k8s.io/node-stage-secret-name: "smbcreds"
+  csi.storage.k8s.io/node-stage-secret-namespace: "default"
+----
+====
+.Secrets Manager を使用した AWS FSx for ONTAPの設定
+[%collapsible]
+====
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-ontap-nas
+spec:
+  version: 1
+  storageDriverName: ontap-nas
+  backendName: tbc-ontap-nas
+  svm: svm-name
+  aws:
+    fsxFilesystemID: fs-xxxxxxxxxx
+  managementLIF:
+  credentials:
+    name: "arn:aws:secretsmanager:us-west-2:xxxxxxxx:secret:secret-name"
+    type: awsarn
+----
+====

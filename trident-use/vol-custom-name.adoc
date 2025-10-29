@@ -1,0 +1,129 @@
+---
+sidebar: sidebar 
+permalink: trident-use/vol-custom-name.html 
+keywords: volumes, volume name, custom volume name, on-demand volume snapshots, expand volumes, iscsci volumes, nfs volumes, expand, expansion, 
+summary: 'Trident は、作成されたボリュームに意味のある名前とラベルを割り当てることをサポートしているため、ボリュームの識別、監視、管理が容易になり、それぞれの Kubernetes リソース (PVC) に簡単にマッピングできます。' 
+---
+= ボリューム名とラベルをカスタマイズする
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Trident を使用すると、作成したボリュームに意味のある名前とラベルを割り当てることができます。これにより、ボリュームを識別し、それぞれの Kubernetes リソース (PVC) に簡単にマッピングできるようになります。バックエンド レベルでテンプレートを定義して、カスタム ボリューム名とカスタム ラベルを作成することもできます。作成、インポート、またはクローンを作成するボリュームはすべてテンプレートに準拠します。
+
+
+
+== 開始する前に
+
+カスタマイズ可能なボリューム名とラベルのサポート:
+
+. ボリュームの作成、インポート、およびクローン操作。
+. ontap-nas-economy ドライバーの場合、Qtree ボリュームの名前のみが名前テンプレートに準拠します。
+. ontap-san-economy ドライバーの場合、LUN 名のみが名前テンプレートに準拠します。
+
+
+
+
+== 制限事項
+
+. カスタマイズ可能なボリューム名は、 ONTAPオンプレミス ドライバーとのみ互換性があります。
+. カスタマイズ可能なボリューム名は既存のボリュームには適用されません。
+
+
+
+
+== カスタマイズ可能なボリューム名の主な動作
+
+. 名前テンプレートの構文が無効であるために障害が発生した場合、バックエンドの作成は失敗します。ただし、テンプレートの適用が失敗した場合、ボリュームは既存の命名規則に従って名前が付けられます。
+. バックエンド構成の名前テンプレートを使用してボリュームに名前を付ける場合、ストレージプレフィックスは適用されません。必要なプレフィックス値をテンプレートに直接追加できます。
+
+
+
+
+== 名前テンプレートとラベルを使用したバックエンド構成の例
+
+カスタム名テンプレートは、ルート レベルまたはプール レベルで定義できます。
+
+.ルートレベルの例
+[source, json]
+----
+{
+  "version": 1,
+  "storageDriverName": "ontap-nas",
+  "backendName": "ontap-nfs-backend",
+  "managementLIF": "<ip address>",
+  "svm": "svm0",
+  "username": "<admin>",
+  "password": "<password>",
+  "defaults": {
+    "nameTemplate": "{{.volume.Name}}_{{.labels.cluster}}_{{.volume.Namespace}}_{{.volume.RequestName}}"
+  },
+  "labels": {
+    "cluster": "ClusterA",
+    "PVC": "{{.volume.Namespace}}_{{.volume.RequestName}}"
+  }
+}
+----
+.プールレベルの例
+[source, json]
+----
+{
+  "version": 1,
+  "storageDriverName": "ontap-nas",
+  "backendName": "ontap-nfs-backend",
+  "managementLIF": "<ip address>",
+  "svm": "svm0",
+  "username": "<admin>",
+  "password": "<password>",
+  "useREST": true,
+  "storage": [
+    {
+      "labels": {
+        "labelname": "label1",
+        "name": "{{ .volume.Name }}"
+      },
+      "defaults": {
+        "nameTemplate": "pool01_{{ .volume.Name }}_{{ .labels.cluster }}_{{ .volume.Namespace }}_{{ .volume.RequestName }}"
+      }
+    },
+    {
+      "labels": {
+        "cluster": "label2",
+        "name": "{{ .volume.Name }}"
+      },
+      "defaults": {
+        "nameTemplate": "pool02_{{ .volume.Name }}_{{ .labels.cluster }}_{{ .volume.Namespace }}_{{ .volume.RequestName }}"
+      }
+    }
+  ]
+}
+----
+
+
+== 名前テンプレートの例
+
+*例1*:
+
+[listing]
+----
+"nameTemplate": "{{ .config.StoragePrefix }}_{{ .volume.Name }}_{{ .config.BackendName }}"
+----
+*例2*:
+
+[listing]
+----
+"nameTemplate": "pool_{{ .config.StoragePrefix }}_{{ .volume.Name }}_{{ slice .volume.RequestName 1 5 }}""
+----
+
+
+== 考慮すべき点
+
+. ボリュームのインポートの場合、既存のボリュームに特定の形式のラベルがある場合にのみラベルが更新されます。例えば： `{"provisioning":{"Cluster":"ClusterA", "PVC": "pvcname"}}` 。
+. 管理対象ボリュームのインポートの場合、ボリューム名はバックエンド定義のルート レベルで定義された名前テンプレートに従います。
+. Trident は、ストレージ プレフィックス付きのスライス演算子の使用をサポートしていません。
+. テンプレートによって一意のボリューム名が生成されない場合、 Trident はランダムな文字をいくつか追加して一意のボリューム名を作成します。
+. NAS エコノミー ボリュームのカスタム名の長さが 64 文字を超える場合、 Trident は既存の命名規則に従ってボリュームに名前を付けます。その他のすべてのONTAPドライバーでは、ボリューム名が名前制限を超えると、ボリューム作成プロセスは失敗します。
+

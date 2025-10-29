@@ -1,0 +1,159 @@
+---
+sidebar: sidebar 
+permalink: trident-use/anf.html 
+keywords: trident backend, azure netapp files, smb volumes, smb, windows, drivers, access modes, rwo, rwx, rwp, rwop, file system, aks, managed identities, azure 
+summary: 'Azure NetApp Files をTridentのバックエンドとして構成できます。  Azure NetApp Filesバックエンドを使用して、NFS および SMB ボリュームを接続できます。  Trident は、 Azure Kubernetes Services (AKS) クラスターのマネージド ID を使用した資格情報の管理もサポートしています。' 
+---
+= Azure NetApp Filesバックエンドを構成する
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Azure NetApp Files をTridentのバックエンドとして構成できます。  Azure NetApp Filesバックエンドを使用して、NFS および SMB ボリュームを接続できます。  Trident は、 Azure Kubernetes Services (AKS) クラスターのマネージド ID を使用した資格情報の管理もサポートしています。
+
+
+
+== Azure NetApp Filesドライバーの詳細
+
+Trident は、クラスターと通信するために次のAzure NetApp Filesストレージ ドライバーを提供します。サポートされているアクセス モードは、_ReadWriteOnce_ (RWO)、_ReadOnlyMany_ (ROX)、_ReadWriteMany_ (RWX)、_ReadWriteOncePod_ (RWOP) です。
+
+[cols="2, 1, 1, 2, 2"]
+|===
+| ドライバ | プロトコル | ボリュームモード | サポートされているアクセスモード | サポートされているファイルシステム 
+
+
+| `azure-netapp-files`  a| 
+NFS SMB
+ a| 
+Filesystem
+ a| 
+RWO、ROX、RWX、RWOP
+ a| 
+`nfs`、 `smb`
+
+|===
+
+
+=== 考慮事項
+
+* Azure NetApp Filesサービスは、50 GiB 未満のボリュームをサポートしていません。より小さいボリュームが要求された場合、 Trident は自動的に 50 GiB のボリュームを作成します。
+* Trident は、 Windows ノードで実行されているポッドにマウントされた SMB ボリュームのみをサポートします。
+
+
+
+
+== AKS のマネージド ID
+
+Tridentのサポートlink:https://learn.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/overview["マネージドID"^]Azure Kubernetes Services クラスター用。マネージド ID によって提供される合理化された資格情報管理を活用するには、次のものが必要です。
+
+* AKS を使用してデプロイされた Kubernetes クラスター
+* AKS Kubernetes クラスターで構成されたマネージド ID
+* Tridentがインストールされており、 `cloudProvider`指定する `"Azure"`。
++
+[role="tabbed-block"]
+====
+.Tridentオペレーター
+--
+Tridentオペレータを使用してTridentをインストールするには、 `tridentorchestrator_cr.yaml`設定する `cloudProvider`に `"Azure"`。例えば：
+
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentOrchestrator
+metadata:
+  name: trident
+spec:
+  debug: true
+  namespace: trident
+  imagePullPolicy: IfNotPresent
+  cloudProvider: "Azure"
+----
+--
+.舵
+--
+次の例では、 Tridentセットをインストールします `cloudProvider`環境変数を使用してAzureへ `$CP`:
+
+[listing]
+----
+helm install trident trident-operator-100.2506.0.tgz --create-namespace --namespace <trident-namespace> --set cloudProvider=$CP
+----
+--
+.<code>トライデントctl</code>
+--
+次の例では、 Tridentをインストールし、 `cloudProvider`フラグを `Azure`:
+
+[listing]
+----
+tridentctl install --cloud-provider="Azure" -n trident
+----
+--
+====
+
+
+
+
+== AKS のクラウド ID
+
+クラウド ID を使用すると、Kubernetes ポッドは、明示的な Azure 資格情報を提供する代わりに、ワークロード ID として認証することで Azure リソースにアクセスできるようになります。
+
+Azure でクラウド ID を活用するには、次のものが必要です。
+
+* AKS を使用してデプロイされた Kubernetes クラスター
+* AKS Kubernetes クラスターで構成されたワークロード ID と oidc-issuer
+* Tridentがインストールされており、 `cloudProvider`指定する `"Azure"`そして `cloudIdentity`ワークロードIDの指定
++
+[role="tabbed-block"]
+====
+.Tridentオペレーター
+--
+Tridentオペレータを使用してTridentをインストールするには、 `tridentorchestrator_cr.yaml`設定する `cloudProvider`に `"Azure"`そして設定 `cloudIdentity`に `azure.workload.identity/client-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx`。
+
+例えば：
+
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentOrchestrator
+metadata:
+  name: trident
+spec:
+  debug: true
+  namespace: trident
+  imagePullPolicy: IfNotPresent
+  cloudProvider: "Azure"
+  cloudIdentity: 'azure.workload.identity/client-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx' # Edit
+----
+--
+.舵
+--
+次の環境変数を使用して、*cloud-provider (CP)* および *cloud-identity (CI)* フラグの値を設定します。
+
+`export CP="Azure"`
+`export CI="'azure.workload.identity/client-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx'"`
+
+次の例では、 Tridentをインストールし、 `cloudProvider`環境変数を使用してAzureへ `$CP`そして、 `cloudIdentity`環境変数を使用する `$CI`:
+
+[listing]
+----
+helm install trident trident-operator-100.6.0.tgz --set cloudProvider=$CP --set cloudIdentity="$CI"
+----
+--
+.<code>トライデントctl</code>
+--
+次の環境変数を使用して、*クラウド プロバイダー* および *クラウド ID* フラグの値を設定します。
+
+`export CP="Azure"`
+`export CI="azure.workload.identity/client-id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx"`
+
+次の例では、 Tridentをインストールし、 `cloud-provider`フラグを `$CP`、 そして `cloud-identity`に `$CI`:
+
+[listing]
+----
+tridentctl install --cloud-provider=$CP --cloud-identity="$CI" -n trident
+----
+--
+====
+

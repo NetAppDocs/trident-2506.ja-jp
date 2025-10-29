@@ -1,0 +1,533 @@
+---
+sidebar: sidebar 
+permalink: trident-use/ontap-nas-prep.html 
+keywords: trident backend, ontap nas, ontap-nas, ontap-nas-economy, ontap-nas-flexgroups 
+summary: ONTAP NAS ドライバーを使用してONTAPバックエンドを構成するための要件、認証オプション、およびエクスポート ポリシーを理解します。 
+---
+= ONTAP NASドライバーを使用してバックエンドを構成する準備をする
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+ONTAP NAS ドライバーを使用してONTAPバックエンドを構成するための要件、認証オプション、およびエクスポート ポリシーを理解します。
+
+
+
+== 要件
+
+* すべてのONTAPバックエンドでは、 Trident少なくとも 1 つのアグリゲートを SVM に割り当てる必要があります。
+* 複数のドライバーを実行し、いずれかを指すストレージ クラスを作成できます。たとえば、 `ontap-nas`ドライバーとブロンズクラスは `ontap-nas-economy`1つ。
+* すべての Kubernetes ワーカーノードに適切な NFS ツールがインストールされている必要があります。参照link:worker-node-prep.html["ここをクリックしてください。"]詳細についてはこちらをご覧ください。
+* Trident は、 Windows ノードで実行されているポッドにマウントされた SMB ボリュームのみをサポートします。参照 <<SMBボリュームのプロビジョニングの準備>> 詳細については。
+
+
+
+
+== ONTAPバックエンドを認証する
+
+Trident は、 ONTAPバックエンドを認証する 2 つのモードを提供します。
+
+* 認証情報ベース: このモードでは、 ONTAPバックエンドに対する十分な権限が必要です。次のような事前定義されたセキュリティログインロールに関連付けられたアカウントを使用することをお勧めします。 `admin`または `vsadmin`ONTAPバージョンとの最大限の互換性を確保するためです。
+* 証明書ベース: このモードでは、 Trident がONTAPクラスタと通信するために、バックエンドに証明書がインストールされている必要があります。ここで、バックエンド定義には、クライアント証明書、キー、および信頼された CA 証明書（使用する場合）の Base64 エンコードされた値が含まれている必要があります（推奨）。
+
+
+既存のバックエンドを更新して、資格情報ベースの方法と証明書ベースの方法間を切り替えることができます。ただし、一度にサポートされる認証方法は 1 つだけです。別の認証方法に切り替えるには、バックエンド構成から既存の方法を削除する必要があります。
+
+
+WARNING: *資格情報と証明書の両方* を提供しようとすると、構成ファイルに複数の認証方法が提供されているというエラーが発生し、バックエンドの作成が失敗します。
+
+
+
+=== 資格情報ベースの認証を有効にする
+
+Trident、 ONTAPバックエンドと通信するために、SVM スコープ/クラスタ スコープの管理者の認証情報が必要です。次のような標準の事前定義されたロールを利用することをお勧めします。 `admin`または `vsadmin`。これにより、将来のTridentリリースで使用される機能 API を公開する可能性のある将来のONTAPリリースとの前方互換性が確保されます。カスタム セキュリティ ログイン ロールを作成してTridentで使用することは可能ですが、お勧めしません。
+
+サンプルのバックエンド定義は次のようになります。
+
+[role="tabbed-block"]
+====
+.ヤムル
+--
+[source, yaml]
+----
+---
+version: 1
+backendName: ExampleBackend
+storageDriverName: ontap-nas
+managementLIF: 10.0.0.1
+dataLIF: 10.0.0.2
+svm: svm_nfs
+credentials:
+  name: secret-backend-creds
+----
+--
+.JSON
+--
+[source, json]
+----
+{
+  "version": 1,
+  "backendName": "ExampleBackend",
+  "storageDriverName": "ontap-nas",
+  "managementLIF": "10.0.0.1",
+  "dataLIF": "10.0.0.2",
+  "svm": "svm_nfs",
+  "credentials": {
+        "name": "secret-backend-creds"
+    }
+}
+----
+--
+====
+バックエンド定義は、資格情報がプレーンテキストで保存される唯一の場所であることに留意してください。バックエンドが作成されると、ユーザー名とパスワードは Base64 でエンコードされ、Kubernetes シークレットとして保存されます。バックエンドの作成/更新は、資格情報に関する知識が必要となる唯一のステップです。したがって、これは Kubernetes/ストレージ管理者によって実行される管理者専用の操作です。
+
+
+
+=== 証明書ベースの認証を有効にする
+
+新規および既存のバックエンドは証明書を使用してONTAPバックエンドと通信できます。バックエンド定義には 3 つのパラメータが必要です。
+
+* clientCertificate: クライアント証明書の Base64 エンコードされた値。
+* clientPrivateKey: 関連付けられた秘密キーの Base64 エンコードされた値。
+* trustedCACertificate: 信頼された CA 証明書の Base64 エンコードされた値。信頼できる CA を使用する場合は、このパラメータを指定する必要があります。信頼できる CA が使用されていない場合は、これを無視できます。
+
+
+一般的なワークフローには次の手順が含まれます。
+
+.手順
+. クライアント証明書とキーを生成します。生成時に、認証するONTAPユーザーに共通名 (CN) を設定します。
++
+[listing]
+----
+openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout k8senv.key -out k8senv.pem -subj "/C=US/ST=NC/L=RTP/O=NetApp/CN=vsadmin"
+----
+. 信頼できる CA 証明書をONTAPクラスタに追加します。これはストレージ管理者によってすでに処理されている可能性があります。信頼できる CA が使用されていない場合は無視します。
++
+[listing]
+----
+security certificate install -type server -cert-name <trusted-ca-cert-name> -vserver <vserver-name>
+ssl modify -vserver <vserver-name> -server-enabled true -client-enabled true -common-name <common-name> -serial <SN-from-trusted-CA-cert> -ca <cert-authority>
+----
+. クライアント証明書とキー（手順 1 から）をONTAPクラスタにインストールします。
++
+[listing]
+----
+security certificate install -type client-ca -cert-name <certificate-name> -vserver <vserver-name>
+security ssl modify -vserver <vserver-name> -client-enabled true
+----
+. ONTAPセキュリティログインロールがサポートしていることを確認する `cert`認証方法。
++
+[listing]
+----
+security login create -user-or-group-name vsadmin -application ontapi -authentication-method cert -vserver <vserver-name>
+security login create -user-or-group-name vsadmin -application http -authentication-method cert -vserver <vserver-name>
+----
+. 生成された証明書を使用して認証をテストします。  < ONTAP Management LIF> と <vserver name> を管理 LIF IP と SVM 名に置き換えます。  LIFのサービスポリシーが次のように設定されていることを確認する必要があります。 `default-data-management` 。
++
+[listing]
+----
+curl -X POST -Lk https://<ONTAP-Management-LIF>/servlets/netapp.servlets.admin.XMLrequest_filer --key k8senv.key --cert ~/k8senv.pem -d '<?xml version="1.0" encoding="UTF-8"?><netapp xmlns="http://www.netapp.com/filer/admin" version="1.21" vfiler="<vserver-name>"><vserver-get></vserver-get></netapp>'
+----
+. 証明書、キー、および信頼された CA 証明書を Base64 でエンコードします。
++
+[listing]
+----
+base64 -w 0 k8senv.pem >> cert_base64
+base64 -w 0 k8senv.key >> key_base64
+base64 -w 0 trustedca.pem >> trustedca_base64
+----
+. 前の手順で取得した値を使用してバックエンドを作成します。
++
+[listing]
+----
+cat cert-backend-updated.json
+{
+"version": 1,
+"storageDriverName": "ontap-nas",
+"backendName": "NasBackend",
+"managementLIF": "1.2.3.4",
+"dataLIF": "1.2.3.8",
+"svm": "vserver_test",
+"clientCertificate": "Faaaakkkkeeee...Vaaalllluuuueeee",
+"clientPrivateKey": "LS0tFaKE...0VaLuES0tLS0K",
+"storagePrefix": "myPrefix_"
+}
+
+#Update backend with tridentctl
+tridentctl update backend NasBackend -f cert-backend-updated.json -n trident
++------------+----------------+--------------------------------------+--------+---------+
+|    NAME    | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
++------------+----------------+--------------------------------------+--------+---------+
+| NasBackend | ontap-nas      | 98e19b74-aec7-4a3d-8dcf-128e5033b214 | online |       9 |
++------------+----------------+--------------------------------------+--------+---------+
+----
+
+
+
+
+=== 認証方法を更新するか、資格情報をローテーションする
+
+既存のバックエンドを更新して、別の認証方法を使用したり、資格情報をローテーションしたりすることができます。これは両方向に機能します。ユーザー名/パスワードを使用するバックエンドは、証明書を使用するように更新できます。また、証明書を使用するバックエンドは、ユーザー名/パスワード ベースに更新できます。これを行うには、既存の認証方法を削除し、新しい認証方法を追加する必要があります。次に、必要なパラメータを含む更新されたbackend.jsonファイルを使用して実行します。 `tridentctl update backend` 。
+
+[listing]
+----
+cat cert-backend-updated.json
+----
+[source, json]
+----
+{
+"version": 1,
+"storageDriverName": "ontap-nas",
+"backendName": "NasBackend",
+"managementLIF": "1.2.3.4",
+"dataLIF": "1.2.3.8",
+"svm": "vserver_test",
+"username": "vsadmin",
+"password": "password",
+"storagePrefix": "myPrefix_"
+}
+----
+[listing]
+----
+#Update backend with tridentctl
+tridentctl update backend NasBackend -f cert-backend-updated.json -n trident
++------------+----------------+--------------------------------------+--------+---------+
+|    NAME    | STORAGE DRIVER |                 UUID                 | STATE  | VOLUMES |
++------------+----------------+--------------------------------------+--------+---------+
+| NasBackend | ontap-nas      | 98e19b74-aec7-4a3d-8dcf-128e5033b214 | online |       9 |
++------------+----------------+--------------------------------------+--------+---------+
+----
+
+NOTE: パスワードをローテーションする場合、ストレージ管理者はまずONTAP上のユーザーのパスワードを更新する必要があります。続いてバックエンドの更新が行われます。証明書をローテーションする場合、ユーザーに複数の証明書を追加できます。その後、バックエンドは新しい証明書を使用するように更新され、その後、古い証明書をONTAPクラスタから削除できます。
+
+バックエンドを更新しても、すでに作成されているボリュームへのアクセスは中断されず、その後に行われたボリューム接続にも影響はありません。バックエンドの更新が成功すると、 Trident がONTAPバックエンドと通信し、将来のボリューム操作を処理できることを示します。
+
+
+
+=== Trident用のカスタムONTAPロールを作成する
+
+最小限の権限を持つONTAPクラスタ ロールを作成すると、 Tridentで操作を実行するためにONTAP管理者ロールを使用する必要がなくなります。  Tridentバックエンド構成にユーザー名を含めると、 Trident は作成したONTAPクラスタ ロールを使用して操作を実行します。
+
+参照link:https://github.com/NetApp/trident/tree/master/contrib/ontap/trident_role["Tridentカスタムロールジェネレーター"]Tridentカスタム ロールの作成の詳細については、こちらをご覧ください。
+
+[role="tabbed-block"]
+====
+.ONTAP CLIの使用
+--
+. 次のコマンドを使用して新しいロールを作成します。
++
+`security login role create <role_name\> -cmddirname "command" -access all –vserver <svm_name\>`
+
+. Tridentユーザーのユーザー名を作成します。
++
+`security login create -username <user_name\> -application ontapi -authmethod <password\> -role <name_of_role_in_step_1\> –vserver <svm_name\> -comment "user_description"`
+
+. ロールをユーザーにマップします。
++
+`security login modify username <user_name\> –vserver <svm_name\> -role <role_name\> -application ontapi -application console -authmethod <password\>`
+
+
+
+--
+.System Managerを使用
+--
+ONTAP System Manager で次の手順を実行します。
+
+. *カスタムロールを作成する*:
++
+.. クラスター レベルでカスタム ロールを作成するには、*クラスター > 設定* を選択します。
++
+（または）SVMレベルでカスタムロールを作成するには、*ストレージ > ストレージVM > を選択します。 `required SVM` > 設定 > ユーザーとロール*。
+
+.. *ユーザーとロール*の横にある矢印アイコン (*->*) を選択します。
+.. *役割*の下の*+追加*を選択します。
+.. ロールのルールを定義し、「*保存*」をクリックします。
+
+
+. *役割をTridentユーザーにマップします*: + *ユーザーと役割* ページで次の手順を実行します。
++
+.. *ユーザー*の下の追加アイコン*+*を選択します。
+.. 必要なユーザー名を選択し、*役割*のドロップダウン メニューで役割を選択します。
+.. *保存*をクリックします。
+
+
+
+
+--
+====
+詳細については、次のページを参照してください。
+
+* link:https://kb.netapp.com/on-prem/ontap/Ontap_OS/OS-KBs/FAQ__Custom_roles_for_administration_of_ONTAP["ONTAPの管理用のカスタム ロール"^]またはlink:https://docs.netapp.com/us-en/ontap/authentication/define-custom-roles-task.html["カスタム ロールの定義"^]
+* link:https://docs.netapp.com/us-en/ontap-automation/rest/rbac_roles_users.html#rest-api["役割とユーザーを操作する"^]
+
+
+
+
+== NFSエクスポートポリシーを管理する
+
+Trident は、 NFS エクスポート ポリシーを使用して、プロビジョニングするボリュームへのアクセスを制御します。
+
+Trident、エクスポート ポリシーを操作するときに 2 つのオプションが提供されます。
+
+* Trident はエクスポート ポリシー自体を動的に管理できます。この動作モードでは、ストレージ管理者は許容 IP アドレスを表す CIDR ブロックのリストを指定します。 Trident は、公開時にこれらの範囲内にある該当するノード IP をエクスポート ポリシーに自動的に追加します。あるいは、CIDR が指定されていない場合は、ボリュームが公開されるノードで見つかったすべてのグローバル スコープのユニキャスト IP がエクスポート ポリシーに追加されます。
+* ストレージ管理者は、エクスポート ポリシーを作成し、ルールを手動で追加できます。構成で別のエクスポート ポリシー名が指定されていない限り、 Trident はデフォルトのエクスポート ポリシーを使用します。
+
+
+
+
+=== エクスポートポリシーを動的に管理する
+
+Trident は、 ONTAPバックエンドのエクスポート ポリシーを動的に管理する機能を提供します。これにより、ストレージ管理者は、明示的なルールを手動で定義するのではなく、ワーカーノード IP に許可されるアドレス空間を指定できるようになります。これにより、エクスポート ポリシーの管理が大幅に簡素化され、エクスポート ポリシーを変更する際にストレージ クラスターで手動で介入する必要がなくなります。さらに、これにより、ボリュームをマウントしており、指定された範囲内の IP を持つワーカー ノードのみにストレージ クラスターへのアクセスが制限され、きめ細かな自動管理がサポートされます。
+
+
+NOTE: 動的エクスポート ポリシーを使用する場合は、ネットワーク アドレス変換 (NAT) を使用しないでください。  NAT では、ストレージ コントローラは実際の IP ホスト アドレスではなくフロントエンド NAT アドレスを認識するため、エクスポート ルールに一致するものが見つからない場合はアクセスが拒否されます。
+
+
+
+==== 例
+
+使用する必要がある構成オプションが 2 つあります。バックエンドの定義の例を次に示します。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: ontap-nas-economy
+backendName: ontap_nas_auto_export
+managementLIF: 192.168.0.135
+svm: svm1
+username: vsadmin
+password: password
+autoExportCIDRs:
+  - 192.168.0.0/24
+autoExportPolicy: true
+
+----
+
+NOTE: この機能を使用する場合は、SVM のルート ジャンクションに、ノード CIDR ブロックを許可するエクスポート ルールを含むエクスポート ポリシーが以前に作成されていることを確認する必要があります (デフォルトのエクスポート ポリシーなど)。  SVM をTrident専用にする場合は、常にNetApp が推奨するベスト プラクティスに従ってください。
+
+上記の例を使用して、この機能がどのように機能するかを説明します。
+
+* `autoExportPolicy`設定されている `true`。これは、 Tridentがこのバックエンドでプロビジョニングされたボリュームごとにエクスポートポリシーを作成することを示します。 `svm1` SVMを使用してルールの追加と削除を処理します `autoexportCIDRs`アドレス ブロック。ボリュームがノードに接続されるまで、そのボリュームへの不要なアクセスを防ぐためのルールのない空のエクスポート ポリシーがボリュームで使用されます。ボリュームがノードに公開されると、 Trident は指定された CIDR ブロック内のノード IP を含む基礎となる qtree と同じ名前のエクスポート ポリシーを作成します。これらのIPは、親FlexVol volumeで使用されるエクスポートポリシーにも追加されます。
++
+** 例えば：
++
+*** バックエンドUUID 403b5326-8482-40db-96d0-d83fb3f4daec
+*** `autoExportPolicy`に設定 `true`
+*** ストレージプレフィックス `trident`
+*** PVC UUID a79bcf5f-7b6d-4a40-9876-e2551f159c1c
+*** trident_pvc_a79bcf5f_7b6d_4a40_9876_e2551f159c1cという名前のqtreeは、 FlexVolという名前のエクスポートポリシーを作成します。 `trident-403b5326-8482-40db96d0-d83fb3f4daec` 、qtreeのエクスポートポリシー
+`trident_pvc_a79bcf5f_7b6d_4a40_9876_e2551f159c1c`、および空のエクスポートポリシー `trident_empty`SVM 上。 FlexVolエクスポート ポリシーのルールは、qtree エクスポート ポリシーに含まれるルールのスーパーセットになります。空のエクスポート ポリシーは、接続されていないボリュームによって再利用されます。
+
+
+
+
+* `autoExportCIDRs`アドレス ブロックのリストが含まれます。このフィールドはオプションであり、デフォルトは ["0.0.0.0/0", "::/0"] になります。定義されていない場合、 Trident はパブリケーションを持つワーカー ノードで見つかったすべてのグローバル スコープのユニキャスト アドレスを追加します。
+
+
+この例では、 `192.168.0.0/24`アドレス空間が提供されます。これは、公開されているこのアドレス範囲内にある Kubernetes ノード IP が、 Trident が作成するエクスポート ポリシーに追加されることを示します。Tridentは、そのノードを登録する際に、そのノードのIPアドレスを取得し、それを以下のアドレスブロックと照合します。 `autoExportCIDRs`公開時に、IP をフィルタリングした後、 Trident は公開先のノードのクライアント IP のエクスポート ポリシー ルールを作成します。
+
+更新できます `autoExportPolicy`そして `autoExportCIDRs`バックエンドを作成した後。自動的に管理されるバックエンドに新しい CIDR を追加したり、既存の CIDR を削除したりできます。 CIDR を削除するときは、既存の接続が切断されないように注意してください。無効にすることもできます `autoExportPolicy`バックエンドにエクスポート ポリシーを手動で作成し、フォールバックします。これには、 `exportPolicy`バックエンド構成のパラメータ。
+
+Tridentがバックエンドを作成または更新した後、以下のコマンドでバックエンドを確認できます。 `tridentctl`または対応する `tridentbackend`CRD:
+
+[listing]
+----
+./tridentctl get backends ontap_nas_auto_export -n trident -o yaml
+items:
+- backendUUID: 403b5326-8482-40db-96d0-d83fb3f4daec
+  config:
+    aggregate: ""
+    autoExportCIDRs:
+    - 192.168.0.0/24
+    autoExportPolicy: true
+    backendName: ontap_nas_auto_export
+    chapInitiatorSecret: ""
+    chapTargetInitiatorSecret: ""
+    chapTargetUsername: ""
+    chapUsername: ""
+    dataLIF: 192.168.0.135
+    debug: false
+    debugTraceFlags: null
+    defaults:
+      encryption: "false"
+      exportPolicy: <automatic>
+      fileSystemType: ext4
+----
+ノードが削除されると、 Trident はすべてのエクスポート ポリシーをチェックし、そのノードに対応するアクセス ルールを削除します。管理対象バックエンドのエクスポート ポリシーからこのノード IP を削除することにより、この IP がクラスター内の新しいノードによって再利用されない限り、 Trident は不正なマウントを防止します。
+
+既存のバックエンドの場合は、バックエンドを次のように更新します。 `tridentctl update backend` Trident がエクスポート ポリシーを自動的に管理することを保証します。これにより、必要に応じて、バックエンドの UUID と qtree 名に基づいて名前が付けられた 2 つの新しいエクスポート ポリシーが作成されます。バックエンドに存在するボリュームは、アンマウントされて再度マウントされた後、新しく作成されたエクスポート ポリシーを使用します。
+
+
+NOTE: 自動管理エクスポート ポリシーを持つバックエンドを削除すると、動的に作成されたエクスポート ポリシーも削除されます。バックエンドが再作成されると、新しいバックエンドとして扱われ、新しいエクスポート ポリシーが作成されます。
+
+ライブ ノードの IP アドレスが更新された場合は、ノード上のTridentポッドを再起動する必要があります。その後、 Trident は、この IP 変更を反映するために、管理するバックエンドのエクスポート ポリシーを更新します。
+
+
+
+== SMBボリュームのプロビジョニングの準備
+
+少しの追加の準備をすれば、SMBボリュームをプロビジョニングできます。 `ontap-nas`ドライバー。
+
+
+WARNING: SVMでNFSとSMB/CIFSプロトコルの両方を設定する必要があります。 `ontap-nas-economy` ONTAPオンプレミス クラスターの SMB ボリューム。これらのプロトコルのいずれかを構成しないと、SMB ボリュームの作成が失敗します。
+
+
+NOTE: `autoExportPolicy`SMB ボリュームではサポートされません。
+
+.開始する前に
+SMB ボリュームをプロビジョニングする前に、次のものが必要です。
+
+* Linux コントローラー ノードと、Windows Server 2022 を実行する少なくとも 1 つの Windows ワーカー ノードを備えた Kubernetes クラスター。  Trident は、 Windows ノードで実行されているポッドにマウントされた SMB ボリュームのみをサポートします。
+* Active Directory 資格情報を含む少なくとも 1 つのTridentシークレット。秘密を生成する `smbcreds`:
++
+[listing]
+----
+kubectl create secret generic smbcreds --from-literal username=user --from-literal password='password'
+----
+* Windows サービスとして構成された CSI プロキシ。設定するには `csi-proxy`、参照link:https://github.com/kubernetes-csi/csi-proxy["GitHub: CSIプロキシ"^]またはlink:https://github.com/Azure/aks-engine/blob/master/docs/topics/csi-proxy-windows.md["GitHub: Windows 用 CSI プロキシ"^]Windows 上で実行されている Kubernetes ノード用。
+
+
+.手順
+. オンプレミスのONTAPの場合、オプションで SMB 共有を作成するか、 Trident で作成することもできます。
++
+
+NOTE: Amazon FSx for ONTAPには SMB 共有が必要です。
+
++
+SMB管理共有は、次の2つの方法のいずれかで作成できます。link:https://learn.microsoft.com/en-us/troubleshoot/windows-server/system-management-components/what-is-microsoft-management-console["Microsoft管理コンソール"^]共有フォルダ スナップインまたはONTAP CLI を使用します。  ONTAP CLI を使用して SMB 共有を作成するには、次の手順を実行します。
+
++
+.. 必要に応じて、共有のディレクトリ パス構造を作成します。
++
+その `vserver cifs share create`コマンドは、共有の作成中に -path オプションで指定されたパスをチェックします。指定されたパスが存在しない場合、コマンドは失敗します。
+
+.. 指定された SVM に関連付けられた SMB 共有を作成します。
++
+[listing]
+----
+vserver cifs share create -vserver vserver_name -share-name share_name -path path [-share-properties share_properties,...] [other_attributes] [-comment text]
+----
+.. 共有が作成されたことを確認します。
++
+[listing]
+----
+vserver cifs share show -share-name share_name
+----
++
+
+NOTE: 参照link:https://docs.netapp.com/us-en/ontap/smb-config/create-share-task.html["SMB共有を作成する"^]詳細についてはこちらをご覧ください。
+
+
+
+. バックエンドを作成するときは、SMB ボリュームを指定するために以下を構成する必要があります。  FSx for ONTAPのバックエンド構成オプションについては、以下を参照してください。link:trident-fsx-examples.html["FSx for ONTAP の構成オプションと例"] 。
++
+[cols="1,2,1"]
+|===
+| パラメータ | 説明 | 例 
+
+
+| `smbShare` | 次のいずれかを指定できます: Microsoft 管理コンソールまたはONTAP CLI を使用して作成された SMB 共有の名前、 Trident がSMB 共有を作成できるようにする名前、またはボリュームへの共通共有アクセスを防止するためにパラメータを空白のままにしておくことができます。このパラメータは、オンプレミスのONTAPではオプションです。このパラメータはAmazon FSx for ONTAPバックエンドに必須であり、空白にすることはできません。 | `smb-share` 
+
+
+| `nasType` | *設定する必要があります `smb`.*  nullの場合、デフォルトは `nfs`。 | `smb` 
+
+
+| `securityStyle` | 新しいボリュームのセキュリティ スタイル。  *設定する必要があります `ntfs`または `mixed`SMB ボリュームの場合。* | `ntfs`または `mixed`SMBボリューム用 
+
+
+| `unixPermissions` | 新しいボリュームのモード。  *SMB ボリュームの場合は空のままにする必要があります。* | "" 
+|===
+
+
+
+
+=== 安全なSMBを有効にする
+
+25.06リリース以降、 NetApp Tridentは、以下の方法で作成されたSMBボリュームの安全なプロビジョニングをサポートします。 `ontap-nas`そして `ontap-nas-economy`バックエンド。セキュア SMB を有効にすると、アクセス制御リスト (ACL) を使用して、Active Directory (AD) ユーザーおよびユーザー グループに SMB 共有への制御されたアクセスを提供できます。
+
+.覚えておくべきポイント
+* インポート `ontap-nas-economy`ボリュームはサポートされていません。
+* 読み取り専用クローンのみがサポートされています `ontap-nas-economy`ボリューム。
+* Secure SMB が有効になっている場合、 Trident はバックエンドに記載されている SMB 共有を無視します。
+* PVC アノテーション、ストレージ クラス アノテーション、およびバックエンド フィールドを更新しても、SMB 共有 ACL は更新されません。
+* クローン PVC の注釈で指定された SMB 共有 ACL は、ソース PVC の ACL よりも優先されます。
+* 安全な SMB を有効にする際には、有効な AD ユーザーを提供するようにしてください。無効なユーザーは ACL に追加されません。
+* バックエンド、ストレージ クラス、PVC で同じ AD ユーザーに異なる権限を指定した場合、権限の優先順位は PVC、ストレージ クラス、バックエンドの順になります。
+* セキュアSMBは以下でサポートされています `ontap-nas`管理対象ボリュームのインポートには適用され、管理対象外ボリュームのインポートには適用されません。
+
+
+.手順
+. 次の例に示すように、TridentBackendConfig で adAdminUser を指定します。
++
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-ontap
+  namespace: trident
+spec:
+  version: 1
+  storageDriverName: ontap-nas
+  managementLIF: 10.193.176.x
+  svm: svm0
+  useREST: true
+  defaults:
+    adAdminUser: tridentADtest
+  credentials:
+    name: backend-tbc-ontap-invest-secret
+----
+. ストレージ クラスに注釈を追加します。
++
+追加する `trident.netapp.io/smbShareAdUser`ストレージ クラスにアノテーションを追加して、安全な SMB を確実に有効にします。注釈に指定されたユーザー値 `trident.netapp.io/smbShareAdUser`指定されたユーザー名と同じである必要があります `smbcreds`秘密。次のいずれかを選択できます `smbShareAdUserPermission`: `full_control` 、 `change` 、 または `read`。デフォルトの権限は `full_control`。
+
+
+
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ontap-smb-sc
+  annotations:
+    trident.netapp.io/smbShareAdUserPermission: change
+    trident.netapp.io/smbShareAdUser: tridentADuser
+parameters:
+  backendType: ontap-nas
+  csi.storage.k8s.io/node-stage-secret-name: smbcreds
+  csi.storage.k8s.io/node-stage-secret-namespace: trident
+  trident.netapp.io/nasType: smb
+provisioner: csi.trident.netapp.io
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+----
+. PVCを作成します。
++
+次の例では、PVC を作成します。
+
+
+
+[listing]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc4
+  namespace: trident
+  annotations:
+    trident.netapp.io/snapshotDirectory: "true"
+    trident.netapp.io/smbShareAccessControl: |
+      read:
+        - tridentADtest
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: ontap-smb-sc
+----

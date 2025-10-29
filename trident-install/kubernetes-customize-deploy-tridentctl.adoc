@@ -1,0 +1,46 @@
+---
+sidebar: sidebar 
+permalink: trident-get-started/kubernetes-customize-deploy-tridentctl.html 
+keywords: deploy, Trident, methods, operator, tridentctl, helm, attributes, customize 
+summary: Tridentインストーラーを使用して展開をカスタマイズできます。 
+---
+= tridentctl インストールのカスタマイズ
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Tridentインストーラーを使用してインストールをカスタマイズできます。
+
+
+
+== インストーラーについて学ぶ
+
+Tridentインストーラーを使用すると、属性をカスタマイズできます。たとえば、 Tridentイメージをプライベートリポジトリにコピーした場合は、次のようにイメージ名を指定できます。 `--trident-image` 。  Tridentイメージと必要なCSIサイドカーイメージをプライベートリポジトリにコピーした場合は、 `--image-registry`スイッチは次の形式をとる `<registry FQDN>[:port]`。
+
+
+IMPORTANT: プライベートリポジトリにTridentをインストールする場合、 `--image-registry`リポジトリの場所を指定するスイッチは使用しないでください `/netapp/`リポジトリ パス内。例えば： `./tridentctl install --image-registry <image-registry> -n <namespace>`
+
+Kubernetesのディストリビューションを使用している場合、 `kubelet`データを通常とは異なるパスに保存する `/var/lib/kubelet`代替パスを指定するには、 `--kubelet-dir` 。
+
+インストーラーの引数で許可されている範囲を超えてインストールをカスタマイズする必要がある場合は、展開ファイルをカスタマイズすることもできます。使用して `--generate-custom-yaml`パラメータはインストーラー内に以下のYAMLファイルを作成します。 `setup`ディレクトリ：
+
+* `trident-clusterrolebinding.yaml`
+* `trident-deployment.yaml`
+* `trident-crds.yaml`
+* `trident-clusterrole.yaml`
+* `trident-daemonset.yaml`
+* `trident-service.yaml`
+* `trident-namespace.yaml`
+* `trident-serviceaccount.yaml`
+* `trident-resourcequota.yaml`
+
+
+これらのファイルを生成したら、必要に応じて変更して使用することができます。 `--use-custom-yaml`カスタム展開をインストールします。
+
+[source, console]
+----
+./tridentctl install -n trident --use-custom-yaml
+----

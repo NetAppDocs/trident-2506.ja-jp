@@ -1,0 +1,175 @@
+---
+sidebar: sidebar 
+permalink: trident-use/vol-group-snapshots.html 
+keywords: volumes, on-demand volume group snapshots, csi, csi snapshots, create snapshots, backends, kubernetes, create PVCs, PVCs, snapshot, volume snapshot, import snapshot, recover data 
+summary: '永続ボリューム (PV) の Kubernetes ボリューム スナップショットにより、ボリュームのポイントインタイム コピーが可能になります。  Trident を使用して作成されたボリュームのスナップショットを作成したり、 Tridentの外部で作成されたスナップショットをインポートしたり、既存のスナップショットから新しいボリュームを作成したり、スナップショットからボリューム データを回復したりできます。' 
+---
+= ボリュームグループのスナップショットを操作する
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+永続ボリューム (PV) の Kubernetes ボリューム グループ スナップショットNetApp Trident は、複数のボリュームのスナップショット (ボリューム スナップショットのグループ) を作成する機能を提供します。このボリューム グループのスナップショットは、同じ時点で取得された複数のボリュームからのコピーを表します。
+
+
+NOTE: VolumeGroupSnapshot は、ベータ API を備えた Kubernetes のベータ機能です。  VolumeGroupSnapshot に必要な最小バージョンは Kubernetes 1.32 です。
+
+
+
+== ボリュームグループのスナップショットを作成する
+
+ボリュームグループスナップショットは、 `ontap-san`ドライバーは iSCSI プロトコル専用であり、ファイバー チャネル (FCP) や NVMe/TCP ではまだサポートされていません。始める前に
+
+* Kubernetes のバージョンが K8s 1.32 以上であることを確認してください。
+* スナップショットを操作するには、外部スナップショット コントローラーとカスタム リソース定義 (CRD) が必要です。これは、Kubernetes オーケストレーター (例: Kubeadm、GKE、OpenShift) の責任です。
++
+Kubernetesディストリビューションに外部スナップショットコントローラとCRDが含まれていない場合は、<<ボリュームスナップショットコントローラを展開する>> 。
+
++
+
+NOTE: GKE 環境でオンデマンド ボリューム グループ スナップショットを作成する場合は、スナップショット コントローラを作成しないでください。  GKE は組み込みの隠しスナップショット コントローラを使用します。
+
+* スナップショットコントローラYAMLで、 `CSIVolumeGroupSnapshot`ボリューム グループのスナップショットが有効になっていることを確認するには、機能ゲートを 'true' に設定します。
+* ボリューム グループ スナップショットを作成する前に、必要なボリューム グループ スナップショット クラスを作成します。
+* VolumeGroupSnapshot を作成できるようにするには、すべての PVC/ボリュームが同じ SVM 上にあることを確認します。
+
+
+.手順
+* VolumeGroupSnapshot を作成する前に、VolumeGroupSnapshotClass を作成します。詳細については、link:../trident-reference/objects.html#kubernetes-volumegroupsnapshotclass-objects["ボリュームグループスナップショットクラス"] 。
++
+[source, yaml]
+----
+apiVersion: groupsnapshot.storage.k8s.io/v1beta1
+kind: VolumeGroupSnapshotClass
+metadata:
+  name: csi-group-snap-class
+  annotations:
+    kubernetes.io/description: "Trident group snapshot class"
+driver: csi.trident.netapp.io
+deletionPolicy: Delete
+----
+* 既存のストレージ クラスを使用して必要なラベルを持つ PVC を作成するか、これらのラベルを既存の PVC に追加します。
++
+次の例では、PVCを作成します。 `pvc1-group-snap`データソースとラベルとして `consistentGroupSnapshot: groupA`。要件に応じてラベルのキーと値を定義します。
+
+
+
+[listing]
+----
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pvc1-group-snap
+  labels:
+    consistentGroupSnapshot: groupA
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: sc1-1
+----
+* 同じラベルのVolumeGroupSnapshotを作成する(`consistentGroupSnapshot: groupA`) を PVC で指定します。
++
+この例では、ボリューム グループのスナップショットを作成します。
+
+
+
+[listing]
+----
+apiVersion: groupsnapshot.storage.k8s.io/v1beta1
+kind: VolumeGroupSnapshot
+metadata:
+  name: "vgs1"
+  namespace: trident
+spec:
+  volumeGroupSnapshotClassName: csi-group-snap-class
+  source:
+    selector:
+      matchLabels:
+        consistentGroupSnapshot: groupA
+----
+
+
+== グループスナップショットを使用してボリュームデータを回復する
+
+ボリューム グループ スナップショットの一部として作成された個々のスナップショットを使用して、個々の永続ボリュームを復元できます。ボリューム グループ スナップショットを単位として復元することはできません。
+
+volume snapshot restore ONTAP CLI を使用して、ボリュームを以前のスナップショットに記録された状態に復元します。
+
+[listing]
+----
+cluster1::*> volume snapshot restore -vserver vs0 -volume vol3 -snapshot vol3_snap_archive
+----
+
+NOTE: スナップショット コピーを復元すると、既存のボリューム構成が上書きされます。スナップショット コピーの作成後にボリューム データに加えられた変更は失われます。
+
+
+
+== スナップショットからのインプレースボリューム復元
+
+Tridentは、スナップショットからボリュームを迅速に復元する機能を提供します。 `TridentActionSnapshotRestore` （TASR）CR。この CR は命令型の Kubernetes アクションとして機能し、操作の完了後は保持されません。
+
+詳細については、 link:../trident-use/vol-snapshots.html#in-place-volume-restoration-from-a-snapshot["スナップショットからのインプレースボリューム復元"]。
+
+
+
+== 関連するグループスナップショットを含む PV を削除する
+
+グループボリュームのスナップショットを削除する場合:
+
+* グループ内の個々のスナップショットではなく、VolumeGroupSnapshots 全体を削除できます。
+* PersistentVolume のスナップショットが存在している間に PersistentVolume が削除された場合、ボリュームを安全に削除する前にスナップショットを削除する必要があるため、 Trident はそのボリュームを「削除中」状態に移行します。
+* グループ化されたスナップショットを使用してクローンを作成し、その後グループを削除する場合は、クローン時に分割操作が開始され、分割が完了するまでグループを削除することはできません。
+
+
+
+
+== ボリュームスナップショットコントローラを展開する
+
+Kubernetes ディストリビューションにスナップショット コントローラーと CRD が含まれていない場合は、次のようにデプロイできます。
+
+.手順
+. ボリューム スナップショット CRD を作成します。
++
+[listing]
+----
+cat snapshot-setup.sh
+----
++
+[source, sh]
+----
+#!/bin/bash
+# Create volume snapshot CRDs
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-8.2/client/config/crd/groupsnapshot.storage.k8s.io_volumegroupsnapshotclasses.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-8.2/client/config/crd/groupsnapshot.storage.k8s.io_volumegroupsnapshotcontents.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-8.2/client/config/crd/groupsnapshot.storage.k8s.io_volumegroupsnapshots.yaml
+----
+. スナップショット コントローラーを作成します。
++
+[source, console]
+----
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-8.2/deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml
+----
++
+[source, console]
+----
+kubectl apply -f https://raw.githubusercontent.com/kubernetes-csi/external-snapshotter/release-8.2/deploy/kubernetes/snapshot-controller/setup-snapshot-controller.yaml
+----
++
+
+NOTE: 必要に応じて開く `deploy/kubernetes/snapshot-controller/rbac-snapshot-controller.yaml`更新 `namespace`あなたの名前空間に。
+
+
+
+
+
+== 関連リンク
+
+* link:../trident-reference/objects.html#kubernetes-volumegroupsnapshotclass-objects["ボリュームグループスナップショットクラス"]
+* link:../trident-concepts/snapshots.html["ボリュームスナップショット"]
+

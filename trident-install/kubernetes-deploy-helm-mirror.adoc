@@ -1,0 +1,267 @@
+---
+sidebar: sidebar 
+permalink: trident-get-started/kubernetes-deploy-helm-mirror.html 
+keywords: deploy, Trident, operator, helm, helm chart, configuration, values, offline, air gap, gap, registry 
+summary: Tridentオペレーターをデプロイし、Helm を使用してTrident をインストールできます。このプロセスは、 Tridentに必要なコンテナ イメージがプライベート レジストリに保存されているインストールに適用されます。 
+---
+= Helm を使用してTridentオペレーターをデプロイする (オフライン モード)
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Tridentオペレーターをデプロイし、Helm を使用してTrident をインストールできます。このプロセスは、 Tridentに必要なコンテナ イメージがプライベート レジストリに保存されているインストールに適用されます。プライベートイメージレジストリがない場合は、link:kubernetes-deploy-helm.html["標準的な展開のプロセス"] 。
+
+
+
+== Trident 25.06に関する重要な情報
+
+* Tridentに関する以下の重要な情報を必ずお読みください。*
+
+.<strong>Tridentに関する重要な情報</strong>
+[%collapsible%open]
+====
+[]
+=====
+* Kubernetes 1.34 がTridentでサポートされるようになりました。Kubernetes をアップグレードする前にTridentをアップグレードします。
+* TridentはSAN環境でのマルチパス構成の使用を厳格に強制しており、推奨値は `find_multipaths: no`multipath.conf ファイル内。
++
+非マルチパス構成の使用または `find_multipaths: yes`または `find_multipaths: smart`multipath.conf ファイルの値が小さいとマウントが失敗します。Tridentは、 `find_multipaths: no` 21.07 リリース以降。
+
+
+
+=====
+====
+
+
+== Tridentオペレーターをデプロイし、Helm を使用してTrident をインストールする
+
+Tridentの使用link:https://netapp.github.io/trident-helm-chart["ヘルムチャート"^]Tridentオペレーターの展開とTridentのインストールを 1 つの手順で行うことができます。
+
+レビューlink:../trident-get-started/kubernetes-deploy.html["インストールの概要"]インストールの前提条件を満たしていること、および環境に適したインストール オプションが選択されていることを確認します。
+
+.開始する前に
+に加えてlink:../trident-get-started/kubernetes-deploy.html#before-you-deploy["展開の前提条件"]必要なのはlink:https://v3.helm.sh/["Helm バージョン 3"^]。
+
+
+IMPORTANT: プライベートリポジトリにTridentをインストールする場合、 `imageRegistry`リポジトリの場所を指定するスイッチは使用しないでください `/netapp/`リポジトリ パス内。
+
+.手順
+. Trident Helm リポジトリを追加します。
++
+[source, console]
+----
+helm repo add netapp-trident https://netapp.github.io/trident-helm-chart
+----
+. 使用 `helm install`デプロイメントの名前とイメージ レジストリの場所を指定します。あなたのlink:../trident-get-started/requirements.html#container-images-and-corresponding-kubernetes-versions["TridentとCSIの画像"]1 つのレジストリまたは異なるレジストリに配置できますが、すべての CSI イメージは同じレジストリに配置する必要があります。例では、 `100.2506.0`インストールするTridentのバージョンです。
++
+[role="tabbed-block"]
+====
+.1つのレジストリ内の画像
+--
+[source, console]
+----
+helm install <name> netapp-trident/trident-operator --version 100.2506.0 --set imageRegistry=<your-registry> --create-namespace --namespace <trident-namespace> --set nodePrep={iscsi}
+----
+--
+.異なるレジストリ内の画像
+--
+[source, console]
+----
+helm install <name> netapp-trident/trident-operator --version 100.2506.0 --set imageRegistry=<your-registry> --set operatorImage=<your-registry>/trident-operator:25.06.0 --set tridentAutosupportImage=<your-registry>/trident-autosupport:25.06 --set tridentImage=<your-registry>/trident:25.06.0 --create-namespace --namespace <trident-namespace> --set nodePrep={iscsi}
+----
+--
+====
++
+
+NOTE: すでにTridentの名前空間を作成している場合は、 `--create-namespace`パラメータは追加の名前空間を作成しません。
+
+
+
+使用できます `helm list`名前、名前空間、チャート、ステータス、アプリのバージョン、リビジョン番号などのインストールの詳細を確認します。
+
+
+
+== インストール中に構成データを渡す
+
+インストール中に構成データを渡す方法は 2 つあります。
+
+[cols="2"]
+|===
+| オプション | 説明 
+
+
+| `--values`（または `-f`）  a| 
+オーバーライドを含む YAML ファイルを指定します。これは複数回指定することができ、右端のファイルが優先されます。
+
+
+
+| `--set`  a| 
+コマンドラインでオーバーライドを指定します。
+
+|===
+たとえば、デフォルト値を変更するには、 `debug`次のコマンドを実行します。 `100.2506.0`インストールするTridentのバージョン:
+
+[source, console]
+----
+helm install <name> netapp-trident/trident-operator --version 100.2506.0  --create-namespace --namespace trident --set tridentDebug=true
+----
+nodePrep 値を追加するには、次のコマンドを実行します。
+
+[source, console]
+----
+helm install <name> netapp-trident/trident-operator --version 100.2506.0  --create-namespace --namespace trident --set nodePrep={iscsi}
+----
+
+
+== 構成オプション
+
+この表と `values.yaml`Helm チャートの一部であるファイルは、キーとそのデフォルト値のリストを提供します。
+
+
+WARNING: values.yaml ファイルからデフォルトのアフィニティを削除しないでください。カスタム アフィニティを提供する場合は、デフォルトのアフィニティを拡張します。
+
+[cols="3"]
+|===
+| オプション | 説明 | デフォルト 
+
+
+| `nodeSelector` | ポッド割り当て用のノードラベル |  
+
+
+| `podAnnotations` | ポッド注釈 |  
+
+
+| `deploymentAnnotations` | デプロイメントアノテーション |  
+
+
+| `tolerations` | ポッド割り当ての許容範囲 |  
+
+
+| `affinity` | ポッド割り当ての親和性  a| 
+[listing]
+----
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/arch
+              operator: In
+              values:
+              - arm64
+              - amd64
+            - key: kubernetes.io/os
+              operator: In
+              values:
+              - linux
+----
+
+WARNING: values.yaml ファイルからデフォルトのアフィニティを削除しないでください。カスタム アフィニティを提供する場合は、デフォルトのアフィニティを拡張します。
+
+
+
+| `tridentControllerPluginNodeSelector` | ポッドの追加ノードセレクター。参照 link:../trident-get-started/architecture.html#understanding-controller-pods-and-node-pods["コントローラーポッドとノードポッドについて"] 詳細については。 |  
+
+
+| `tridentControllerPluginTolerations` | ポッドの Kubernetes 許容値をオーバーライドします。参照 link:../trident-get-started/architecture.html#understanding-controller-pods-and-node-pods["コントローラーポッドとノードポッドについて"] 詳細については。 |  
+
+
+| `tridentNodePluginNodeSelector` | ポッドの追加ノードセレクター。参照 link:../trident-get-started/architecture.html#understanding-controller-pods-and-node-pods["コントローラーポッドとノードポッドについて"] 詳細については。 |  
+
+
+| `tridentNodePluginTolerations` | ポッドの Kubernetes 許容値をオーバーライドします。参照 link:../trident-get-started/architecture.html#understanding-controller-pods-and-node-pods["コントローラーポッドとノードポッドについて"] 詳細については。 |  
+
+
+| `imageRegistry` | レジストリを識別します `trident-operator`、 `trident` 、その他の画像など。デフォルトを受け入れる場合は空のままにしておきます。重要: プライベートリポジトリにTridentをインストールする場合、 `imageRegistry`リポジトリの場所を指定するスイッチは使用しないでください `/netapp/`リポジトリ パス内。 | "" 
+
+
+| `imagePullPolicy` | イメージプルポリシーを設定します `trident-operator`。 | `IfNotPresent` 
+
+
+| `imagePullSecrets` | イメージプルシークレットを設定します `trident-operator`、 `trident` 、その他の画像など。 |  
+
+
+| `kubeletDir` | kubelet の内部状態のホストの場所を上書きできます。 | `"/var/lib/kubelet"` 
+
+
+| `operatorLogLevel` | Tridentオペレータのログ レベルを次のように設定できます。 `trace` 、 `debug` 、 `info` 、 `warn` 、 `error` 、 または `fatal`。 | `"info"` 
+
+
+| `operatorDebug` | Tridentオペレーターのログ レベルをデバッグに設定できるようにします。 | `true` 
+
+
+| `operatorImage` | 画像の完全な上書きを許可します `trident-operator`。 | "" 
+
+
+| `operatorImageTag` | タグを上書きできます `trident-operator`画像。 | "" 
+
+
+| `tridentIPv6` | Trident をIPv6 クラスターで動作させることを可能にします。 | `false` 
+
+
+| `tridentK8sTimeout`  a| 
+ほとんどの Kubernetes API 操作のデフォルトの 180 秒のタイムアウトをオーバーライドします (ゼロ以外の場合は秒単位)。
+
+
+NOTE: その `tridentK8sTimeout`パラメータはTridentインストールにのみ適用されます。
+| `180` 
+
+
+| `tridentHttpRequestTimeout` | HTTPリクエストのデフォルトの90秒のタイムアウトを上書きします。 `0s`タイムアウトの期間は無制限です。負の値は許可されません。 | `"90s"` 
+
+
+| `tridentSilenceAutosupport` | Trident の定期的なAutoSupportレポートを無効にできます。 | `false` 
+
+
+| `tridentAutosupportImageTag` | Trident AutoSupportコンテナのイメージのタグを上書きできます。 | `<version>` 
+
+
+| `tridentAutosupportProxy` | Trident AutoSupportコンテナが HTTP プロキシ経由でホームに電話できるようにします。 | "" 
+
+
+| `tridentLogFormat` | Trident のログ形式を設定します(`text`または `json`）。 | `"text"` 
+
+
+| `tridentDisableAuditLog` | Trident監査ロガーを無効にします。 | `true` 
+
+
+| `tridentLogLevel` | Tridentのログ レベルを次のように設定できます。 `trace` 、 `debug` 、 `info` 、 `warn` 、 `error` 、 または `fatal`。 | `"info"` 
+
+
+| `tridentDebug` | Tridentのログレベルを次のように設定できます。 `debug` 。 | `false` 
+
+
+| `tridentLogWorkflows` | 特定のTridentワークフローでトレース ログまたはログ抑制を有効にすることができます。 | "" 
+
+
+| `tridentLogLayers` | 特定のTridentレイヤーを有効にして、トレース ログまたはログ抑制を行うことができます。 | "" 
+
+
+| `tridentImage` | Tridentのイメージを完全に上書きできます。 | "" 
+
+
+| `tridentImageTag` | Tridentのイメージのタグを上書きできます。 | "" 
+
+
+| `tridentProbePort` | Kubernetes の生存/準備状況プローブに使用されるデフォルトのポートを上書きできます。 | "" 
+
+
+| `windows` | Windows ワーカー ノードにTrident をインストールできるようにします。 | `false` 
+
+
+| `enableForceDetach` | 強制デタッチ機能を有効にできます。 | `false` 
+
+
+| `excludePodSecurityPolicy` | オペレーター ポッド セキュリティ ポリシーを作成から除外します。 | `false` 
+
+
+| `nodePrep`  a| 
+指定されたデータ ストレージ プロトコルを使用してボリュームを管理するために、 Tridentが Kubernetes クラスターのノードを準備できるようにします。*現在、 `iscsi`サポートされている唯一の値です。*
+
+
+NOTE: OpenShift 4.19 以降、この機能でサポートされるTrident の最小バージョンは 25.06.1 です。
+|  
+|===

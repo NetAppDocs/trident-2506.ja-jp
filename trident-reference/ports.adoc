@@ -1,0 +1,40 @@
+---
+sidebar: sidebar 
+permalink: trident-reference/ports.html 
+keywords: Trident, port, ports 
+summary: Trident が通信するポートについて詳しく説明します。 
+---
+= Tridentポート
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Trident が通信に使用するポートについて詳しく説明します。
+
+
+
+== Tridentポート
+
+Trident は、Kubernetes 内の通信に次のポートを使用します。
+
+[cols="2,4"]
+|===
+| ポート | 目的 
+
+
+| 8443 | バックチャネルHTTPS 
+
+
+| 8001 | Prometheusメトリクスエンドポイント 
+
+
+| 8000 | TridentRESTサーバー 
+
+
+| 17546 | Tridentデーモンセット ポッドによって使用される生存/準備状況プローブ ポート 
+|===
+
+NOTE: ライブネス/レディネスプローブポートは、インストール中に `--probe-port`フラグ。このポートがワーカーノード上の別のプロセスによって使用されていないことを確認することが重要です。

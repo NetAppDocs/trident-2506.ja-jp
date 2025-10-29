@@ -1,0 +1,108 @@
+---
+sidebar: sidebar 
+permalink: get-help.html 
+keywords: get help, get support, knowledgebase, discord, phone, web, ticket, contact support, support ticket 
+summary: NetApp はさまざまな方法でTridentのサポートを提供します。  Discord チャンネルなど、幅広い無料のセルフサポート オプションが 24 時間 365 日ご利用いただけます。 
+---
+= サポート
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ./media/
+
+
+[role="lead"]
+NetApp はさまざまな方法でTridentのサポートを提供します。ナレッジベース (KB) 記事や Discord チャネルなど、広範な無料のセルフサポート オプションが 24 時間年中無休でご利用いただけます。
+
+
+
+== Tridentのサポート
+
+Trident はバージョンに応じて 3 つのレベルのサポートを提供します。参照link:https://mysupport.netapp.com/site/info/version-support["NetAppソフトウェア バージョンの定義のサポート"^]。
+
+完全サポート:: Trident は、リリース日から 12 か月間、完全なサポートを提供します。
+限定的なサポート:: Trident は、リリース日から 13 ～ 24 か月間限定のサポートを提供します。
+自立:: Trident のドキュメントは、リリース日から 25 ～ 36 か月間ご利用いただけます。
+
+
+[cols="1, 1, 1, 1"]
+|===
+
+
+| version | 完全サポート | 限定的なサポート | 自立 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident/index.html["25.06"^]
+| 2026年6月 | 2027年6月 | 2028年6月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2502/index.html["25.02"^]
+| 2026年2月 | 2027年2月 | 2028年2月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2410/index.html["24.10"^]
+| 2025年10月 | 2026年10月 | 2027年10月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2406/index.html["24.06"^]
+| 2025年6月 | 2026年6月 | 2027年6月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2402/index.html["24.02"^]
+| 2025年2月 | 2026年2月 | 2027年2月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2310/index.html["23.10"^]
+| -- | 2025年10月 | 2026年10月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2307/index.html["23.07"^]
+| -- | 2025年7月 | 2026年7月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2304/index.html["23.04"^]
+| -- | 2025年4月 | 2026年4月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2301/index.html["23.01"^]
+| -- | -- | 2026年1月 
+
+
+ a| 
+link:https://docs.netapp.com/us-en/trident-2210/index.html["22.10"^]
+| -- | -- | 2025年10月 
+|===
+
+
+== 自立
+
+トラブルシューティング記事の包括的なリストについては、以下を参照してください。 https://kb.netapp.com/Advice_and_Troubleshooting/Cloud_Services/Trident_Kubernetes["NetAppナレッジベース (ログインが必要です)"^] 。
+
+
+
+== コミュニティサポート
+
+私たちのサイトにはコンテナユーザー（ Trident開発者を含む）の活発なパブリックコミュニティがあります。link:https://discord.gg/NetApp["Discordチャンネル"^] 。ここは、プロジェクトに関する一般的な質問をしたり、同じ考えを持つ仲間と関連トピックについて話し合ったりするのに最適な場所です。
+
+
+
+== NetAppテクニカルサポート
+
+Tridentのヘルプについては、次の方法でサポートバンドルを作成してください。 `tridentctl logs -a -n trident`送信先 `NetApp Support <Getting Help>`。
+
+
+
+== 詳細情報
+
+* link:https://github.com/NetApp/trident["Tridentリソース"^]
+* link:https://cloud.netapp.com/kubernetes-hub["Kubernetesハブ"^]
+

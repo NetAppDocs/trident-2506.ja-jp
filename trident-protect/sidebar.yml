@@ -1,0 +1,48 @@
+---
+section: trident-protect
+title: Trident Protectでアプリケーションを保護する
+entries:
+- title: Tridentプロテクトについて学ぶ
+  url: "/trident-protect/learn-about-trident-protect.html"
+- title: Trident Protectをインストールする
+  entries:
+  - title: Trident保護要件
+    url: "/trident-protect/trident-protect-requirements.html"
+  - title: Trident Protectをインストールする
+    url: "/trident-protect/trident-protect-installation.html"
+  - title: Trident Protect CLIプラグインをインストールする
+    url: "/trident-protect/trident-protect-cli.html"
+  - title: Trident Protectのインストールをカスタマイズ
+    url: "/trident-protect/trident-protect-customize-installation.html"
+- title: Tridentプロテクトを管理する
+  entries:
+  - title: 承認とアクセス制御を管理する
+    url: "/trident-protect/manage-authorization-access-control.html"
+  - title: Tridentを監視してリソースを保護する
+    url: "/trident-protect/monitor-trident-protect-resources.html"
+  - title: Trident Protect サポートバンドルを生成する
+    url: "/trident-protect/trident-protect-generate-support-bundle.html"
+  - title: Tridentプロテクトをアップグレード
+    url: "/trident-protect/trident-protect-upgrade.html"
+- title: アプリケーションの管理と保護
+  entries:
+  - title: AppVault オブジェクトを使用してバケットを管理する
+    url: "/trident-protect/trident-protect-appvault-custom-resources.html"
+  - title: 管理用のアプリケーションを定義する
+    url: "/trident-protect/trident-protect-manage-applications.html"
+  - title: アプリケーションを保護する
+    url: "/trident-protect/trident-protect-protect-apps.html"
+  - title: アプリケーションを復元する
+    entries:
+    - title: Trident Protectを使用してアプリケーションを復元する
+      url: "/trident-protect/trident-protect-restore-apps.html"
+    - title: 詳細設定を使用する
+      url: "/trident-protect/trident-protect-restore-settings.html"
+  - title: NetApp SnapMirrorでアプリケーションを複製する
+    url: "/trident-protect/trident-protect-use-snapmirror-replication.html"
+  - title: アプリケーションの移行
+    url: "/trident-protect/trident-protect-migrate-apps.html"
+  - title: Trident Protectで実行フックを管理する
+    url: "/trident-protect/trident-protect-use-execution-hooks.html"
+- title: Trident Protectをアンインストールする
+  url: "/trident-protect/trident-protect-uninstall.html"

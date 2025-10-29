@@ -1,0 +1,235 @@
+---
+sidebar: sidebar 
+permalink: troubleshooting.html 
+keywords: troubleshooting, trident 
+summary: Tridentのインストールおよび使用中に発生する可能性のある問題のトラブルシューティングについては、ここに示すヒントを参照してください。 
+---
+= トラブルシューティング
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ./media/
+
+
+[role="lead"]
+Tridentのインストールおよび使用中に発生する可能性のある問題のトラブルシューティングについては、ここに示すヒントを参照してください。
+
+
+NOTE: Tridentのヘルプについては、次の方法でサポートバンドルを作成してください。 `tridentctl logs -a -n trident` NetAppサポートに送信してください。
+
+
+
+== 一般的なトラブルシューティング
+
+* Tridentポッドが正しく立ち上がらない場合は（例えば、Tridentポッドが `ContainerCreating`準備完了コンテナが2つ未満のフェーズ）実行中 `kubectl -n trident describe deployment trident`そして `kubectl -n trident describe pod trident-********-****`追加の洞察を提供できます。  kubeletログの取得（例： `journalctl -xeu kubelet` ) も役立ちます。
+* Tridentのログに十分な情報がない場合、次の行を渡してTridentのデバッグモードを有効にしてみてください。 `-d`インストール オプションに基づいて、インストール パラメータにフラグを追加します。
++
+次に、デバッグが設定されていることを確認します。 `./tridentctl logs -n trident`そして探している `level=debug msg`ログに記録されます。
+
++
+オペレーターと一緒にインストール::
++
+--
+[listing]
+----
+kubectl patch torc trident -n <namespace> --type=merge -p '{"spec":{"debug":true}}'
+----
+これにより、すべてのTridentポッドが再起動されます。これには数秒かかる場合があります。これは、出力の「AGE」列を観察することで確認できます。 `kubectl get pod -n trident` 。
+
+Trident 20.07および20.10の場合 `tprov`の代わりに `torc`。
+
+--
+Helmでインストール::
++
+--
+[listing]
+----
+helm upgrade <name> trident-operator-21.07.1-custom.tgz --set tridentDebug=true`
+----
+--
+tridentctlでインストール::
++
+--
+[listing]
+----
+./tridentctl uninstall -n trident
+./tridentctl install -d -n trident
+----
+--
+
+
+* 各バックエンドのデバッグログを取得するには、以下を含めることもできます。 `debugTraceFlags`バックエンドの定義で。たとえば、 `debugTraceFlags: {"api":true, "method":true,}` Tridentログで API 呼び出しとメソッド トラバーサルを取得します。既存のバックエンドには `debugTraceFlags`構成 `tridentctl backend update`。
+* Red Hat Enterprise Linux CoreOS (RHCOS)を使用する場合は、 `iscsid`ワーカーノードで有効になっており、デフォルトで起動します。これは、OpenShift MachineConfigs を使用するか、Ignition テンプレートを変更することで実行できます。
+* Tridentを使用する際によく発生する問題は、 https://azure.microsoft.com/en-us/services/netapp/["Azure NetApp Files"]テナント シークレットとクライアント シークレットが、権限が不十分なアプリ登録から取得された場合です。Tridentの要件の完全なリストについては、以下を参照してください。link:trident-use/anf.html["Azure NetApp Files"]構成。
+* PVをコンテナにマウントする際に問題がある場合は、 `rpcbind`インストールされ実行されています。ホストOSに必要なパッケージマネージャーを使用して、 `rpcbind`実行中です。ステータスを確認することができます `rpcbind`サービスを実行することで `systemctl status rpcbind`またはそれと同等のもの。
+* Tridentバックエンドが、 `failed`以前は動作していたにもかかわらず、この状態になった場合は、バックエンドに関連付けられた SVM/管理者の資格情報が変更されたことが原因である可能性があります。バックエンド情報を更新する `tridentctl update backend`または、 Tridentポッドをバウンスさせると、この問題は解決します。
+* コンテナランタイムとしてDockerを使用してTridentをインストールするときに権限の問題が発生した場合は、次の方法でTridentをインストールしてみてください。 `--in cluster=false`フラグ。これによりインストーラポッドは使用されず、 `trident-installer`ユーザー。
+* 使用 `uninstall parameter <Uninstalling Trident>`実行が失敗した後のクリーンアップ用。デフォルトでは、スクリプトはTridentによって作成された CRD を削除しないため、実行中のデプロイメントでも安全にアンインストールして再インストールできます。
+* Tridentの以前のバージョンにダウングレードしたい場合は、まず `tridentctl uninstall`Trident を削除するコマンド。希望するものをダウンロード https://github.com/NetApp/trident/releases["Tridentバージョン"]インストールするには `tridentctl install`指示。
+* インストールが成功した後、PVCが `Pending`フェーズ、実行中 `kubectl describe pvc`Trident がこの PVC に対して PV をプロビジョニングできなかった理由についての追加情報を提供できます。
+
+
+
+
+== オペレーターを使用したTridentの展開は失敗に終わった
+
+オペレーターを使用してTridentを展開している場合は、 `TridentOrchestrator`変更から `Installing`に `Installed`。あなたが観察すると `Failed`ステータスが「0」で、オペレーターが単独で回復できない場合は、次のコマンドを実行してオペレーターのログを確認する必要があります。
+
+[listing]
+----
+tridentctl logs -l trident-operator
+----
+trident-operator コンテナのログを追跡すると、問題がどこにあるかがわかります。たとえば、エアギャップ環境のアップストリーム レジストリから必要なコンテナ イメージをプルできないという問題が考えられます。
+
+Tridentのインストールが失敗した理由を理解するには、 `TridentOrchestrator`状態。
+
+[listing]
+----
+kubectl describe torc trident-2
+Name:         trident-2
+Namespace:
+Labels:       <none>
+Annotations:  <none>
+API Version:  trident.netapp.io/v1
+Kind:         TridentOrchestrator
+...
+Status:
+  Current Installation Params:
+    IPv6:
+    Autosupport Hostname:
+    Autosupport Image:
+    Autosupport Proxy:
+    Autosupport Serial Number:
+    Debug:
+    Image Pull Secrets:         <nil>
+    Image Registry:
+    k8sTimeout:
+    Kubelet Dir:
+    Log Format:
+    Silence Autosupport:
+    Trident Image:
+  Message:                      Trident is bound to another CR 'trident'
+  Namespace:                    trident-2
+  Status:                       Error
+  Version:
+Events:
+  Type     Reason  Age                From                        Message
+  ----     ------  ----               ----                        -------
+  Warning  Error   16s (x2 over 16s)  trident-operator.netapp.io  Trident is bound to another CR 'trident'
+----
+このエラーは、すでに `TridentOrchestrator`Tridentのインストールに使用されました。各KubernetesクラスタはTridentのインスタンスを1つしか持つことができないため、オペレータは、常にアクティブなインスタンスが1つだけ存在するようにします。 `TridentOrchestrator`それが作成できること。
+
+さらに、 Tridentポッドの状態を観察すると、何か異常があるかどうかがわかることがよくあります。
+
+[listing]
+----
+kubectl get pods -n trident
+
+NAME                                READY   STATUS             RESTARTS   AGE
+trident-csi-4p5kq                   1/2     ImagePullBackOff   0          5m18s
+trident-csi-6f45bfd8b6-vfrkw        4/5     ImagePullBackOff   0          5m19s
+trident-csi-9q5xc                   1/2     ImagePullBackOff   0          5m18s
+trident-csi-9v95z                   1/2     ImagePullBackOff   0          5m18s
+trident-operator-766f7b8658-ldzsv   1/1     Running            0          8m17s
+----
+1 つ以上のコンテナ イメージが取得されなかったため、ポッドを完全に初期化できないことがはっきりとわかります。
+
+この問題に対処するには、 `TridentOrchestrator` CR。あるいは、削除することもできます `TridentOrchestrator`、修正された正確な定義で新しいものを作成します。
+
+
+
+== Trident配備失敗 `tridentctl`
+
+何が問題だったのかを解明するために、インストーラーを再度実行してみましょう。``-d``引数を指定するとデバッグ モードがオンになり、問題が何であるかを理解するのに役立ちます。
+
+[listing]
+----
+./tridentctl install -n trident -d
+----
+問題を解決した後、次のようにインストールをクリーンアップし、 `tridentctl install`再度コマンドを実行します:
+
+[listing]
+----
+./tridentctl uninstall -n trident
+INFO Deleted Trident deployment.
+INFO Deleted cluster role binding.
+INFO Deleted cluster role.
+INFO Deleted service account.
+INFO Removed Trident user from security context constraint.
+INFO Trident uninstallation succeeded.
+----
+
+
+== TridentとCRDを完全に削除する
+
+Tridentと、作成されたすべての CRD および関連するカスタム リソースを完全に削除できます。
+
+
+WARNING: この処理を元に戻すことはできません。Tridentを完全に新規にインストールする場合を除き、これを実行しないでください。  CRDを削除せずにTridentをアンインストールするには、link:trident-managing-k8s/uninstall-trident.html["Tridentをアンインストールする"] 。
+
+[role="tabbed-block"]
+====
+.Tridentオペレーター
+--
+Tridentオペレーターを使用してTridentをアンインストールし、CRD を完全に削除するには:
+
+[listing]
+----
+kubectl patch torc <trident-orchestrator-name> --type=merge -p '{"spec":{"wipeout":["crds"],"uninstall":true}}'
+----
+--
+.舵
+--
+Helm を使用してTridentをアンインストールし、CRD を完全に削除するには:
+
+[listing]
+----
+kubectl patch torc trident --type=merge -p '{"spec":{"wipeout":["crds"],"uninstall":true}}'
+----
+--
+.<code>トライデントctl</code>
+--
+Tridentをアンインストールした後CRDを完全に削除するには `tridentctl`
+
+[listing]
+----
+tridentctl obliviate crd
+----
+--
+====
+
+
+== Kubernetes 1.26 の RWX 生ブロック名前空間での NVMe ノードのアンステージング失敗
+
+Kubernetes 1.26 を実行している場合、RWX 生のブロック名前空間で NVMe/TCP を使用すると、ノードのステージング解除が失敗する可能性があります。次のシナリオは、失敗に対する回避策を提供します。あるいは、Kubernetes を 1.27 にアップグレードすることもできます。
+
+
+
+=== 名前空間とポッドを削除しました
+
+Trident管理名前空間 (NVMe 永続ボリューム) がポッドに接続されているシナリオを考えてみましょう。 ONTAPバックエンドからネームスペースを直接削除すると、ポッドを削除しようとした後にステージング解除プロセスが停止します。このシナリオは、Kubernetes クラスターやその他の機能に影響を与えません。
+
+.回避策
+それぞれのノードから永続ボリューム（その名前空間に対応）をアンマウントして削除します。
+
+
+
+=== ブロックされたデータLIF
+
+ If you block (or bring down) all the dataLIFs of the NVMe Trident backend, the unstaging process gets stuck when you attempt to delete the pod. In this scenario, you cannot run any NVMe CLI commands on the Kubernetes node.
+.回避策
+完全な機能を復元するには、dataLIFS を起動します。
+
+
+
+=== 名前空間マッピングを削除しました
+
+ If you remove the `hostNQN` of the worker node from the corresponding subsystem, the unstaging process gets stuck when you attempt to delete the pod. In this scenario, you cannot run any NVMe CLI commands on the Kubernetes node.
+.回避策
+追加する `hostNQN`サブシステムに戻ります。
+
+
+
+== ONTAPをアップグレードした後、NFSv4.2 クライアントは「v4.2-xattrs」が有効になっていることを期待しているにもかかわらず、「無効な引数」を報告します。
+
+ONTAPをアップグレードした後、NFSv4.2 クライアントは、NFSv4.2 エクスポートをマウントしようとしたときに「無効な引数」エラーを報告する場合があります。この問題は、 `v4.2-xattrs` オプションは SVM で有効になっていません。回避策を有効にする `v4.2-xattrs` SVM でオプションを無効にするか、このオプションがデフォルトで有効になっているONTAP 9.12.1 以降にアップグレードしてください。

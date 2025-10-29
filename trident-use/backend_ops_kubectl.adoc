@@ -1,0 +1,79 @@
+---
+sidebar: sidebar 
+permalink: trident-use/backend_ops_kubectl.html 
+keywords: backends, storage system, anf, cvs for aws, cvs for gcp, element, hci, solidfire, ontap, aff, fas, ontap select, configure backends, kubectl, create backends, delete backends, update backends, view backends 
+summary: 'バックエンド管理操作を実行する方法について学習します。 `kubectl` 。' 
+---
+= kubectl を使用してバックエンド管理を実行する
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+バックエンド管理操作を実行する方法について学習します。 `kubectl` 。
+
+
+
+== バックエンドを削除する
+
+削除することで `TridentBackendConfig`、 Tridentにバックエンドを削除/保持するように指示します（ `deletionPolicy` ）。バックエンドを削除するには、 `deletionPolicy`削除するように設定されています。削除するには `TridentBackendConfig`、必ず `deletionPolicy`保持するように設定されています。これにより、バックエンドがまだ存在し、以下を使用して管理できることが保証されます。 `tridentctl` 。
+
+次のコマンドを実行します。
+
+[listing]
+----
+kubectl delete tbc <tbc-name> -n trident
+----
+Tridentは、使用されていたKubernetes Secretsを削除しません。 `TridentBackendConfig` 。 Kubernetes ユーザーはシークレットをクリーンアップする責任があります。シークレットを削除するときは注意が必要です。シークレットは、バックエンドで使用されていない場合にのみ削除する必要があります。
+
+
+
+== 既存のバックエンドを表示する
+
+次のコマンドを実行します。
+
+[listing]
+----
+kubectl get tbc -n trident
+----
+実行することもできます `tridentctl get backend -n trident`または `tridentctl get backend -o yaml -n trident`存在するすべてのバックエンドのリストを取得します。このリストには、 `tridentctl` 。
+
+
+
+== バックエンドを更新する
+
+バックエンドを更新する理由は複数考えられます。
+
+* ストレージ システムへの資格情報が変更されました。資格情報を更新するには、 `TridentBackendConfig`オブジェクトを更新する必要があります。  Trident は、提供された最新の資格情報を使用してバックエンドを自動的に更新します。  Kubernetes シークレットを更新するには、次のコマンドを実行します。
++
+[listing]
+----
+kubectl apply -f <updated-secret-file.yaml> -n trident
+----
+* パラメータ（使用されているONTAP SVM の名前など）を更新する必要があります。
++
+** 更新できます `TridentBackendConfig`次のコマンドを使用して、Kubernetes 経由でオブジェクトを直接実行します。
++
+[listing]
+----
+kubectl apply -f <updated-backend-file.yaml>
+----
+** あるいは、既存の `TridentBackendConfig`次のコマンドを使用して CR を実行します。
++
+[listing]
+----
+kubectl edit tbc <tbc-name> -n trident
+----
+
+
+
+
+[NOTE]
+====
+* バックエンドの更新が失敗した場合、バックエンドは最後の既知の構成のままになります。ログを表示して原因を特定するには、次のコマンドを実行します。 `kubectl get tbc <tbc-name> -o yaml -n trident`または `kubectl describe tbc <tbc-name> -n trident`。
+* 構成ファイルの問題を特定して修正したら、更新コマンドを再実行できます。
+
+
+====

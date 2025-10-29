@@ -1,0 +1,66 @@
+---
+sidebar: sidebar 
+permalink: trident-reference/rest-api.html 
+keywords: rest api, get, post, json, object, backends 
+summary: Trident の REST API と対話したい場合は、REST エンドポイントを直接使用できます。 
+---
+= TridentREST API
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+その間link:tridentctl.html["tridentctl コマンドとオプション"]これらはTrident REST API と対話する最も簡単な方法ですが、必要に応じて REST エンドポイントを直接使用することもできます。
+
+
+
+== REST APIを使用する場合
+
+REST API は、Kubernetes 以外のデプロイメントでTrident をスタンドアロン バイナリとして使用する高度なインストールに役立ちます。
+
+安全性を高めるために、Trident `REST API`ポッド内で実行する場合、デフォルトでは localhost に制限されます。この動作を変更するには、Tridentの `-address`ポッド構成内の引数。
+
+
+
+== REST APIの使用
+
+これらのAPIの呼び出し例については、デバッグを渡してください。(`-d` ） フラグ。詳細については、link:../trident-managing-k8s/tridentctl.html["tridentctl を使用してTrident を管理する"] 。
+
+API は次のように動作します。
+
+
+
+=== GET
+
+`GET <trident-address>/trident/v1/<object-type>`:: そのタイプのすべてのオブジェクトを一覧表示します。
+`GET <trident-address>/trident/v1/<object-type>/<object-name>`:: 名前付きオブジェクトの詳細を取得します。
+
+
+
+
+=== POST
+
+`POST <trident-address>/trident/v1/<object-type>`:: 指定したタイプのオブジェクトを作成します。
++
+--
+* オブジェクトを作成するには JSON 構成が必要です。各オブジェクトタイプの仕様については、link:../trident-managing-k8s/tridentctl.html["tridentctl を使用してTrident を管理する"] 。
+* オブジェクトがすでに存在する場合、動作は異なります。バックエンドは既存のオブジェクトを更新しますが、他のすべてのオブジェクト タイプは操作に失敗します。
+
+
+--
+
+
+
+
+=== DELETE
+
+`DELETE <trident-address>/trident/v1/<object-type>/<object-name>`:: 名前付きリソースを削除します。
++
+--
+
+NOTE: バックエンドまたはストレージ クラスに関連付けられたボリュームは引き続き存在するため、これらは個別に削除する必要があります。詳細については、link:../trident-managing-k8s/tridentctl.html["tridentctl を使用してTrident を管理する"] 。
+
+--
+

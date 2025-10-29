@@ -1,0 +1,30 @@
+---
+sidebar: sidebar 
+permalink: trident-concepts/vol-access-groups.html 
+keywords: volume access groups, element, solidfire, chap, Trident, hci, netapp hci, storage system, access volumes, 
+summary: Trident がボリューム アクセス グループを使用する方法について詳しく説明します。 
+---
+= ボリュームアクセスグループ
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Tridentがどのように活用されているかについて詳しくは https://docs.netapp.com/us-en/element-software/concepts/concept_solidfire_concepts_volume_access_groups.html["ボリュームアクセスグループ"^]。
+
+
+NOTE: CHAP を使用している場合は、管理を簡素化し、以下で説明するスケーリング制限を回避するためにこのセクションを無視することをお勧めします。なお、 Trident をCSI モードで使用している場合は、このセクションは無視できます。  Trident は、拡張 CSI プロビジョナーとしてインストールされる場合、CHAP を使用します。
+
+
+
+== ボリュームアクセスグループについて学ぶ
+
+Trident はボリューム アクセス グループを使用して、プロビジョニングするボリュームへのアクセスを制御できます。  CHAPが無効になっている場合は、次のアクセスグループが見つかると予想されます。 `trident`構成で 1 つ以上のアクセス グループ ID を指定しない限り、これは実行されません。
+
+Trident は新しいボリュームを構成されたアクセス グループに関連付けますが、アクセス グループ自体は作成したり管理したりしません。アクセス グループは、ストレージ バックエンドがTridentに追加される前に存在している必要があり、そのバックエンドによってプロビジョニングされたボリュームをマウントする可能性のある Kubernetes クラスター内のすべてのノードからの iSCSI IQN が含まれている必要があります。ほとんどのインストールでは、クラスター内のすべてのワーカーノードが含まれます。
+
+64 を超えるノードを持つ Kubernetes クラスターの場合は、複数のアクセス グループを使用する必要があります。各アクセス グループには最大 64 個の IQN を含めることができ、各ボリュームは 4 つのアクセス グループに属することができます。最大 4 つのアクセス グループを構成すると、最大 256 ノードのクラスター内の任意のノードが任意のボリュームにアクセスできるようになります。ボリュームアクセスグループの最新の制限については、以下を参照してください。 https://docs.netapp.com/us-en/element-software/concepts/concept_solidfire_concepts_volume_access_groups.html["ここをクリックしてください。"^] 。
+
+デフォルトを使用している構成から変更する場合 `trident`アクセスグループを他のグループも使用するグループに変更する場合は、 `trident`リスト内のアクセス グループ。

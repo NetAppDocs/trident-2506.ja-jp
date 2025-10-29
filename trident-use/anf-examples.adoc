@@ -1,0 +1,514 @@
+---
+sidebar: sidebar 
+permalink: trident-use/anf-examples.html 
+keywords: trident backend, azure netapp files, smb volumes, smb, windows 
+summary: Azure NetApp Filesの NFS および SMB バックエンド構成オプションについて学習し、構成例を確認します。 
+---
+= Azure NetApp Filesバックエンド構成オプションと例
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Azure NetApp Filesの NFS および SMB バックエンド構成オプションについて学習し、構成例を確認します。
+
+
+
+== バックエンド構成オプション
+
+Trident は、バックエンド構成 (サブネット、仮想ネットワーク、サービス レベル、場所) を使用して、要求された場所で使用可能で、要求されたサービス レベルとサブネットに一致する容量プールにAzure NetApp Filesボリュームを作成します。
+
+
+NOTE: * NetApp Trident 25.06 リリース以降、手動 QoS 容量プールがテクニカル プレビューとしてサポートされます。*
+
+Azure NetApp Filesバックエンドは、次の構成オプションを提供します。
+
+[cols="3"]
+|===
+| パラメータ | 説明 | デフォルト 
+
+
+| `version` |  | 常に1 
+
+
+| `storageDriverName` | ストレージ ドライバーの名前 | 「azure-netapp-files」 
+
+
+| `backendName` | カスタム名またはストレージバックエンド | ドライバー名 + "_" + ランダムな文字 
+
+
+| `subscriptionID` | Azure サブスクリプションのサブスクリプション ID。AKS クラスターでマネージド ID が有効になっている場合はオプションです。 |  
+
+
+| `tenantID` | アプリ登録からのテナント ID。AKS クラスターでマネージド ID またはクラウド ID が使用される場合はオプションです。 |  
+
+
+| `clientID` | アプリ登録からのクライアント ID。AKS クラスターでマネージド ID またはクラウド ID が使用される場合はオプションです。 |  
+
+
+| `clientSecret` | アプリ登録からのクライアント シークレット。AKS クラスターでマネージド ID またはクラウド ID が使用される場合はオプションです。 |  
+
+
+| `serviceLevel` | 1つ `Standard`、 `Premium` 、 または `Ultra` | 「」（ランダム） 
+
+
+| `location` | 新しいボリュームが作成される Azure の場所の名前。AKS クラスターでマネージド ID が有効になっている場合はオプションです。 |  
+
+
+| `resourceGroups` | 検出されたリソースをフィルタリングするためのリソース グループのリスト | "[]" (フィルターなし) 
+
+
+| `netappAccounts` | 検出されたリソースをフィルタリングするためのNetAppアカウントのリスト | "[]" (フィルターなし) 
+
+
+| `capacityPools` | 検出されたリソースをフィルタリングするための容量プールのリスト | "[]" (フィルターなし、ランダム) 
+
+
+| `virtualNetwork` | 委任されたサブネットを持つ仮想ネットワークの名前 | "" 
+
+
+| `subnet` | 委任先のサブネットの名前 `Microsoft.Netapp/volumes` | "" 
+
+
+| `networkFeatures` | ボリュームのVNet機能のセット。 `Basic`または `Standard`。ネットワーク機能はすべての地域で利用できるわけではなく、サブスクリプションで有効にする必要がある場合があります。指定 `networkFeatures`この機能が有効になっていないと、ボリュームのプロビジョニングが失敗します。 | "" 
+
+
+| `nfsMountOptions` | NFS マウント オプションのきめ細かな制御。  SMB ボリュームの場合は無視されます。 NFSバージョン4.1を使用してボリュームをマウントするには、 `nfsvers=4`カンマ区切りのマウント オプション リストで、NFS v4.1 を選択します。ストレージ クラス定義で設定されたマウント オプションは、バックエンド構成で設定されたマウント オプションをオーバーライドします。 | 「nfsvers=3」 
+
+
+| `limitVolumeSize` | 要求されたボリューム サイズがこの値を超える場合、プロビジョニングに失敗します | "" (デフォルトでは強制されません) 
+
+
+| `debugTraceFlags` | トラブルシューティング時に使用するデバッグ フラグ。例、 `\{"api": false, "method": true, "discovery": true}` 。トラブルシューティングを行っており、詳細なログ ダンプが必要な場合を除き、これを使用しないでください。 | ヌル 
+
+
+| `nasType` | NFS または SMB ボリュームの作成を構成します。オプションは `nfs`、 `smb`または null。  null に設定すると、デフォルトで NFS ボリュームになります。 | `nfs` 
+
+
+| `supportedTopologies` | このバックエンドでサポートされているリージョンとゾーンのリストを表します。詳細については、link:../trident-use/csi-topology.html["CSIトポロジを使用する"] 。 |  
+
+
+| `qosType` | QoSタイプ（自動または手動）を表します。* Trident 25.06のテクニカルプレビュー* | オート 
+
+
+| `maxThroughput` | 許容される最大スループットを MiB/秒単位で設定します。手動QoS容量プールでのみサポートされます。* Trident 25.06のテクニカルプレビュー* | `4 MiB/sec` 
+|===
+
+NOTE: ネットワーク機能の詳細については、以下を参照してください。link:https://docs.microsoft.com/en-us/azure/azure-netapp-files/configure-network-features["Azure NetApp Filesボリュームのネットワーク機能を構成する"^] 。
+
+
+
+=== 必要な権限とリソース
+
+PVC の作成時に「容量プールが見つかりません」というエラーが表示される場合は、アプリの登録に必要なアクセス許可とリソース (サブネット、仮想ネットワーク、容量プール) が関連付けられていない可能性があります。デバッグが有効になっている場合、 Trident はバックエンドの作成時に検出された Azure リソースをログに記録します。適切なロールが使用されていることを確認します。
+
+の値は `resourceGroups`、 `netappAccounts` 、 `capacityPools` 、 `virtualNetwork` 、 そして `subnet`短い名前または完全修飾名を使用して指定できます。短い名前は同じ名前を持つ複数のリソースと一致する可能性があるため、ほとんどの場合、完全修飾名が推奨されます。
+
+その `resourceGroups`、 `netappAccounts` 、 そして `capacityPools`値は、検出されたリソースのセットをこのストレージ バックエンドで使用可能なものに制限するフィルターであり、任意の組み合わせで指定できます。完全修飾名は、次の形式に従います。
+
+[cols="2"]
+|===
+| タイプ | フォーマット 
+
+
+| リソース グループ | <リソース グループ> 
+
+
+| NetAppアカウント | <リソース グループ>/<netapp アカウント> 
+
+
+| 容量プール | <リソース グループ>/<netapp アカウント>/<容量プール> 
+
+
+| 仮想ネットワーク | <リソース グループ>/<仮想ネットワーク> 
+
+
+| サブネット | <リソース グループ>/<仮想ネットワーク>/<サブネット> 
+|===
+
+
+=== ボリュームプロビジョニング
+
+構成ファイルの特別なセクションで次のオプションを指定することにより、デフォルトのボリュームのプロビジョニングを制御できます。参照 <<構成例>> 詳細については。
+
+[cols=",,"]
+|===
+| パラメータ | 説明 | デフォルト 
+
+
+| `exportRule` | 新しいボリュームのエクスポート ルール。
+`exportRule` CIDR 表記の IPv4 アドレスまたは IPv4 サブネットの任意の組み合わせをコンマで区切ったリストにする必要があります。  SMB ボリュームの場合は無視されます。 | 「0.0.0.0/0」 
+
+
+| `snapshotDir` | .snapshotディレクトリの可視性を制御します | NFSv4の場合は「true」、NFSv3の場合は「false」 
+
+
+| `size` | 新しいボリュームのデフォルトサイズ | 「100G」 
+
+
+| `unixPermissions` | 新しいボリュームの UNIX 権限 (4 桁の 8 進数)。  SMB ボリュームの場合は無視されます。 | 「」（プレビュー機能、サブスクリプションでホワイトリストへの登録が必要） 
+|===
+
+
+== 構成例
+
+次の例は、ほとんどのパラメータをデフォルトのままにする基本構成を示しています。これはバックエンドを定義する最も簡単な方法です。
+
+.最小限の構成
+[%collapsible]
+====
+これは絶対的に最小限のバックエンド構成です。この構成では、 Trident は構成された場所にあるAzure NetApp Filesに委任されたすべてのNetAppアカウント、容量プール、およびサブネットを検出し、それらのプールとサブネットのいずれかに新しいボリュームをランダムに配置します。なぜなら `nasType`省略された場合、 `nfs`デフォルトが適用され、バックエンドは NFS ボリュームをプロビジョニングします。
+
+この構成は、 Azure NetApp Filesを使い始めて試してみる場合に最適ですが、実際には、プロビジョニングするボリュームのスコープをさらに指定することが必要になります。
+
+[source, yaml]
+----
+---
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-anf-1
+  namespace: trident
+spec:
+  version: 1
+  storageDriverName: azure-netapp-files
+  subscriptionID: 9f87c765-4774-fake-ae98-a721add45451
+  tenantID: 68e4f836-edc1-fake-bff9-b2d865ee56cf
+  clientID: dd043f63-bf8e-fake-8076-8de91e5713aa
+  clientSecret: SECRET
+  location: eastus
+----
+====
+.AKS のマネージド ID
+[%collapsible]
+====
+このバックエンド構成では、 `subscriptionID` 、 `tenantID` 、 `clientID` 、 そして `clientSecret`マネージド ID を使用する場合はオプションです。
+
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-anf-1
+  namespace: trident
+spec:
+  version: 1
+  storageDriverName: azure-netapp-files
+  capacityPools:
+    - ultra-pool
+  resourceGroups:
+    - aks-ami-eastus-rg
+  netappAccounts:
+    - smb-na
+  virtualNetwork: eastus-prod-vnet
+  subnet: eastus-anf-subnet
+----
+====
+.AKS のクラウド ID
+[%collapsible]
+====
+このバックエンド構成では、 `tenantID` 、 `clientID` 、 そして `clientSecret`クラウド ID を使用する場合はオプションです。
+
+[source, yaml]
+----
+apiVersion: trident.netapp.io/v1
+kind: TridentBackendConfig
+metadata:
+  name: backend-tbc-anf-1
+  namespace: trident
+spec:
+  version: 1
+  storageDriverName: azure-netapp-files
+  capacityPools:
+    - ultra-pool
+  resourceGroups:
+    - aks-ami-eastus-rg
+  netappAccounts:
+    - smb-na
+  virtualNetwork: eastus-prod-vnet
+  subnet: eastus-anf-subnet
+  location: eastus
+  subscriptionID: 9f87c765-4774-fake-ae98-a721add45451
+----
+====
+.容量プールフィルターを使用した特定のサービスレベル構成
+[%collapsible]
+====
+このバックエンド構成では、Azureの `eastus`場所 `Ultra`容量プール。  Trident は、その場所でAzure NetApp Filesに委任されたすべてのサブネットを自動的に検出し、そのうちの 1 つに新しいボリュームをランダムに配置します。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: azure-netapp-files
+subscriptionID: 9f87c765-4774-fake-ae98-a721add45451
+tenantID: 68e4f836-edc1-fake-bff9-b2d865ee56cf
+clientID: dd043f63-bf8e-fake-8076-8de91e5713aa
+clientSecret: SECRET
+location: eastus
+serviceLevel: Ultra
+capacityPools:
+  - application-group-1/account-1/ultra-1
+  - application-group-1/account-1/ultra-2
+----
+====
+.手動 QoS 容量プールを使用したバックエンドの例
+[%collapsible]
+====
+このバックエンド構成では、Azureの `eastus`手動 QoS 容量プールのある場所。* NetApp Trident 25.06 のテクニカル プレビュー*。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: azure-netapp-files
+backendName: anf1
+location: eastus
+labels:
+  clusterName: test-cluster-1
+  cloud: anf
+  nasType: nfs
+defaults:
+  qosType: Manual
+storage:
+  - serviceLevel: Ultra
+    labels:
+      performance: gold
+    defaults:
+      maxThroughput: 10
+  - serviceLevel: Premium
+    labels:
+      performance: silver
+    defaults:
+      maxThroughput: 5
+  - serviceLevel: Standard
+    labels:
+      performance: bronze
+    defaults:
+      maxThroughput: 3
+----
+====
+.高度な設定
+[%collapsible]
+====
+このバックエンド構成により、ボリュームの配置範囲が単一のサブネットにさらに縮小され、一部のボリューム プロビジョニングのデフォルトも変更されます。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: azure-netapp-files
+subscriptionID: 9f87c765-4774-fake-ae98-a721add45451
+tenantID: 68e4f836-edc1-fake-bff9-b2d865ee56cf
+clientID: dd043f63-bf8e-fake-8076-8de91e5713aa
+clientSecret: SECRET
+location: eastus
+serviceLevel: Ultra
+capacityPools:
+  - application-group-1/account-1/ultra-1
+  - application-group-1/account-1/ultra-2
+virtualNetwork: my-virtual-network
+subnet: my-subnet
+networkFeatures: Standard
+nfsMountOptions: vers=3,proto=tcp,timeo=600
+limitVolumeSize: 500Gi
+defaults:
+  exportRule: 10.0.0.0/24,10.0.1.0/24,10.0.2.100
+  snapshotDir: "true"
+  size: 200Gi
+  unixPermissions: "0777"
+
+----
+====
+.仮想プールの構成
+[%collapsible]
+====
+このバックエンド構成では、単一のファイルで複数のストレージ プールを定義します。これは、異なるサービス レベルをサポートする複数の容量プールがあり、それらを表すストレージ クラスを Kubernetes で作成する場合に便利です。仮想プールラベルは、以下の基準に基づいてプールを区別するために使用されました。 `performance` 。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: azure-netapp-files
+subscriptionID: 9f87c765-4774-fake-ae98-a721add45451
+tenantID: 68e4f836-edc1-fake-bff9-b2d865ee56cf
+clientID: dd043f63-bf8e-fake-8076-8de91e5713aa
+clientSecret: SECRET
+location: eastus
+resourceGroups:
+  - application-group-1
+networkFeatures: Basic
+nfsMountOptions: vers=3,proto=tcp,timeo=600
+labels:
+  cloud: azure
+storage:
+  - labels:
+      performance: gold
+    serviceLevel: Ultra
+    capacityPools:
+      - ultra-1
+      - ultra-2
+    networkFeatures: Standard
+  - labels:
+      performance: silver
+    serviceLevel: Premium
+    capacityPools:
+      - premium-1
+  - labels:
+      performance: bronze
+    serviceLevel: Standard
+    capacityPools:
+      - standard-1
+      - standard-2
+
+----
+====
+.サポートされているトポロジ構成
+[%collapsible]
+====
+Trident は、リージョンと可用性ゾーンに基づいてワークロードのボリュームのプロビジョニングを容易にします。その `supportedTopologies`このバックエンド構成のブロックは、バックエンドごとにリージョンとゾーンのリストを提供するために使用されます。ここで指定するリージョンとゾーンの値は、各 Kubernetes クラスター ノードのラベルのリージョンとゾーンの値と一致する必要があります。これらのリージョンとゾーンは、ストレージ クラスで提供できる許容値のリストを表します。バックエンドで提供されるリージョンとゾーンのサブセットを含むストレージ クラスの場合、 Trident は指定されたリージョンとゾーンにボリュームを作成します。詳細については、link:../trident-use/csi-topology.html["CSIトポロジを使用する"] 。
+
+[source, yaml]
+----
+---
+version: 1
+storageDriverName: azure-netapp-files
+subscriptionID: 9f87c765-4774-fake-ae98-a721add45451
+tenantID: 68e4f836-edc1-fake-bff9-b2d865ee56cf
+clientID: dd043f63-bf8e-fake-8076-8de91e5713aa
+clientSecret: SECRET
+location: eastus
+serviceLevel: Ultra
+capacityPools:
+  - application-group-1/account-1/ultra-1
+  - application-group-1/account-1/ultra-2
+supportedTopologies:
+  - topology.kubernetes.io/region: eastus
+    topology.kubernetes.io/zone: eastus-1
+  - topology.kubernetes.io/region: eastus
+    topology.kubernetes.io/zone: eastus-2
+----
+====
+
+
+== ストレージクラスの定義
+
+次の `StorageClass`定義は上記のストレージ プールを参照します。
+
+
+
+=== 定義例 `parameter.selector`分野
+
+使用 `parameter.selector`それぞれ指定できます `StorageClass`ボリュームをホストするために使用される仮想プール。ボリュームには、選択したプールで定義された側面が含まれます。
+
+[source, yaml]
+----
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: gold
+provisioner: csi.trident.netapp.io
+parameters:
+  selector: performance=gold
+allowVolumeExpansion: true
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: silver
+provisioner: csi.trident.netapp.io
+parameters:
+  selector: performance=silver
+allowVolumeExpansion: true
+
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: bronze
+provisioner: csi.trident.netapp.io
+parameters:
+  selector: performance=bronze
+allowVolumeExpansion: true
+----
+
+
+=== SMBボリュームの定義例
+
+使用 `nasType`、 `node-stage-secret-name` 、 そして `node-stage-secret-namespace`、SMB ボリュームを指定し、必要な Active Directory 資格情報を提供できます。
+
+.デフォルトの名前空間での基本設定
+[%collapsible]
+====
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: anf-sc-smb
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "azure-netapp-files"
+  trident.netapp.io/nasType: "smb"
+  csi.storage.k8s.io/node-stage-secret-name: "smbcreds"
+  csi.storage.k8s.io/node-stage-secret-namespace: "default"
+----
+====
+.名前空間ごとに異なるシークレットを使用する
+[%collapsible]
+====
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: anf-sc-smb
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "azure-netapp-files"
+  trident.netapp.io/nasType: "smb"
+  csi.storage.k8s.io/node-stage-secret-name: "smbcreds"
+  csi.storage.k8s.io/node-stage-secret-namespace: ${pvc.namespace}
+----
+====
+.ボリュームごとに異なる秘密を使用する
+[%collapsible]
+====
+[source, yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: anf-sc-smb
+provisioner: csi.trident.netapp.io
+parameters:
+  backendType: "azure-netapp-files"
+  trident.netapp.io/nasType: "smb"
+  csi.storage.k8s.io/node-stage-secret-name: ${pvc.name}
+  csi.storage.k8s.io/node-stage-secret-namespace: ${pvc.namespace}
+----
+====
+
+NOTE: `nasType: smb`SMB ボリュームをサポートするプールのフィルター。 `nasType: nfs`または `nasType: null`NFS プールのフィルター。
+
+
+
+== バックエンドを作成する
+
+バックエンド構成ファイルを作成したら、次のコマンドを実行します。
+
+[listing]
+----
+tridentctl create backend -f <backend-file>
+----
+バックエンドの作成に失敗した場合、バックエンドの構成に問題があります。次のコマンドを実行すると、ログを表示して原因を特定できます。
+
+[listing]
+----
+tridentctl logs
+----
+構成ファイルの問題を特定して修正したら、create コマンドを再度実行できます。

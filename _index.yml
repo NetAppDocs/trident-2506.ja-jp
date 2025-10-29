@@ -1,0 +1,63 @@
+---
+indexpage:
+  lead: Trident は、 NetAppが管理するオープンソースのストレージ プロビジョナーおよびオーケストレーターです。  Docker と Kubernetes
+    によって管理されるコンテナ化されたアプリケーション用のストレージ ボリュームを作成できます。
+  tiles:
+  - title: リリース ノート
+    links:
+    - title: 新着情報
+      url: trident-rn.html
+    - title: 以前のバージョン
+      url: "/earlier-versions.html"
+  - title: 始めましょう
+    links:
+    - title: Tridentについて学ぶ
+      url: "/trident-get-started/intro.html"
+    - title: 要件
+      url: "/trident-get-started/requirements.html"
+    - title: クイック スタート
+      url: "/trident-get-started/quickstart.html"
+  - title: Tridentを展開する
+    links:
+    - title: Tridentオペレーターで展開
+      url: "/trident-get-started/kubernetes-deploy-operator.html"
+    - title: tridentctlでデプロイする
+      url: "/trident-get-started/kubernetes-deploy-tridentctl.html"
+    - title: Docker 用のTrident をデプロイする
+      url: "/trident-docker/deploy-docker.html"
+  - title: Tridentをアップグレード
+    links:
+    - title: Tridentオペレーターによるアップグレード
+      url: "/trident-managing-k8s/upgrade-operator.html"
+    - title: tridentctl によるアップグレード
+      url: "/trident-managing-k8s/upgrade-tridentctl.html"
+  - title: Tridentを使用する
+    links:
+    - title: ワーカーノードを準備する
+      url: "/trident-use/worker-node-prep.html"
+    - title: バックエンドを構成する
+      url: "/trident-use/backends.html"
+    - title: ストレージクラスの管理
+      url: "/trident-use/manage-stor-class.html"
+    - title: ボリューム操作を実行する
+      url: "/trident-use/vol-operations.html"
+  - title: 高度なデータ管理と保護
+    links:
+    - title: Trident Protectによる高度なデータ保護
+      url: "/trident-protect/learn-about-trident-protect.html"
+    - title: Tridentプロテクトを展開
+      url: "/trident-protect/trident-protect-installation.html"
+    - title: Tridentプロテクトをアップグレード
+      url: "/trident-protect/trident-protect-upgrade.html"
+  - title: デモとチュートリアル
+    links:
+    - title: Tridentのビデオ
+      url: https://media.netapp.com/video-detail/c5bebae0-aab6-5fed-ae16-df6a3a8b260d/netapp-trident-advanced-data-protection-for-kubernetes-applications
+  - title: ブログとコミュニティ
+    links:
+    - title: TridentとTridentはブログを保護する
+      url: "/blog-posts.html"
+    - title: NetApp.io
+      url: https://netapp.io/
+    - title: 不和
+      url: https://discord.gg/NetApp

@@ -1,0 +1,349 @@
+---
+sidebar: sidebar 
+permalink: trident-use/trident-fsx-install-trident.html 
+keywords: Amazon FSx for NetApp ONTAP, FSx for ONTAP, deploy Trident, integrate Trident, Trident add-on, Trident EKS add-on, Trident AWS EKS add-on 
+summary: 'Trident をAmazon FSx for NetApp ONTAPと併用することで、Amazon Elastic Kubernetes Service (EKS) で実行されている Kubernetes クラスターがONTAPによってサポートされるブロックおよびファイルの永続ボリュームをプロビジョニングできるようになります。' 
+---
+= Tridentをインストールする
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Trident は、 Kubernetes でのAmazon FSx for NetApp ONTAPストレージ管理を合理化し、開発者と管理者がアプリケーションの導入に集中できるようにします。
+
+次のいずれかの方法でTrident をインストールできます。
+
+* 舵
+* EKSアドオン
+
+
+スナップショット機能を利用する場合は、CSI スナップショット コントローラー アドオンをインストールします。参照link:https://docs.aws.amazon.com/eks/latest/userguide/csi-snapshot-controller.html["CSIボリュームのスナップショット機能を有効にする"^]詳細についてはこちらをご覧ください。
+
+
+
+== Helm経由でTridentをインストールする
+
+[role="tabbed-block"]
+====
+.ポッドのアイデンティティ
+--
+. Trident Helm リポジトリを追加します。
++
+[source, console]
+----
+helm repo add netapp-trident https://netapp.github.io/trident-helm-chart
+----
+. 次の例を使用してTrident をインストールします。
++
+[source, console]
+----
+helm install trident-operator netapp-trident/trident-operator --version 100.2502.1 --namespace trident --create-namespace
+----
++
+使用することができます `helm list`名前、名前空間、チャート、ステータス、アプリのバージョン、リビジョン番号などのインストールの詳細を確認するコマンド。
+
++
+[source, console]
+----
+helm list -n trident
+----
++
+[listing]
+----
+NAME                NAMESPACE   REVISION    UPDATED                                 STATUS       CHART                          APP VERSION
+
+trident-operator    trident     1           2024-10-14 14:31:22.463122 +0300 IDT    deployed     trident-operator-100.2502.0    25.02.0
+----
+
+
+--
+.サービス アカウント アソシエーション (IRSA)
+--
+. Trident Helm リポジトリを追加します。
++
+[source, console]
+----
+helm repo add netapp-trident https://netapp.github.io/trident-helm-chart
+----
+. *クラウド プロバイダー* と *クラウド ID* の値を設定します。
++
+[source, console]
+----
+helm install trident-operator netapp-trident/trident-operator --version 100.2502.1  \
+--set cloudProvider="AWS" \
+--set cloudIdentity="'eks.amazonaws.com/role-arn: arn:aws:iam::<accountID>:role/<AmazonEKS_FSxN_CSI_DriverRole>'" \
+--namespace trident \
+--create-namespace
+----
++
+使用することができます `helm list`名前、名前空間、チャート、ステータス、アプリのバージョン、リビジョン番号などのインストールの詳細を確認するコマンド。
+
++
+[source, console]
+----
+helm list -n trident
+----
++
+[listing]
+----
+NAME                NAMESPACE   REVISION    UPDATED                                 STATUS       CHART                          APP VERSION
+
+trident-operator    trident     1           2024-10-14 14:31:22.463122 +0300 IDT    deployed     trident-operator-100.2506.0    25.06.0
+----
+
+
+--
+====
+[NOTE]
+====
+iSCSI を使用する予定の場合は、クライアント マシンで iSCSI が有効になっていることを確認してください。  AL2023 ワーカー ノード OS を使用している場合は、helm インストールで node prep パラメータを追加することで、iSCSI クライアントのインストールを自動化できます。
+
+[source, console]
+----
+helm install trident-operator netapp-trident/trident-operator --version 100.2502.1 --namespace trident --create-namespace –-set nodePrep={iscsi}
+----
+====
+
+
+== EKSアドオン経由でTridentをインストールする
+
+Trident EKS アドオンには最新のセキュリティパッチとバグ修正が含まれており、Amazon EKS で動作することが AWS によって検証されています。  EKS アドオンを使用すると、Amazon EKS クラスターの安全性と安定性を常に確保し、アドオンのインストール、設定、更新に必要な作業量を削減できます。
+
+
+
+=== 前提条件
+
+AWS EKS のTridentアドオンを設定する前に、以下があることを確認してください。
+
+* アドオンサブスクリプション付きの Amazon EKS クラスターアカウント
+* AWS マーケットプレイスへの AWS 権限:
+`"aws-marketplace:ViewSubscriptions",
+"aws-marketplace:Subscribe",
+"aws-marketplace:Unsubscribe`
+* AMI タイプ: Amazon Linux 2 (AL2_x86_64) または Amazon Linux 2 Arm(AL2_ARM_64)
+* ノードタイプ: AMD またはARM
+* 既存のAmazon FSx for NetApp ONTAPファイルシステム
+
+
+
+
+=== AWS のTridentアドオンを有効にする
+
+[role="tabbed-block"]
+====
+.管理コンソール
+--
+. Amazon EKSコンソールを開きます。 https://console.aws.amazon.com/eks/home#/clusters[] 。
+. 左側のナビゲーション ペインで、[*クラスター*] を選択します。
+. NetApp Trident CSI アドオンを構成するクラスターの名前を選択します。
+. *アドオン*を選択し、*さらにアドオンを取得*を選択します。
+. アドオンを選択するには、次の手順に従います。
++
+.. *AWS Marketplace アドオン* セクションまで下にスクロールし、検索ボックスに「* Trident」* と入力します。
+.. Trident by NetAppボックスの右上隅にあるチェック ボックスを選択します。
+.. *次へ*を選択します。
+
+
+. *選択したアドオンの構成*設定ページで、次の操作を行います。
++
+
+NOTE: *Pod Identity 関連付けを使用している場合は、これらの手順をスキップしてください。*
+
++
+.. 使用したい*バージョン*を選択してください。
+.. IRSA 認証を使用している場合は、オプション構成設定で使用可能な構成値を必ず設定してください。
++
+*** 使用したい*バージョン*を選択してください。
+*** *アドオン構成スキーマ* に従い、*構成値* セクションの *configurationValues* パラメータを、前の手順で作成した role-arn に設定します (値は次の形式である必要があります)。
+
+
+
+
++
+[source, JSON]
+----
+{
+
+  "cloudIdentity": "'eks.amazonaws.com/role-arn: <role ARN>'",
+  "cloudProvider": "AWS"
+
+}
+----
++
+競合解決方法として [オーバーライド] を選択した場合、既存のアドオンの 1 つ以上の設定を Amazon EKS アドオン設定で上書きできます。このオプションを有効にせず、既存の設定と競合する場合、操作は失敗します。結果のエラー メッセージを使用して競合のトラブルシューティングを行うことができます。このオプションを選択する前に、Amazon EKS アドオンが自己管理する必要がある設定を管理していないことを確認してください。
+
+. *次へ*を選択します。
+. *確認と追加*ページで、*作成*を選択します。
++
+アドオンのインストールが完了すると、インストールされたアドオンが表示されます。
+
+
+
+--
+.AWS CLI
+--
+*1.作成する `add-on.json`ファイル*：
+
+*Pod Identity の場合は、次の形式を使用します*。
+
+[source, json]
+----
+{
+  "clusterName": "<eks-cluster>",
+  "addonName": "netapp_trident-operator",
+  "addonVersion": "v25.6.0-eksbuild.1",
+}
+----
+*IRSA 認証の場合は、次の形式を使用します*:
+
+[source, json]
+----
+{
+  "clusterName": "<eks-cluster>",
+  "addonName": "netapp_trident-operator",
+  "addonVersion": "v25.6.0-eksbuild.1",
+  "serviceAccountRoleArn": "<role ARN>",
+  "configurationValues": {
+    "cloudIdentity": "'eks.amazonaws.com/role-arn: <role ARN>'",
+    "cloudProvider": "AWS"
+  }
+}
+----
+
+NOTE: 交換する `<role ARN>`前の手順で作成されたロールの ARN を使用します。
+
+*2.Trident EKS アドオンをインストールします。*
+
+[source, console]
+----
+aws eks create-addon --cli-input-json file://add-on.json
+----
+--
+.eksctl
+--
+次のコマンド例は、 Trident EKS アドオンをインストールします。
+
+[source, console]
+----
+eksctl create addon --name netapp_trident-operator --cluster <cluster_name> --force
+----
+--
+====
+
+
+=== Trident EKSアドオンを更新する
+
+[role="tabbed-block"]
+====
+.管理コンソール
+--
+. Amazon EKSコンソールを開く https://console.aws.amazon.com/eks/home#/clusters[]。
+. 左側のナビゲーション ペインで、[*クラスター*] を選択します。
+. NetApp Trident CSI アドオンを更新するクラスターの名前を選択します。
+. *アドオン*タブを選択します。
+. * Trident by NetApp*を選択し、*編集*を選択します。
+. * Trident by NetAppの構成 *ページで、次の操作を行います。
++
+.. 使用したい*バージョン*を選択してください。
+.. *オプションの構成設定*を展開し、必要に応じて変更します。
+.. *変更を保存*を選択します。
+
+
+
+
+--
+.AWS CLI
+--
+次の例では、EKS アドオンを更新します。
+
+[source, console]
+----
+aws eks update-addon --cluster-name <eks_cluster_name> --addon-name netapp_trident-operator --addon-version v25.6.0-eksbuild.1 \
+  --service-account-role-arn <role-ARN> --resolve-conflict preserve \
+  --configuration-values “{\"cloudIdentity\": \"'eks.amazonaws.com/role-arn: <role ARN>'\"}"
+----
+--
+.eksctl
+--
+* FSxN Trident CSI アドオンの現在のバージョンを確認します。交換する `my-cluster`クラスター名に置き換えます。
++
+[source, console]
+----
+eksctl get addon --name netapp_trident-operator --cluster my-cluster
+----
++
+*出力例:*
+
+
+
+[listing]
+----
+NAME                        VERSION             STATUS    ISSUES    IAMROLE    UPDATE AVAILABLE    CONFIGURATION VALUES
+netapp_trident-operator    v25.6.0-eksbuild.1    ACTIVE    0       {"cloudIdentity":"'eks.amazonaws.com/role-arn: arn:aws:iam::139763910815:role/AmazonEKS_FSXN_CSI_DriverRole'"}
+----
+* 前の手順の出力の UPDATE AVAILABLE で返されたバージョンにアドオンを更新します。
++
+[source, console]
+----
+eksctl update addon --name netapp_trident-operator --version v25.6.0-eksbuild.1 --cluster my-cluster --force
+----
+
+
+削除すると `--force`オプションと Amazon EKS アドオン設定のいずれかが既存の設定と競合する場合、Amazon EKS アドオンの更新は失敗し、競合を解決するためのエラーメッセージが表示されます。このオプションを指定する前に、Amazon EKS アドオンが管理する必要がある設定を管理していないことを確認してください。このオプションによってそれらの設定が上書きされるためです。この設定の他のオプションの詳細については、link:https://eksctl.io/usage/addons/["アドオン"] 。  Amazon EKS Kubernetesフィールド管理の詳細については、以下を参照してください。link:https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-field-management.html["Kubernetes フィールド管理"] 。
+
+--
+====
+
+
+=== Trident EKSアドオンをアンインストール/削除する
+
+Amazon EKS アドオンを削除するには、次の 2 つのオプションがあります。
+
+* *クラスター上のアドオンソフトウェアを保持する* – このオプションを選択すると、Amazon EKS によるすべての設定の管理が削除されます。また、Amazon EKS が更新を通知し、更新を開始した後に Amazon EKS アドオンを自動的に更新する機能も削除されます。ただし、アドオン ソフトウェアはクラスター上に保持されます。このオプションを選択すると、アドオンは Amazon EKS アドオンではなく、自己管理型インストールになります。このオプションを使用すると、アドオンのダウンタイムは発生しません。保持する `--preserve`アドオンを保持するには、コマンドにオプションを追加します。
+* *クラスターからアドオン ソフトウェアを完全に削除する* – NetApp、クラスター上に Amazon EKS アドオンに依存するリソースがない場合にのみ、クラスターから Amazon EKS アドオンを削除することをお勧めします。削除する `--preserve`オプションから `delete`アドオンを削除するコマンド。
+
+
+
+NOTE: アドオンに IAM アカウントが関連付けられている場合、その IAM アカウントは削除されません。
+
+[role="tabbed-block"]
+====
+.管理コンソール
+--
+. Amazon EKSコンソールを開きます。 https://console.aws.amazon.com/eks/home#/clusters[] 。
+. 左側のナビゲーション ペインで、[*クラスター*] を選択します。
+. NetApp Trident CSI アドオンを削除するクラスターの名前を選択します。
+. *アドオン*タブを選択し、* Trident by NetApp*を選択します。*
+. *削除*を選択します。
+. *netapp_trident-operator の削除確認* ダイアログで、次の操作を行います。
++
+.. Amazon EKS によるアドオン設定の管理を停止する場合は、[クラスターで保持] を選択します。アドオン ソフトウェアをクラスター上に保持して、アドオンのすべての設定を自分で管理できるようにする場合は、これを実行してください。
+.. *netapp_trident-operator* と入力します。
+.. *削除*を選択します。
+
+
+
+
+--
+.AWS CLI
+--
+交換する `my-cluster`クラスターの名前に変更し、次のコマンドを実行します。
+
+[source, console]
+----
+aws eks delete-addon --cluster-name my-cluster --addon-name netapp_trident-operator --preserve
+----
+--
+.eksctl
+--
+次のコマンドは、 Trident EKS アドオンをアンインストールします。
+
+[source, console]
+----
+eksctl delete addon --cluster K8s-arm --name netapp_trident-operator
+----
+--
+====

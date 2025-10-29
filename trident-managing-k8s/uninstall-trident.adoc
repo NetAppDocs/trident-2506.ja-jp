@@ -1,0 +1,100 @@
+---
+sidebar: sidebar 
+permalink: trident-managing-k8s/uninstall-trident.html 
+keywords: uninstall, Trident, methods, operator, tridentctl, helm, downgrade, obliviate, crds, wipeout, downgrade 
+summary: Trident をアンインストールするには、 Tridentをインストールしたときと同じ方法を使用する必要があります。アップグレード後に確認されたバグ、依存関係の問題、または失敗したアップグレードや不完全なアップグレードの修正が必要な場合は、 Tridentをアンインストールし、そのバージョンの特定の手順に従って以前のバージョンを再インストールする必要があります。 
+---
+= Tridentをアンインストールする
+:hardbreaks:
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/
+
+
+[role="lead"]
+Trident をアンインストールするには、 Tridentをインストールしたときと同じ方法を使用する必要があります。
+
+.タスク概要
+* アップグレード後に発見されたバグ、依存関係の問題、またはアップグレードの失敗や不完全なアップグレードの修正が必要な場合は、 Tridentをアンインストールし、そのバージョンの特定の手順に従って以前のバージョンを再インストールする必要があります。link:../earlier-versions.html["version"] 。これは、以前のバージョンにダウングレードする場合に推奨される唯一の方法です。
+* アップグレードと再インストールを容易にするために、 Tridentをアンインストールしても、 Tridentによって作成された CRD または関連オブジェクトは削除されません。  Tridentとそのすべてのデータを完全に削除する必要がある場合は、link:../troubleshooting.html#completely-remove-trident-and-crds["TridentとCRDを完全に削除する"] 。
+
+
+.開始する前に
+Kubernetes クラスターを廃止する場合は、アンインストールする前に、 Tridentによって作成されたボリュームを使用するすべてのアプリケーションを削除する必要があります。これにより、PVC が削除される前に Kubernetes ノードで未公開になることが保証されます。
+
+
+
+== 元のインストール方法を決定する
+
+Trident をアンインストールするには、インストールに使用したのと同じ方法を使用する必要があります。アンインストールする前に、最初にTrident をインストールしたときに使用したバージョンを確認してください。
+
+. 使用 `kubectl get pods -n trident`ポッドを検査します。
++
+** オペレーターポッドがない場合、Tridentは次のようにインストールされます。 `tridentctl` 。
+** オペレーター ポッドがある場合、 Trident は手動または Helm を使用してTridentオペレーターを使用してインストールされました。
+
+
+. オペレーターポッドがある場合は、 `kubectl describe tproc trident` Trident がHelm を使用してインストールされているかどうかを判断します。
++
+** Helm ラベルがある場合、 Trident はHelm を使用してインストールされました。
+** Helm ラベルがない場合、 Trident はTridentオペレーターを使用して手動でインストールされています。
+
+
+
+
+
+
+== Tridentオペレータのインストールをアンインストールする
+
+Trident Operator のインストールは手動でアンインストールすることも、Helm を使用してアンインストールすることもできます。
+
+
+
+=== 手動インストールをアンインストールする
+
+オペレータを使用してTrident をインストールした場合は、次のいずれかの方法でアンインストールできます。
+
+. **編集 `TridentOrchestrator`CR してアンインストール フラグを設定します**:
++
+[listing]
+----
+kubectl patch torc <trident-orchestrator-name> --type=merge -p '{"spec":{"uninstall":true}}'
+----
++
+いつ `uninstall`フラグが設定されている `true`、 TridentオペレーターはTridentをアンインストールしますが、TridentOrchestrator 自体は削除しません。  Trident を再度インストールする場合は、TridentOrchestrator をクリーンアップして新しいものを作成する必要があります。
+
+. **消去 `TridentOrchestrator`**: 削除することにより `TridentOrchestrator`Trident を展開するために使用された CR の場合、オペレーターにTrident をアンインストールするように指示します。オペレーターは、 `TridentOrchestrator`そして、 Tridentデプロイメントとデーモンセットを削除し、インストールの一環として作成されたTridentポッドを削除します。
++
+[listing]
+----
+kubectl delete -f deploy/<bundle.yaml> -n <namespace>
+----
+
+
+
+
+=== Helmのインストールをアンインストールする
+
+Helmを使用してTridentをインストールした場合は、以下を使用してアンインストールできます。 `helm uninstall` 。
+
+[listing]
+----
+#List the Helm release corresponding to the Trident install.
+helm ls -n trident
+NAME          NAMESPACE       REVISION        UPDATED                                 STATUS          CHART                           APP VERSION
+trident       trident         1               2021-04-20 00:26:42.417764794 +0000 UTC deployed        trident-operator-21.07.1        21.07.1
+
+#Uninstall Helm release to remove Trident
+helm uninstall trident -n trident
+release "trident" uninstalled
+----
+
+
+== アンインストール `tridentctl`インストール
+
+使用 `uninstall`コマンドイン `tridentctl`CRD と関連オブジェクトを除く、 Tridentに関連付けられたすべてのリソースを削除します。
+
+[listing]
+----
+./tridentctl uninstall -n <namespace>
+----
