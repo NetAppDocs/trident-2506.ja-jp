@@ -2445,23 +2445,19 @@
   <block id="948be8a05d305f0b3dece0e8dcaf4546" category="list-text">入力したら<block ref="3e2c6ff026eba99761434b4f79aaa782" prefix=" " category="inline-code"></block>正しい値を持つファイルには、CR を適用します。</block>
   <block id="677aa747b5e08444532c7cc040384124" category="open-title">CLIを使用してソースアプリケーションを作成する</block>
   <block id="feaddb5b204f8f8f1226cc6f02275f5c" category="list-text">ソース アプリケーションを作成します。例えば：</block>
-  <block id="f815c45e5a618fe75ef3a716b30b711d" category="list-text">必要に応じて、ソース クラスターでソース アプリケーションのスナップショットを取得します。このスナップショットは、宛先クラスター上のアプリケーションのベースとして使用されます。この手順をスキップした場合は、最新のスナップショットを取得するために、次にスケジュールされたスナップショットが実行されるまで待つ必要があります。</block>
   <block id="9399bd959f53d5a7d8671b597df92df2" category="paragraph">以下に示すスケジュールに加えて、ピア接続されたONTAPクラスタ間で共通のスナップショットを維持するために、保持期間が 7 日間の個別の毎日のスナップショット スケジュールを作成することをお勧めします。これにより、スナップショットは最大 7 日間利用できるようになりますが、保持期間はユーザーの要件に基づいてカスタマイズできます。</block>
   <block id="bd8250ba3a5ac73f1ca0ba8c92937c5a" category="paragraph">フェイルオーバーが発生した場合、システムはこれらのスナップショットを最大 7 日間使用して逆の操作を行うことができます。この方法では、すべてのデータではなく、最後のスナップショット以降に行われた変更のみが転送されるため、逆のプロセスがより高速かつ効率的になります。</block>
   <block id="af22b57fbc1d302d6a0b83cb06ce9e6a" category="paragraph">アプリケーションの既存のスケジュールがすでに必要な保持要件を満たしている場合は、追加のスケジュールは必要ありません。</block>
-  <block id="84caf200e79d5962bc7f3516e9ad328c" category="open-title">CRを使用してスナップショットを撮る</block>
   <block id="929d5ad53cad5d51ead7578004e2d5e5" category="list-text">ソース アプリケーションのレプリケーション スケジュールを作成します。</block>
   <block id="57cc31c4785dfe52bb22cc8d375a3b67" category="list-text">カスタムリソース（CR）ファイルを作成し、名前を付けます（例：<block ref="8898becea7c9a79dd32acb9c34818b46" prefix=" " category="inline-code"></block> ）。</block>
   <block id="87918fdbe5607aeceec3ec53bc40a2f8" category="list-text">*metadata.name*: (_必須_) スケジュールカスタムリソースの名前。</block>
   <block id="3e23380d121194d4ed43d5587e33eeba" category="list-text">*spec.AppVaultRef*: (_必須_) この値は、ソース アプリケーションの AppVault の metadata.name フィールドと一致する必要があります。</block>
-  <block id="a7ac547d97c63ad78926b420081cf36d" category="list-text">*spec.ApplicationRef*: (_必須_) この値は、ソース アプリケーション CR の metadata.name フィールドと一致する必要があります。</block>
   <block id="565c53b27f6972afc514c3431a7fb733" category="list-text">*spec.backupRetention*: (_必須_) このフィールドは必須であり、値は 0 に設定する必要があります。</block>
   <block id="e00228f2eaa851d908b74fd6e1cbb1ab" category="list-text">*spec.enabled*: true に設定する必要があります。</block>
   <block id="b8e08f9f53492c0cf7c4c918c8c27185" category="list-text">*spec.granularity*: に設定する必要があります<block ref="90589c47f06eb971d548591f23c285af" prefix=" " category="inline-code"></block>。</block>
   <block id="8c33ed4b89c2cd001ffad0203fe3c3b6" category="list-text">*spec.recurrenceRule*: UTC 時間での開始日と繰り返し間隔を定義します。</block>
   <block id="35ef995e5b9fe2ba99491ff849d63302" category="list-text">*spec.snapshotRetention*: 2 に設定する必要があります。</block>
   <block id="7c6d1c687b69c90909ec8375ac84883e" category="list-text">入力したら<block ref="8898becea7c9a79dd32acb9c34818b46" prefix=" " category="inline-code"></block>正しい値を持つファイルには、CR を適用します。</block>
-  <block id="3feb4a62c8b59cd52ae22845d363c901" category="open-title">CLIを使用してスナップショットを取得する</block>
   <block id="85d88f09b637997959adc6d50a42d56f" category="list-text">宛先クラスタで、ソースクラスタに適用したAppVault CRと同一のソースアプリケーションAppVault CRを作成し、名前を付けます（例：<block ref="3ad9e8b652d0a9a977e2534bf143ea29" prefix=" " category="inline-code"></block> ）。</block>
   <block id="04a53b4d2f7e20d9df207bfb6beb6ee7" category="list-text">CR を適用します。</block>
   <block id="8af8219e9797756f7e348dd40e365632" category="list-text">宛先クラスター上の宛先アプリケーション用の宛先 AppVault CR を作成します。ストレージプロバイダに応じて、以下の例を変更します。<block ref="789b31b0a5cabea5de04107e65439f53" category="inline-link-macro-rx"></block>あなたの環境に合わせて:</block>
@@ -2476,10 +2472,8 @@
   <block id="ad47c31cec730ddef75893f6207a8350" category="list-text">*spec.namespaceMapping*: (_必須_) 宛先名前空間とソース名前空間は、それぞれのアプリケーション CR で定義されているアプリケーション名前空間と一致する必要があります。</block>
   <block id="0d2f17f43053f85c97752c575bb2af3e" category="list-text">*spec.sourceAppVaultRef*: (_必須_) この値は、ソース アプリケーションの AppVault の名前と一致する必要があります。</block>
   <block id="5c0044cad9c27e4f4742c4a031edd6eb" category="list-text">*spec.sourceApplicationName*: (_必須_) この値は、ソース アプリケーション CR で定義したソース アプリケーションの名前と一致する必要があります。</block>
-  <block id="5e77ee724e7a9c6f34c1fd6a65b3f3b5" category="list-text">*spec.storageClassName*: (_必須_) クラスター上の有効なストレージ クラスの名前を選択します。ストレージ クラスは、ソース環境とピアリングされているONTAPストレージ VM にリンクされている必要があります。</block>
   <block id="e1e70c108ffb369c9c05ac65820562c3" category="list-text">入力したら<block ref="e4fba3915616865173fe7feee130a30f" prefix=" " category="inline-code"></block>正しい値を持つファイルには、CR を適用します。</block>
   <block id="d4c94febe4f13411fa761de57ad6cce6" category="open-title">CLIを使用してAppMirrorRelationshipを作成する</block>
-  <block id="1d29e9d9da5d097b90cc18a976fa591c" category="list-text">括弧内の値を環境の情報に置き換えて、AppMirrorRelationship オブジェクトを作成して適用します。例えば：</block>
   <block id="3d9dc864aeb5b914422a6a665c53ceeb" category="list-text">(_オプション_) 宛先クラスターで、レプリケーション関係の状態とステータスを確認します。</block>
   <block id="70cc2bec279e168711b67e789468c45c" category="section-title">宛先クラスタへのフェイルオーバー</block>
   <block id="196c4df78e5add7c9590d6a1c18367ec" category="paragraph">Trident Protect を使用すると、複製されたアプリケーションを宛先クラスターにフェイルオーバーできます。この手順により、レプリケーション関係が停止され、宛先クラスターでアプリがオンラインになります。  Trident Protect は、ソース クラスター上のアプリが稼働中であった場合、そのアプリを停止しません。</block>
@@ -5838,4 +5832,14 @@
   <block id="e8ce47501426b8525633fc30daf17d7a" category="sidebar">ボリューム名をカスタマイズする</block>
   <block id="f18a50f02f48551895d57b81dd288142" category="sidebar">名前空間間でNFSボリュームを共有する</block>
   <block id="62486fa65fc31c383ace8989549632ad" category="sidebar">スナップショットを使用する</block>
+  <block id="30e52f4e46178e20ec0172d136f6e964" category="list-text">必要に応じて、ソース クラスターでソース アプリケーションのスナップショットを取得します。このスナップショットは、宛先クラスター上のアプリケーションのベースとして使用されます。この手順をスキップした場合は、最新のスナップショットを取得するために、次にスケジュールされたスナップショットが実行されるまで待つ必要があります。オンデマンドスナップショットを作成するには、 <block ref="359fb751a7b652662d6f4f859ab7278e" category="inline-link-macro-rx"></block>。</block>
+  <block id="5c24c4abf654732ea864deb8dfd27900" category="list-text">ソース クラスターで、レプリケーション スケジュール CR を作成します。</block>
+  <block id="7f3cf5a508f65aafe24cfcbde532a846" category="open-title">CRを使用してレプリケーションスケジュールを作成する</block>
+  <block id="7228f7e08042915e251a683bfff18231" category="list-text">*spec.appVaultRef*: (_必須_) この値は、ソース アプリケーションの AppVault の metadata.name フィールドと一致する必要があります。</block>
+  <block id="2845cbe42176f1140d5d897aaf3abea8" category="list-text">*spec.applicationRef*: (_必須_) この値は、ソース アプリケーション CR の metadata.name フィールドと一致する必要があります。</block>
+  <block id="4cd94b75213793150ad247d75cd897e9" category="open-title">CLIを使用してレプリケーションスケジュールを作成する</block>
+  <block id="3de5f07029546bc00c37d9c9edf9cc20" category="list-text">括弧内の値を環境の情報に置き換えて、レプリケーション スケジュールを作成します。</block>
+  <block id="7749c9ae56691a1f3a933f4d23d038e3" category="list-text">*spec.sourceApplicationUID*: (必須) この値は、ソース アプリケーション CR で定義したソース アプリケーションの UID と一致する必要があります。</block>
+  <block id="3d684c1e0271c67148a368e61c2e954e" category="list-text">*spec.storageClassName*: (_オプション_) クラスター上の有効なストレージ クラスの名前を選択します。ストレージ クラスは、ソース環境とピアリングされているONTAPストレージ VM にリンクされている必要があります。ストレージ クラスが指定されていない場合は、クラスターのデフォルトのストレージ クラスがデフォルトで使用されます。</block>
+  <block id="c97418e1743694adcebfb4447351b629" category="list-text">AppMirrorRelationship オブジェクトを作成して適用し、括弧内の値を環境の情報に置き換えます。</block>
 </blocks>
