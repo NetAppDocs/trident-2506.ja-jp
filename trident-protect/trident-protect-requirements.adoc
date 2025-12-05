@@ -2,9 +2,9 @@
 sidebar: sidebar 
 permalink: trident-protect/trident-protect-requirements.html 
 keywords: trident protect, application, cluster, snapmirror replication, ontap, configuration 
-summary: まず、運用環境、アプリケーション クラスター、アプリケーション、ライセンスの準備状況を確認します。  Trident Protect を展開および運用するには、環境がこれらの要件を満たしていることを確認してください。 
+summary: まず、運用環境、アプリケーション クラスター、アプリケーション、ライセンスの準備状況を確認します。Trident Protect を展開および運用するには、環境がこれらの要件を満たしていることを確認してください。 
 ---
-= Trident保護要件
+= Tridentプロテクトの要件
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,11 +14,11 @@ summary: まず、運用環境、アプリケーション クラスター、ア�
 
 
 [role="lead"]
-まず、運用環境、アプリケーション クラスター、アプリケーション、ライセンスの準備状況を確認します。  Trident Protect を展開および運用するには、環境がこれらの要件を満たしていることを確認してください。
+まず、運用環境、アプリケーション クラスター、アプリケーション、ライセンスの準備状況を確認します。Trident Protect を展開および運用するには、環境がこれらの要件を満たしていることを確認してください。
 
 
 
-== Trident はKubernetes クラスターの互換性を保護します
+== Trident Protect Kubernetes クラスターの互換性
 
 Trident Protect は、以下を含む幅広いフルマネージドおよびセルフマネージド Kubernetes 製品と互換性があります。
 
@@ -40,7 +40,7 @@ Trident Protect は、以下を含む幅広いフルマネージドおよびセ�
 ====
 
 
-== Trident はストレージバックエンドの互換性を保護します
+== Trident Protect ストレージバックエンドの互換性
 
 Trident Protect は次のストレージ バックエンドをサポートしています。
 
@@ -58,14 +58,14 @@ Trident Protect は次のストレージ バックエンドをサポートして
 
 * NetApp ONTAPストレージ バックエンドがあることを確認します。
 * バックアップを保存するためのオブジェクト ストレージ バケットが設定されていることを確認します。
-* アプリケーションまたはアプリケーション データ管理操作に使用する予定のアプリケーション名前空間を作成します。  Trident protect はこれらの名前空間を作成しません。カスタム リソースに存在しない名前空間を指定すると、操作は失敗します。
+* アプリケーションまたはアプリケーション データ管理操作に使用する予定のアプリケーション名前空間を作成します。Trident Protect はこれらの名前空間を作成しません。カスタム リソースに存在しない名前空間を指定すると、操作は失敗します。
 
 
 
 
 == NASエコノミーボリュームの要件
 
-Trident Protect は、NAS エコノミー ボリュームへのバックアップおよび復元操作をサポートします。スナップショット、クローン、および NAS エコノミー ボリュームへのSnapMirrorレプリケーションは現在サポートされていません。  Trident Protect で使用する予定の各 nas-economy ボリュームに対してスナップショット ディレクトリを有効にする必要があります。
+Trident Protect は、NAS エコノミー ボリュームへのバックアップおよび復元操作をサポートします。スナップショット、クローン、および NAS エコノミー ボリュームへのSnapMirrorレプリケーションは現在サポートされていません。Trident Protect で使用する予定の各 nas-economy ボリュームに対してスナップショット ディレクトリを有効にする必要があります。
 
 [NOTE]
 ====
@@ -89,22 +89,22 @@ NOTE: Tridentバックエンド設定オプションを設定することで、�
 
 == KubeVirt VM によるデータ保護
 
-Trident protect 24.10 と 24.10.1 以降では、KubeVirt VM 上で実行されているアプリケーションを保護する場合の動作が異なります。どちらのバージョンでも、データ保護操作中にファイルシステムのフリーズとフリーズ解除を有効または無効にすることができます。
+Trident Protect 24.10 と 24.10.1 以降では、KubeVirt VM 上で実行されているアプリケーションを保護する場合の動作が異なります。どちらのバージョンでも、データ保護操作中にファイルシステムのフリーズとフリーズ解除を有効または無効にすることができます。
 
 
 NOTE: 復元操作中は、 `VirtualMachineSnapshots`仮想マシン (VM) 用に作成されたファイルは復元されません。
 
 .Tridentプロテクト 24.10
-Trident protect 24.10 は、データ保護操作中に KubeVirt VM ファイルシステムの一貫した状態を自動的に保証しません。 Trident protect 24.10 を使用して KubeVirt VM データを保護する場合は、データ保護操作の前に、ファイルシステムのフリーズ/アンフリーズ機能を手動で有効にする必要があります。これにより、ファイルシステムが一貫した状態になることが保証されます。
+Trident Protect 24.10 は、データ保護操作中に KubeVirt VM ファイルシステムの一貫した状態を自動的に保証しません。Trident Protect 24.10 を使用して KubeVirt VM データを保護する場合は、データ保護操作の前に、ファイルシステムのフリーズ/アンフリーズ機能を手動で有効にする必要があります。これにより、ファイルシステムが一貫した状態になることが保証されます。
 
-Trident protect 24.10を設定して、データ保護操作中にVMファイルシステムの凍結と解凍を管理することができます。link:https://docs.openshift.com/container-platform/4.16/virt/install/installing-virt.html["仮想化の構成"^]そして次のコマンドを使用します。
+Trident Protect 24.10を設定して、データ保護操作中にVMファイルシステムの凍結と解凍を管理することができます。link:https://docs.openshift.com/container-platform/4.16/virt/install/installing-virt.html["仮想化の構成"^]そして次のコマンドを使用します。
 
 [source, console]
 ----
 kubectl set env deployment/trident-protect-controller-manager NEPTUNE_VM_FREEZE=true -n trident-protect
 ----
 .Trident Protect 24.10.1以降
-Trident protect 24.10.1 以降、 Trident protect はデータ保護操作中に KubeVirt ファイルシステムを自動的にフリーズおよびアンフリーズします。オプションで、次のコマンドを使用してこの自動動作を無効にすることができます。
+Trident Protect 24.10.1 以降、 Trident Protect はデータ保護操作中に KubeVirt ファイルシステムを自動的にフリーズおよびアンフリーズします。オプションで、次のコマンドを使用してこの自動動作を無効にすることができます。
 
 [source, console]
 ----
@@ -128,7 +128,7 @@ NetApp SnapMirrorレプリケーションは、次のONTAPソリューション�
 
 SnapMirrorレプリケーションを使用する予定の場合は、 ONTAPクラスタが次の要件を満たしていることを確認してください。
 
-* * NetApp Trident*: NetApp Trident は、 ONTAP をバックエンドとして使用するソース Kubernetes クラスターと宛先 Kubernetes クラスターの両方に存在する必要があります。  Trident Protect は、次のドライバーによってサポートされるストレージ クラスを使用して、 NetApp SnapMirrorテクノロジによるレプリケーションをサポートします。
+* * NetApp Trident*: NetApp Trident は、 ONTAP をバックエンドとして使用するソース Kubernetes クラスターと宛先 Kubernetes クラスターの両方に存在する必要があります。Trident Protect は、次のドライバーによってサポートされるストレージ クラスを使用して、 NetApp SnapMirrorテクノロジによるレプリケーションをサポートします。
 +
 ** `ontap-nas`: NFS
 ** `ontap-san`: iSCSI

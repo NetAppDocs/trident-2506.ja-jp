@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: trident-protect/trident-protect-cli.html 
 keywords: trident, protect, command line utility, cli, netapp, custom, resources 
-summary: protectctl コマンドを使用して、 Trident保護カスタム リソースを作成し、操作することができます。 
+summary: protectctl コマンドを使用して、 Trident Protect カスタム リソースを作成し、操作することができます。 
 ---
 = Trident Protect CLIプラグインをインストールする
 :hardbreaks:
@@ -14,7 +14,7 @@ summary: protectctl コマンドを使用して、 Trident保護カスタム リ
 
 
 [role="lead"]
-Tridentの拡張機能であるTrident Protectコマンドラインプラグインを使用することができます。 `tridentctl` Trident保護カスタム リソース (CR) を作成し、操作するためのユーティリティです。
+Trident Protectコマンドラインプラグインを使用できます。これはTridentの拡張機能です。 `tridentctl` Trident Protect カスタム リソース (CR) を作成し、操作するためのユーティリティです。
 
 
 
@@ -27,7 +27,7 @@ Tridentの拡張機能であるTrident Protectコマンドラインプラグイ�
 .Linux AMD64 CPU用プラグインをダウンロード
 --
 .手順
-. Trident protect CLI プラグインをダウンロードします。
+. Trident Protect CLI プラグインをダウンロードします。
 +
 [source, console]
 ----
@@ -39,7 +39,7 @@ curl -L -o tridentctl-protect https://github.com/NetApp/tridentctl-protect/relea
 .Linux ARM64 CPU用プラグインをダウンロード
 --
 .手順
-. Trident protect CLI プラグインをダウンロードします。
+. Trident Protect CLI プラグインをダウンロードします。
 +
 [source, console]
 ----
@@ -51,7 +51,7 @@ curl -L -o tridentctl-protect https://github.com/NetApp/tridentctl-protect/relea
 .Mac AMD64 CPU用プラグインをダウンロード
 --
 .手順
-. Trident protect CLI プラグインをダウンロードします。
+. Trident Protect CLI プラグインをダウンロードします。
 +
 [source, console]
 ----
@@ -63,7 +63,7 @@ curl -L -o tridentctl-protect https://github.com/NetApp/tridentctl-protect/relea
 .Mac ARM64 CPU用プラグインをダウンロード
 --
 .手順
-. Trident protect CLI プラグインをダウンロードします。
+. Trident Protect CLI プラグインをダウンロードします。
 +
 [source, console]
 ----
@@ -115,7 +115,7 @@ tridentctl-protect help
 
 == コマンドの自動補完を有効にする
 
-Trident protect CLI プラグインをインストールした後、特定のコマンドの自動補完を有効にすることができます。
+Trident Protect CLI プラグインをインストールした後、特定のコマンドの自動補完を有効にすることができます。
 
 [role="tabbed-block"]
 ====

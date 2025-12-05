@@ -4,7 +4,7 @@ permalink: trident-protect/trident-protect-upgrade.html
 keywords: trident, protect, netapp, upgrade, new, version 
 summary: 新しい機能やバグ修正を利用するには、 Trident Protect を最新バージョンにアップグレードできます。 
 ---
-= Tridentプロテクトをアップグレード
+= Tridentプロテクトのアップグレード
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -32,10 +32,10 @@ Trident Protect をアップグレードするには、次の手順を実行し�
 ----
 helm repo update
 ----
-. Trident保護 CRD をアップグレードします。
+. Trident Protect CRD をアップグレードします。
 +
 
-NOTE: 25.06 より前のバージョンからアップグレードする場合は、CRD がTrident protect Helm チャートに含まれるようになったため、この手順は必須です。
+NOTE: 25.06 より前のバージョンからアップグレードする場合は、CRD がTrident Protect Helm チャートに含まれるようになったため、この手順は必須です。
 
 +
 .. このコマンドを実行すると、CRDの管理を `trident-protect-crds`に `trident-protect`:

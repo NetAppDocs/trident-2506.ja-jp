@@ -14,10 +14,10 @@ summary: 自動保護ポリシーまたはアドホック ベースを使用し�
 
 
 [role="lead"]
-自動保護ポリシーを使用するかアドホック ベースでスナップショットとバックアップを取得することにより、 Trident Protect によって管理されるすべてのアプリを保護できます。
+自動保護ポリシーを使用するかアドホック ベースでスナップショットやバックアップを取得することにより、 Trident Protect によって管理されるすべてのアプリを保護できます。
 
 
-NOTE: データ保護操作中にファイルシステムをフリーズおよびアンフリーズするようにTrident protect を構成できます。link:trident-protect-requirements.html#protecting-data-with-kubevirt-vms["Trident Protectを使用したファイルシステムのフリーズ設定の詳細"]。
+NOTE: データ保護操作中にファイルシステムをフリーズおよびフリーズ解除するようにTrident Protect を構成できます。link:trident-protect-requirements.html#protecting-data-with-kubevirt-vms["Trident Protect によるファイルシステムのフリーズ設定の詳細"]。
 
 
 
@@ -383,7 +383,7 @@ tridentctl get volume <pv name> -n trident -o yaml | grep snapshotDir
 snapshotDirectory: "true"
 ----
 +
-スナップショット ディレクトリが有効になっていない場合、 Trident Protect は通常のバックアップ機能を選択し、バックアップ プロセス中に容量プールのスペースを一時的に消費します。この場合、バックアップ対象のボリュームのサイズの一時ボリュームを作成するために十分なスペースが容量プールにあることを確認してください。
+スナップショット ディレクトリが有効になっていない場合は、通常のバックアップ機能が選択され、バックアップ プロセス中に容量プールのスペースが一時的に消費されます。この場合、バックアップ対象のボリュームのサイズの一時ボリュームを作成するために十分なスペースが容量プールにあることを確認してください。
 
 
 

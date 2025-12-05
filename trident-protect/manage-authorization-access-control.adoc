@@ -4,7 +4,7 @@ sidebar: sidebar
 keywords: manage, authentication, rbac 
 summary: 'Trident Protect は、ロールベースのアクセス制御 (RBAC) の Kubernetes モデルを使用します。Trident Protect RBAC 機能を使用すると、リソースへのアクセスをより細かく制御できます。' 
 ---
-= Trident の保護認証とアクセス制御を管理する
+= Trident Protectの認証とアクセス制御を管理する
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
@@ -19,10 +19,10 @@ Trident Protect は、ロールベースのアクセス制御 (RBAC) の Kuberne
 
 [NOTE]
 ====
-次のような特権Trident Protect カスタム リソース オブジェクトにアクセスできるのは管理者のみです。
+特権のあるTrident Protect カスタム リソース オブジェクトには、管理者のみがアクセスできる必要があります。これには次のものが含まれます。
 
 * *AppVault*: バケット認証情報データが必要
-* *AutoSupportBundle*: メトリック、ログ、その他の機密性の高いTrident保護データを収集します
+* *AutoSupportBundle*: メトリック、ログ、その他の機密性の高いTrident Protect データを収集します
 * *AutoSupportBundleSchedule*: ログ収集スケジュールを管理します
 
 
@@ -128,7 +128,7 @@ type: kubernetes.io/service-account-token
 
 === ステップ4: ClusterRoleオブジェクトを各新しいサービスアカウントにバインドするためのRoleBindingオブジェクトを作成する
 
-Trident Protect をインストールすると、デフォルトの ClusterRole オブジェクトが作成されます。  RoleBinding オブジェクトを作成して適用することで、この ClusterRole をサービス アカウントにバインドできます。
+Trident Protect をインストールすると、デフォルトの ClusterRole オブジェクトが作成されます。RoleBinding オブジェクトを作成して適用することで、この ClusterRole をサービス アカウントにバインドできます。
 
 .手順
 . ClusterRole をエンジニアリング サービス アカウントにバインドします。
@@ -215,7 +215,7 @@ apiVersion: protect.trident.netapp.io/v1
 kind: AppVault
 metadata:
   name: appvault-for-eng-user-only
-  namespace: trident-protect # Trident protect system namespace
+  namespace: trident-protect # Trident Protect system namespace
 spec:
   providerConfig:
     azure:

@@ -6,23 +6,23 @@ entries:
   url: "/trident-protect/learn-about-trident-protect.html"
 - title: Trident Protectをインストールする
   entries:
-  - title: Trident保護要件
+  - title: Tridentプロテクトの要件
     url: "/trident-protect/trident-protect-requirements.html"
   - title: Trident Protectをインストールする
     url: "/trident-protect/trident-protect-installation.html"
   - title: Trident Protect CLIプラグインをインストールする
     url: "/trident-protect/trident-protect-cli.html"
-  - title: Trident Protectのインストールをカスタマイズ
+  - title: Trident Protectのインストールをカスタマイズする
     url: "/trident-protect/trident-protect-customize-installation.html"
-- title: Tridentプロテクトを管理する
+- title: Trident Protectの管理
   entries:
   - title: 承認とアクセス制御を管理する
     url: "/trident-protect/manage-authorization-access-control.html"
-  - title: Tridentを監視してリソースを保護する
+  - title: Trident Protectリソースを監視する
     url: "/trident-protect/monitor-trident-protect-resources.html"
   - title: Trident Protect サポートバンドルを生成する
     url: "/trident-protect/trident-protect-generate-support-bundle.html"
-  - title: Tridentプロテクトをアップグレード
+  - title: Tridentプロテクトのアップグレード
     url: "/trident-protect/trident-protect-upgrade.html"
 - title: アプリケーションの管理と保護
   entries:

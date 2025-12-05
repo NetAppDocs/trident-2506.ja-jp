@@ -2,20 +2,20 @@
 permalink: trident-protect/monitor-trident-protect-resources.html 
 sidebar: sidebar 
 keywords: manage, authentication, rbac 
-summary: kube-state-metrics と Prometheus を使用して、 Trident保護リソースの状態を監視できます。これにより、デプロイメント、ノード、ポッドに関する正常性情報が提供されます。 
+summary: kube-state-metrics と Prometheus を使用して、 Trident Protect リソースの状態を監視できます。これにより、デプロイメント、ノード、ポッドに関する正常性情報が提供されます。 
 ---
-= Tridentを監視してリソースを保護する
+= Trident Protectリソースを監視する
 :allow-uri-read: 
 :icons: font
 :imagesdir: ../media/
 
 
 [role="lead"]
-kube-state-metrics、Prometheus、および Alertmanager オープンソース ツールを使用して、 Trident protect によって保護されているリソースの健全性を監視できます。
+kube-state-metrics、Prometheus、および Alertmanager オープンソース ツールを使用して、 Trident Protect によって保護されているリソースの健全性を監視できます。
 
-kube-state-metrics サービスは、Kubernetes API 通信からメトリックを生成します。これをTrident protect と併用すると、環境内のリソースの状態に関する有用な情報が公開されます。
+kube-state-metrics サービスは、Kubernetes API 通信からメトリックを生成します。Trident Protect と併用すると、環境内のリソースの状態に関する有用な情報が公開されます。
 
-Prometheus は、kube-state-metrics によって生成されたデータを取り込み、これらのオブジェクトに関する読みやすい情報として提示できるツールキットです。  kube-state-metrics と Prometheus を組み合わせることで、 Trident protect で管理しているリソースの健全性とステータスを監視する方法が提供されます。
+Prometheus は、kube-state-metrics によって生成されたデータを取り込み、これらのオブジェクトに関する読みやすい情報として提示できるツールキットです。kube-state-metrics と Prometheus を組み合わせることで、 Trident Protect で管理しているリソースの健全性とステータスを監視する方法が提供されます。
 
 Alertmanager は、Prometheus などのツールによって送信されたアラートを取り込み、設定した宛先にルーティングするサービスです。
 
@@ -108,7 +108,7 @@ prometheus:
 ----
 helm install custom-resource -f metrics-config.yaml prometheus-community/kube-state-metrics --version 5.21.0
 ----
-. kube-state-metricsを設定して、 Trident protectが使用するカスタムリソースのメトリックを生成するには、以下の手順に従ってください。 https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md#custom-resource-state-metrics["kube-state-metrics カスタムリソースのドキュメント"^] 。
+. kube-state-metricsを設定して、 Trident Protectが使用するカスタムリソースのメトリックを生成するには、以下の手順に従ってください。 https://github.com/kubernetes/kube-state-metrics/blob/main/docs/metrics/extend/customresourcestate-metrics.md#custom-resource-state-metrics["kube-state-metrics カスタムリソースのドキュメント"^] 。
 
 
 

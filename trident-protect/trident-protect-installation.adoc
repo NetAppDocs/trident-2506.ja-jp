@@ -14,7 +14,7 @@ summary: 環境が要件を満たしている場合は、次の手順に従っ�
 
 
 [role="lead"]
-環境がTrident protect の要件を満たしている場合は、次の手順に従ってクラスターにTrident protect をインストールできます。 Trident protect はNetAppから入手するか、独自のプライベート レジストリからインストールすることができます。クラスターがインターネットにアクセスできない場合は、プライベート レジストリからインストールすると便利です。
+環境がTrident Protect の要件を満たしている場合は、次の手順に従ってクラスターにTrident Protect をインストールできます。Trident Protect はNetAppから入手するか、独自のプライベート レジストリからインストールすることができます。クラスターがインターネットにアクセスできない場合は、プライベート レジストリからインストールすると便利です。
 
 
 
@@ -22,7 +22,7 @@ summary: 環境が要件を満たしている場合は、次の手順に従っ�
 
 [role="tabbed-block"]
 ====
-.NetAppのTrident Protectをインストールする
+.NetAppからTrident Protectをインストールする
 --
 .手順
 . Trident Helm リポジトリを追加します。
@@ -78,7 +78,7 @@ docker tag netapp/controller:25.06.0 <private-registry-url>/controller:25.06.0
 ----
 docker push <private-registry-url>/controller:25.06.0
 ----
-. Trident保護システム名前空間を作成します。
+. Trident Protect システム名前空間を作成します。
 +
 [source, console]
 ----
@@ -102,7 +102,7 @@ kubectl create secret docker-registry regcred --docker-username=<registry-userna
 ----
 helm repo add netapp-trident-protect https://netapp.github.io/trident-protect-helm-chart
 ----
-. という名前のファイルを作成します `protectValues.yaml`。次のTrident保護設定が含まれていることを確認します。
+. という名前のファイルを作成します `protectValues.yaml`。次のTrident Protect 設定が含まれていることを確認します。
 +
 [source, yaml]
 ----

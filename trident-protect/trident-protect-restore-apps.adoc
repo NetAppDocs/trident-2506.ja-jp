@@ -41,7 +41,7 @@ AWS セッション トークンの有効期限が、長時間実行される S3
 
 
 
-NOTE: Kopia をデータ ムーバーとして使用してバックアップを復元する場合、オプションで CR に注釈を指定するか、CLI を使用して Kopia が使用する一時ストレージの動作を制御できます。参照 https://kopia.io/docs/getting-started/["Kopiaのドキュメント"^]設定できるオプションの詳細については、こちらをご覧ください。使用 `tridentctl-protect create --help`Trident protect CLI で注釈を指定する方法の詳細については、コマンドを参照してください。
+NOTE: Kopia をデータ ムーバーとして使用してバックアップを復元する場合、オプションで CR に注釈を指定するか、CLI を使用して Kopia が使用する一時ストレージの動作を制御できます。参照 https://kopia.io/docs/getting-started/["Kopiaのドキュメント"^]設定できるオプションの詳細については、こちらをご覧ください。使用 `tridentctl-protect create --help`Trident Protect CLI で注釈を指定する方法の詳細については、コマンドを参照してください。
 
 [role="tabbed-block"]
 ====
@@ -79,7 +79,7 @@ spec:
 . (_オプション_) 復元するアプリケーションの特定のリソースのみを選択する必要がある場合は、特定のラベルでマークされたリソースを含めるか除外するフィルタリングを追加します。
 +
 
-NOTE: Trident protect は、選択したリソースとの関係に基づいて、一部のリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
+NOTE: Trident Protect は、選択したリソースとの関係に基づいて、いくつかのリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (フィルタリングに必須) 使用 `Include`または `Exclude`resourceMatchers で定義されたリソースを含めるか除外するかを指定します。含めるまたは除外するリソースを定義するには、次の resourceMatchers パラメータを追加します。
@@ -160,7 +160,7 @@ AWS セッション トークンの有効期限が、長時間実行される S3
 
 
 
-NOTE: Kopia をデータ ムーバーとして使用してバックアップを復元する場合、オプションで CR に注釈を指定するか、CLI を使用して Kopia が使用する一時ストレージの動作を制御できます。参照 https://kopia.io/docs/getting-started/["Kopiaのドキュメント"^]設定できるオプションの詳細については、こちらをご覧ください。使用 `tridentctl-protect create --help`Trident protect CLI で注釈を指定する方法の詳細については、コマンドを参照してください。
+NOTE: Kopia をデータ ムーバーとして使用してバックアップを復元する場合、オプションで CR に注釈を指定するか、CLI を使用して Kopia が使用する一時ストレージの動作を制御できます。参照 https://kopia.io/docs/getting-started/["Kopiaのドキュメント"^]設定できるオプションの詳細については、こちらをご覧ください。使用 `tridentctl-protect create --help`Trident Protect CLI で注釈を指定する方法の詳細については、コマンドを参照してください。
 
 [role="tabbed-block"]
 ====
@@ -199,7 +199,7 @@ spec:
 . (_オプション_) 復元するアプリケーションの特定のリソースのみを選択する必要がある場合は、特定のラベルでマークされたリソースを含めるか除外するフィルタリングを追加します。
 +
 
-NOTE: Trident protect は、選択したリソースとの関係に基づいて、一部のリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
+NOTE: Trident Protect は、選択したリソースとの関係に基づいて、いくつかのリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (フィルタリングに必須) 使用 `Include`または `Exclude`resourceMatchers で定義されたリソースを含めるか除外するかを指定します。含めるまたは除外するリソースを定義するには、次の resourceMatchers パラメータを追加します。
@@ -272,14 +272,14 @@ tridentctl-protect create backupinplacerestore <my_restore_name> \
 元のクラスターに問題がある場合は、バックアップを別のクラスターに復元できます。
 
 
-NOTE: Kopia をデータ ムーバーとして使用してバックアップを復元する場合、オプションで CR に注釈を指定するか、CLI を使用して Kopia が使用する一時ストレージの動作を制御できます。参照 https://kopia.io/docs/getting-started/["Kopiaのドキュメント"^]設定できるオプションの詳細については、こちらをご覧ください。使用 `tridentctl-protect create --help`Trident protect CLI で注釈を指定する方法の詳細については、コマンドを参照してください。
+NOTE: Kopia をデータ ムーバーとして使用してバックアップを復元する場合、オプションで CR に注釈を指定するか、CLI を使用して Kopia が使用する一時ストレージの動作を制御できます。参照 https://kopia.io/docs/getting-started/["Kopiaのドキュメント"^]設定できるオプションの詳細については、こちらをご覧ください。使用 `tridentctl-protect create --help`Trident Protect CLI で注釈を指定する方法の詳細については、コマンドを参照してください。
 
 .開始する前に
 次の前提条件が満たされていることを確認してください。
 
 * 宛先クラスターにはTrident Protect がインストールされています。
 * 宛先クラスターは、バックアップが保存されているソース クラスターと同じ AppVault のバケット パスにアクセスできます。
-* 実行時に、ローカル環境がAppVault CRで定義されたオブジェクトストレージバケットに接続できることを確認してください。 `tridentctl-protect get appvaultcontent`指示。ネットワーク制限によりアクセスできない場合は、代わりに宛先クラスターのポッド内からTrident protect CLI を実行します。
+* 実行時に、ローカル環境がAppVault CRで定義されたオブジェクトストレージバケットに接続できることを確認してください。 `tridentctl-protect get appvaultcontent`指示。ネットワーク制限によりアクセスできない場合は、代わりに宛先クラスターのポッド内からTrident Protect CLI を実行します。
 * AWS セッショントークンの有効期限が、長時間実行される復元操作に十分であることを確認します。復元操作中にトークンの有効期限が切れると、操作が失敗する可能性があります。
 +
 ** 参照 https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html["AWS API ドキュメント"^]現在のセッション トークンの有効期限を確認する方法の詳細については、こちらをご覧ください。
@@ -289,7 +289,7 @@ NOTE: Kopia をデータ ムーバーとして使用してバックアップを�
 
 
 .手順
-. Trident protect CLI プラグインを使用して、宛先クラスター上の AppVault CR の可用性を確認します。
+. Trident Protect CLI プラグインを使用して、宛先クラスター上の AppVault CR の可用性を確認します。
 +
 [source, console]
 ----
@@ -395,7 +395,7 @@ tridentctl-protect create backuprestore <restore_name> \
 
 == スナップショットから別の名前空間に復元する
 
-カスタム リソース (CR) ファイルを使用して、スナップショットからデータを別の名前空間または元のソース名前空間に復元できます。 SnapshotRestore CR を使用してスナップショットを別の名前空間に復元すると、 Trident Protect はアプリケーションを新しい名前空間に復元し、復元されたアプリケーションのアプリケーション CR を作成します。復元されたアプリケーションを保護するには、オンデマンド バックアップまたはスナップショットを作成するか、保護スケジュールを確立します。
+カスタム リソース (CR) ファイルを使用して、スナップショットからデータを別の名前空間または元のソース名前空間に復元できます。SnapshotRestore CR を使用してスナップショットを別の名前空間に復元すると、 Trident Protect はアプリケーションを新しい名前空間に復元し、復元されたアプリケーションのアプリケーション CR を作成します。復元されたアプリケーションを保護するには、オンデマンド バックアップまたはスナップショットを作成するか、保護スケジュールを確立します。
 
 
 NOTE: SnapshotRestoreは、 `spec.storageClassMapping`属性ですが、ソース ストレージ クラスと宛先ストレージ クラスが同じストレージ バックエンドを使用する場合のみです。復元しようとすると、 `StorageClass`異なるストレージ バックエンドを使用する場合、復元操作は失敗します。
@@ -443,7 +443,7 @@ spec:
 . (_オプション_) 復元するアプリケーションの特定のリソースのみを選択する必要がある場合は、特定のラベルでマークされたリソースを含めるか除外するフィルタリングを追加します。
 +
 
-NOTE: Trident protect は、選択したリソースとの関係に基づいて、一部のリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
+NOTE: Trident Protect は、選択したリソースとの関係に基づいて、いくつかのリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (フィルタリングに必須) 使用 `Include`または `Exclude`resourceMatchers で定義されたリソースを含めるか除外するかを指定します。含めるまたは除外するリソースを定義するには、次の resourceMatchers パラメータを追加します。
@@ -565,7 +565,7 @@ spec:
 . (_オプション_) 復元するアプリケーションの特定のリソースのみを選択する必要がある場合は、特定のラベルでマークされたリソースを含めるか除外するフィルタリングを追加します。
 +
 
-NOTE: Trident protect は、選択したリソースとの関係に基づいて、一部のリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
+NOTE: Trident Protect は、選択したリソースとの関係に基づいて、いくつかのリソースを自動的に選択します。たとえば、永続ボリューム要求リソースを選択し、それに関連付けられたポッドがある場合、 Trident Protect は関連付けられたポッドも復元します。
 
 +
 ** *resourceFilter.resourceSelectionCriteria*: (フィルタリングに必須) 使用 `Include`または `Exclude`resourceMatchers で定義されたリソースを含めるか除外するかを指定します。含めるまたは除外するリソースを定義するには、次の resourceMatchers パラメータを追加します。

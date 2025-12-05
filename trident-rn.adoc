@@ -251,7 +251,7 @@ NetApp Trident Protect は、 NetApp ONTAPストレージ システムとNetApp 
 
 ==== 機能強化
 
-* volumeMode: File および volumeMode: Block (raw デバイス) ストレージの両方に対して、KubeVirt / OpenShift Virtualization VM のバックアップと復元のサポートが追加されました。このサポートはすべてのTridentドライバーと互換性があり、 Trident保護を備えたNetApp SnapMirrorを使用してストレージを複製する際の既存の保護機能を強化します。
+* volumeMode: File および volumeMode: Block (raw デバイス) ストレージの両方に対して、KubeVirt / OpenShift Virtualization VM のバックアップと復元のサポートが追加されました。このサポートはすべてのTridentドライバーと互換性があり、 Trident Protect を備えたNetApp SnapMirrorを使用してストレージを複製する際の既存の保護機能を強化します。
 * Kubevirt 環境のアプリケーション レベルでフリーズ動作を制御する機能を追加しました。
 * AutoSupportプロキシ接続を構成するためのサポートが追加されました。
 * データ ムーバー暗号化 (Kopia / Restic) のシークレットを定義する機能が追加されました。

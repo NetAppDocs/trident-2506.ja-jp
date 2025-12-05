@@ -2,7 +2,7 @@
 sidebar: sidebar 
 permalink: trident-protect/trident-protect-restore-settings.html 
 keywords: trident, protect, restore, data, backup 
-summary: 注釈、名前空間設定、およびストレージ オプションを使用して、 Trident保護の復元操作をカスタマイズできます。 
+summary: 注釈、名前空間設定、およびストレージ オプションを使用して、 Trident Protect の復元操作をカスタマイズできます。 
 ---
 = 高度なTrident Protect復元設定を使用する
 :hardbreaks:

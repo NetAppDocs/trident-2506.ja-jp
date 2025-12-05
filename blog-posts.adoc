@@ -1,10 +1,10 @@
 ---
 sidebar: sidebar 
 permalink: blog-posts.html 
-keywords: Trident blogs, Trident protect blogs 
-summary: NetApp TridentおよびTrident protect に関する優れたブログがいくつか見つかります。 
+keywords: Trident blogs, Trident Protect blogs 
+summary: NetApp TridentおよびTrident Protect に関する優れたブログがいくつかあります。 
 ---
-= TridentとTridentはブログを保護する
+= TridentとTridentプロテクトのブログ
 :hardbreaks:
 :allow-uri-read: 
 :icons: font
@@ -39,17 +39,17 @@ NetApp TridentとTrident Protect に関する優れたブログを以下でご�
 
 
 
-== Tridentプロテクトブログ
+== Trident Protectブログ
 
-* 2025年5月16日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Automating-registry-failover-for-disaster-recovery-with-Trident-protect-post/ba-p/460777["Trident Protectの復元後フックを使用した災害復旧のためのレジストリフェイルオーバーの自動化"^]
+* 2025年5月16日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Automating-registry-failover-for-disaster-recovery-with-Trident-protect-post/ba-p/460777["Trident Protect の復元後フックを使用して災害復旧のためのレジストリ フェイルオーバーを自動化する"^]
 * 2025年5月16日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/OpenShift-Virtualization-Disaster-Recovery-with-NetApp-Trident-Protect/ba-p/460716["NetApp Trident Protect を使用した OpenShift Virtualization の災害復旧"^]
-* 2025年5月13日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Storage-class-migration-with-Trident-protect-backup-amp-restore/ba-p/460637["Trident Protectのバックアップと復元によるストレージクラスの移行"^]
+* 2025年5月13日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Storage-class-migration-with-Trident-protect-backup-amp-restore/ba-p/460637["Trident Protect バックアップ  復元によるストレージ クラスの移行"^]
 * 2025年5月9日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Rescale-Kubernetes-applications-with-Trident-protect-post-restore-hooks/ba-p/460514["Trident Protect のリストア後フックを使用して Kubernetes アプリケーションを再スケールする"^]
 * 2025年4月3日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Trident-Protect-Power-Up-Kubernetes-Replication-for-Protection-amp-Disaster/ba-p/459777["Trident Protect のパワーアップ: 保護と災害復旧のための Kubernetes レプリケーション"^]
 * 2025年3月13日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Crash-Consistent-Backup-and-Restore-Operations-for-OpenShift-Virtualization-VMs/ba-p/459417["OpenShift Virtualization VM のクラッシュ整合性バックアップおよびリストア操作"^]
 * 2025年3月11日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Extending-GitOps-patterns-to-application-data-protection-with-NetApp-Trident/ba-p/459323["NetApp Tridentによる GitOps パターンのアプリケーション データ保護への拡張"^]
 * 2025年3月3日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Trident-25-02-Elevating-the-Red-Hat-OpenShift-Experience-with-Exciting-New/ba-p/459055["Trident 25.02: エキサイティングな新機能で Red Hat OpenShift エクスペリエンスを向上"^]
-* 2025年1月15日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Introducing-Trident-protect-role-based-access-control/ba-p/457837["Trident Protectのロールベースアクセス制御の導入"^]
-* 2024年11月11日: https://community.netapp.com/t5/Tech-ONTAP-Blogs/Introducing-tridentctl-protect-the-powerful-CLI-for-Trident-protect/ba-p/456494["tridentctl protect のご紹介: Trident protect の強力な CLI"^]
+* 2025年1月15日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Introducing-Trident-protect-role-based-access-control/ba-p/457837["Trident Protect ロールベースアクセス制御のご紹介"^]
+* 2024年11月11日: https://community.netapp.com/t5/Tech-ONTAP-Blogs/Introducing-tridentctl-protect-the-powerful-CLI-for-Trident-protect/ba-p/456494["tridentctl protect のご紹介: Trident Protect の強力な CLI"^]
 * 2024年11月11日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Kubernetes-driven-data-management-The-new-era-with-Trident-protect/ba-p/456395["Kubernetes によるデータ管理: Trident Protect による新時代"^]
 
