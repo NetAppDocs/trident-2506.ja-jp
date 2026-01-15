@@ -174,14 +174,15 @@ Trident は、 KubeVirt および OpenShift Virtualization 用の次のONTAPド�
 
 Trident は特定のオペレーティング システムを公式にはサポートしていませんが、次のオペレーティング システムは動作することが分かっています。
 
-* OpenShift Container Platform (AMD64 および ARM64) でサポートされている Red Hat Enterprise Linux CoreOS (RHCOS) バージョン
-* RHEL 8+ (AMD64 および ARM64)
+* AMD64 および ARM64 上の OpenShift Container Platform でサポートされる Red Hat Enterprise Linux CoreOS (RHCOS) バージョン
+* AMD64 および ARM64 上の Red Hat Enterprise Linux (RHEL) 8 以降
 +
 
 NOTE: NVMe/TCP には RHEL 9 以降が必要です。
 
-* Ubuntu 22.04以降（AMD64およびARM64）
+* AMD64およびARM64上のUbuntu 22.04 LTS以降
 * Windows Server 2022
+* SUSE Linux Enterprise Server (SLES) 15 以降
 
 
 デフォルトでは、 Trident はコンテナ内で実行されるため、どの Linux ワーカーでも実行されます。ただし、これらのワーカーは、使用しているバックエンドに応じて、標準の NFS クライアントまたは iSCSI イニシエーターを使用してTrident が提供するボリュームをマウントできる必要があります。
