@@ -72,7 +72,7 @@ Trident を使用するには、サポートされている以下のバックエ
 * Cloud Volumes ONTAP
 * Google Cloud NetApp Volumes
 * NetAppオール SAN アレイ (ASA)
-* NetApp の限定サポートによるオンプレミスのFAS、 AFF、Select、またはASA r2 (iSCSI および NVMe/TCP) クラスター バージョン。見るlink:https://mysupport.netapp.com/site/info/version-support["ソフトウェア バージョンのサポート"]。
+* オンプレミスFAS、AFF、またはASA r2（iSCSI、NVMe/TCP、FC）で、NetAppの完全サポートまたは限定サポート対象のONTAPバージョンを実行しているもの。link:https://mysupport.netapp.com/site/info/version-support["ソフトウェア バージョンのサポート"]を参照してください。
 * NetApp HCI/Element ソフトウェア 11 以上
 
 
