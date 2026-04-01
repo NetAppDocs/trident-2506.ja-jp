@@ -798,7 +798,7 @@ IMPORTANT: Kubernetes 1.27 がTridentでサポートされるようになりま�
 
 == 22.04の変更点
 
-NetAppは、製品とサービスを継続的に改善および強化しています。以下はTridentの最新機能の一部です。以前のリリースについては、 https://docs.netapp.com/us-en/trident/earlier-versions.html["以前のバージョンのドキュメント"] 。
+NetAppは、製品とサービスを継続的に改善・強化しています。Tridentの最新機能の一部をご紹介します。以前のリリースについては、以前のバージョンのドキュメントを参照してください。
 
 
 IMPORTANT: 以前のTridentリリースからアップグレードし、 Azure NetApp Files を使用する場合は、``location``構成パラメータは必須のシングルトン フィールドになりました。
