@@ -289,7 +289,7 @@ NOTE: Kopia をデータ ムーバーとして使用してバックアップを�
 
 
 .手順
-. Trident Protect CLI プラグインを使用して、宛先クラスター上の AppVault CR の可用性を確認します。
+. Trident Protect CLIプラグインを使用して、デスティネーション クラスタにAppVault CRが存在することを確認します：
 +
 [source, console]
 ----
@@ -297,9 +297,9 @@ tridentctl-protect get appvault --context <destination_cluster_name>
 ----
 +
 
-NOTE: アプリケーションの復元を目的とした名前空間が宛先クラスターに存在することを確認します。
+NOTE: AppVault CR がデスティネーション クラスタに存在しない場合は、link:trident-protect-appvault-custom-resources.html["Trident Protect AppVault オブジェクトを使用してバケットを管理する"]の手順に従って作成します。
 
-. 宛先クラスターから利用可能な AppVault のバックアップ コンテンツを表示します。
+. デスティネーション クラスタで利用可能なAppVaultのバックアップコンテンツを表示し、復元するバックアップの `appArchivePath`をメモします：
 +
 [source, console]
 ----
@@ -327,6 +327,9 @@ tridentctl-protect get appvaultcontent <appvault_name> \
 . AppVault 名とアーカイブ パスを使用して、アプリケーションを宛先クラスターに復元します。
 
 
+
+NOTE: CRを使用する場合は、アプリケーションのリストアに使用する名前空間がデスティネーション クラスタに存在することを確認してください。
+
 [role="tabbed-block"]
 ====
 .CRを使用する
@@ -336,16 +339,7 @@ tridentctl-protect get appvaultcontent <appvault_name> \
 +
 ** *metadata.name*: (_必須_) このカスタム リソースの名前。環境に合わせて一意かつ適切な名前を選択してください。
 ** *spec.appVaultRef*: (_必須_) バックアップ コンテンツが保存される AppVault の名前。
-** *spec.appArchivePath*: バックアップ コンテンツが保存される AppVault 内のパス。このパスを見つけるには、次のコマンドを使用できます。
-+
-[source, console]
-----
-kubectl get backups <BACKUP_NAME> -n my-app-namespace -o jsonpath='{.status.appArchivePath}'
-----
-+
-
-NOTE: BackupRestore CR が使用できない場合は、手順 2 に記載されているコマンドを使用してバックアップの内容を表示できます。
-
+** *spec.appArchivePath*：（必須）AppVault内のバックアップコンテンツが保存されるパス。ステップ2のコマンドを使用してバックアップの内容を表示し、復元するバックアップの `appArchivePath`を確認します。
 ** *spec.namespaceMapping*: 復元操作のソース名前空間から宛先名前空間へのマッピング。交換する `my-source-namespace`そして `my-destination-namespace`あなたの環境からの情報を活用します。
 +
 例えば：

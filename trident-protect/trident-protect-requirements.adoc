@@ -35,6 +35,7 @@ Trident Protect は、以下を含む幅広いフルマネージドおよびセ�
 ====
 * Trident Protect バックアップは、Linux コンピューティング ノードでのみサポートされます。Windows コンピューティング ノードはバックアップ操作ではサポートされていません。
 * Trident Protect をインストールするクラスターに、実行中のスナップショット コントローラーと関連する CRD が設定されていることを確認します。スナップショットコントローラをインストールするには、 https://docs.netapp.com/us-en/trident/trident-use/vol-snapshots.html#deploy-a-volume-snapshot-controller["これらの指示"] 。
+* Trident Protect をインストールするには Helm 4.x 以降が必要です。
 
 
 ====
