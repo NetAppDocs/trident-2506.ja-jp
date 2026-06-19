@@ -154,7 +154,7 @@ NOTE: PVC が 1 つまたは複数のポッドに接続されている場合、�
 | `encryption` | 新しいボリュームでNetAppボリューム暗号化（NVE）を有効にします。デフォルトは `false`。このオプションを使用するには、NVE のライセンスを取得し、クラスターで有効にする必要があります。バックエンドで NAE が有効になっている場合、 Tridentでプロビジョニングされたすべてのボリュームで NAE が有効になります。詳細については、以下を参照してください。link:../trident-reco/security-reco.html["Trident がNVE および NAE と連携する仕組み"] 。 | `false` 
 
 
-| `luksEncryption` | LUKS 暗号化を有効にします。参照link:../trident-reco/security-reco.html#Use-Linux-Unified-Key-Setup-(LUKS)["Linux Unified Key Setup (LUKS) を使用する"]。  SANのみ。 | "" 
+| `luksEncryption` | LUKS 暗号化を有効にします。link:../trident-reco/security-luks.html["Linux Unified Key Setup (LUKS) を使用する"]を参照してください。SANのみ。 | "" 
 
 
 | `tieringPolicy` | 使用する階層化ポリシー	`none` |  

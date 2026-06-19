@@ -141,7 +141,7 @@ Tridentは `shareFromPVC`宛先 PVC にアノテーションを追加し、宛�
 
 == 使用 `tridentctl get`従属ボリュームを照会する
 
-使用して[`tridentctl`ユーティリティを実行すると、 `get`従属ボリュームを取得するコマンド。詳細については、次のリンクを参照してください:../trident-reference/tridentctl.html[`tridentctl`コマンドとオプション]。
+[`tridentctl`ユーティリティを使用して、 `get`コマンドを実行すると、従属ボリュームを取得できます。詳細については、link:../trident-managing-k8s/tridentctl.html[`tridentctl`コマンドとオプション]を参照してください。
 
 [listing]
 ----
@@ -170,6 +170,5 @@ Usage:
 
 クロスネームスペースボリュームアクセスの詳細については、以下を参照してください。
 
-* 訪問link:https://cloud.netapp.com/blog/astra-blg-sharing-volumes-between-namespaces-say-hello-to-cross-namespace-volume-access["名前空間間でボリュームを共有する: クロスネームスペースボリュームアクセスの実現"^]。
 * デモを見るlink:https://media.netapp.com/page/9071d19d-1438-5ed3-a7aa-ea4d73c28b7f/solutions-products["ネットアップTV"^]。
 

@@ -39,16 +39,16 @@ RWO、ROX、RWX、RWOP
 
 == Google Cloud のCloud Volumes Serviceに対するTrident のサポートについて学ぶ
 
-Tridentは、 2つのうちのいずれかでCloud Volumes Serviceボリュームを作成できます。link:https://cloud.google.com/architecture/partners/netapp-cloud-volumes/service-types["サービスの種類"^] :
+Tridentは、次の2つのlink:https://docs.cloud.google.com/netapp/volumes/docs/discover/overview["サービスの種類"^]のいずれかにCloud Volumes Serviceボリュームを作成できます：
 
-* *CVS-Performance*: デフォルトのTridentサービス タイプ。このパフォーマンス最適化されたサービス タイプは、パフォーマンスを重視する運用ワークロードに最適です。 CVS-Performance サービス タイプは、最小 100 GiB サイズのボリュームをサポートするハードウェア オプションです。次のいずれかを選択できますlink:https://cloud.google.com/architecture/partners/netapp-cloud-volumes/service-levels#service_levels_for_the_cvs-performance_service_type["3つのサービスレベル"^]:
+* *CVS-Performance*：デフォルトの Trident サービスタイプ。このパフォーマンス最適化されたサービスタイプは、パフォーマンスを重視する本番環境のワークロードに最適です。CVS-Performance サービスタイプは、最小サイズ 100 GiB のボリュームをサポートするハードウェアオプションです。次のいずれかを選択できます：link:https://docs.cloud.google.com/netapp/volumes/docs/discover/overview["3つのサービスレベル"^]
 +
 ** `standard`
 ** `premium`
 ** `extreme`
 
 
-* *CVS*: CVS サービス タイプは、限定的から中程度のパフォーマンス レベルで、高いゾーン可用性を提供します。 CVS サービス タイプは、ストレージ プールを使用して 1 GiB という小さなボリュームをサポートするソフトウェア オプションです。ストレージ プールには最大 50 個のボリュームを含めることができ、すべてのボリュームがプールの容量とパフォーマンスを共有します。次のいずれかを選択できますlink:https://cloud.google.com/architecture/partners/netapp-cloud-volumes/service-levels#service_levels_for_the_cvs_service_type["2つのサービスレベル"^]:
+* *CVS*: CVSサービスタイプは、高いゾーン可用性を提供しますが、パフォーマンスレベルは限定的から中程度です。CVSサービスタイプは、ストレージプールを使用して1 GiBという小さなボリュームをサポートするソフトウェアオプションです。ストレージプールには最大50個のボリュームを含めることができ、すべてのボリュームはプールの容量とパフォーマンスを共有します。次のいずれかを選択できますlink:https://docs.cloud.google.com/netapp/volumes/docs/discover/overview["2つのサービスレベル"^]：
 +
 ** `standardsw`
 ** `zoneredundantstandardsw`
@@ -57,7 +57,7 @@ Tridentは、 2つのうちのいずれかでCloud Volumes Serviceボリュー�
 
 
 .要件
-設定して使用するには https://cloud.netapp.com/cloud-volumes-service-for-gcp?utm_source=NetAppTrident_ReadTheDocs&utm_campaign=Trident["Cloud Volumes Service for Google Cloud"^]バックエンドでは、次のものが必要です。
+ https://www.netapp.com/google-cloud/netapp-volumes/["Cloud Volumes Service for Google Cloud"^]バックエンドを設定して使用するには、以下のものが必要です：
 
 * NetApp Cloud Volumes Serviceが設定された Google Cloud アカウント
 * Google Cloud アカウントのプロジェクト番号

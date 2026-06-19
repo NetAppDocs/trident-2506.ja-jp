@@ -1,6 +1,6 @@
 ---
 sidebar: sidebar 
-permalink: trident-get-started/kubernetes-deploy.html 
+permalink: trident-install/kubernetes-deploy.html 
 keywords: deploy, Trident, methods, operator, tridentctl, helm, tanzu, vmware 
 summary: 'Tridentは、 Tridentオペレーター（手動またはHelmを使用）を使用してインストールするか、 `tridentctl` 。このトピックでは、適切なインストール プロセスを選択するための重要な情報を提供します。' 
 ---
@@ -40,7 +40,7 @@ Trident をさまざまな環境や組織にインストールできるように
 
 インストール パスに関係なく、次のものが必要です。
 
-* サポートされているバージョンの Kubernetes を実行し、機能要件が有効になっている、サポートされている Kubernetes クラスターに対する完全な権限。レビューlink:requirements.html["要件"]詳細については。
+* サポートされているバージョンの Kubernetes を実行し、機能要件が有効になっている、サポートされている Kubernetes クラスターに対する完全な権限。詳細については、link:../trident-get-started/requirements.html["要件"]を参照してください。
 * サポートされているNetAppストレージ システムへのアクセス。
 * すべての Kubernetes ワーカーノードからボリュームをマウントする機能。
 * Linuxホスト `kubectl`（または `oc`使用する Kubernetes クラスターを管理するためにインストールおよび構成されている、OpenShift を使用している場合)。
@@ -56,13 +56,13 @@ TIP: もしあなたがlink:../trident-get-started/intro.html["基本概念"^]�
 
 == インストール方法を選択してください
 
-適切なインストール方法を選択してください。また、以下の点についても検討する必要があります。link:kubernetes-deploy.html#move-between-installation-methods["方法間の移動"]決定を下す前に。
+適切なインストール方法を選択してください。決定を下す前にlink:../trident-install/kubernetes-deploy.html#moving-between-installation-methods["方法間の移動"]の考慮事項も確認する必要があります。
 
 
 
 === Trident演算子の使用
 
-手動でデプロイする場合でも、Helm を使用する場合でも、 Tridentオペレーターはインストールを簡素化し、 Tridentリソースを動的に管理するのに最適な方法です。あなたはさらにlink:../trident-get-started/kubernetes-customize-deploy.html["Tridentオペレーターの展開をカスタマイズする"]の属性を使用して `TridentOrchestrator`カスタム リソース (CR)。
+手動でのデプロイでもHelmを使用する場合でも、Tridentオペレーターはインストールを簡素化し、Tridentリソースを動的に管理する優れた方法です。さらに、link:../trident-install/kubernetes-customize-deploy.html["Tridentオペレーターの展開をカスタマイズする"]は、 `TridentOrchestrator`カスタムリソース（CR）の属性を使用して行うこともできます。
 
 Tridentオペレータを使用する利点は次のとおりです。
 
@@ -123,9 +123,9 @@ NOTE: クラスターがサポートされていないバージョンにアッ�
 
 === 使用 `tridentctl`
 
-既存の展開をアップグレードする必要がある場合、または展開を高度にカスタマイズしたい場合は、次の点を検討する必要があります。 。これはTrident を展開する従来の方法です。
+既存の展開をアップグレードする必要がある場合、または展開を高度にカスタマイズしたい場合は、を検討する必要があります。これは、Tridentを導入する従来の方法です。
 
-あなたはできるTridentリソースのマニフェストを生成します。これには、デプロイメント、デーモンセット、サービス アカウント、およびTrident がインストールの一環として作成するクラスター ロールが含まれます。
+を使用して、Tridentリソースのマニフェストを生成できます。これには、Tridentがインストールの一部として作成するデプロイメント、デーモンセット、サービスアカウント、およびクラスタロールが含まれます。
 
 
 NOTE: 22.04 リリース以降、 Tridentがインストールされるたびに AES キーが再生成されなくなります。このリリースでは、 Trident はインストール間で保持される新しい秘密オブジェクトをインストールします。これはつまり、 `tridentctl` 22.04 では以前のバージョンのTridentをアンインストールできますが、それ以前のバージョンでは 22.04 のインストールをアンインストールできません。適切なインストール方法を選択してください。

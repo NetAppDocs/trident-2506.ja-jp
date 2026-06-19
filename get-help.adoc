@@ -102,5 +102,5 @@ Tridentのヘルプについては、次の方法でサポートバンドルを�
 == 詳細情報
 
 * link:https://github.com/NetApp/trident["Tridentリソース"^]
-* link:https://cloud.netapp.com/kubernetes-hub["Kubernetesハブ"^]
+* link:https://www.netapp.com/console/["Kubernetesハブ"^]
 

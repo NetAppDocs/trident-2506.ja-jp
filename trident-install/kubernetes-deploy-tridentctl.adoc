@@ -1,6 +1,6 @@
 ---
 sidebar: sidebar 
-permalink: trident-get-started/kubernetes-deploy-tridentctl.html 
+permalink: trident-install/kubernetes-deploy-tridentctl.html 
 keywords: deploy, Trident, methods, tridentctl, windows 
 summary: 'Tridentをインストールするには `tridentctl`。このプロセスは、 Tridentに必要なコンテナ イメージがプライベート レジストリに保存されているかどうかに関係なく、インストールに適用されます。' 
 ---
@@ -35,10 +35,10 @@ Tridentをインストールするには `tridentctl`。このプロセスは、
 
 == Tridentをインストールするには `tridentctl`
 
-レビューlink:../trident-get-started/kubernetes-deploy.html["インストールの概要"]インストールの前提条件を満たしていること、および環境に適したインストール オプションが選択されていることを確認します。
+link:../trident-install/kubernetes-deploy.html["インストールの概要"]を確認して、インストールの前提条件を満たしていること、および環境に適したインストールオプションが選択されていることを確認します。
 
 .開始する前に
-インストールを始める前に、Linuxホストにログインし、正常に動作していることを確認し、link:requirements.html["サポートされているKubernetesクラスター"^]必要な権限を持っていることを確認します。
+インストールを始める前に、Linuxホストにログインし、正常に動作しているlink:../trident-get-started/requirements.html["サポートされているKubernetesクラスター"]を管理していること、および必要な権限を持っていることを確認します。
 
 
 NOTE: OpenShiftでは、 `oc`の代わりに `kubectl`以下のすべての例で、まず*system:admin*としてログインします。 `oc login -u system:admin`または `oc login -u kube-admin`。
@@ -151,7 +151,7 @@ trident-controller-679648bd45-cv2mx   6/6     Running   0          5m29s
 trident-node-linux-vgc8n              2/2     Running   0          5m29s
 ----
 
-NOTE: インストーラが正常に完了しない場合、または `trident-controller-<generated id>` (`trident-csi-<generated id>`23.01 より前のバージョンでは、プラットフォームが *実行中* ステータスになっていないため、プラットフォームはインストールされていません。使用 `-d`にlink:../troubleshooting.html#troubleshooting-an-unsuccessful-trident-deployment-using-tridentctl["デバッグモードをオンにする"]問題を解決します。
+NOTE: インストーラが正常に完了しない場合、または `trident-controller-<generated id>` (`trident-csi-<generated id>`（23.01より前のバージョン）が*Running*ステータスでない場合、プラットフォームはインストールされていません。 `-d`を使用してlink:../troubleshooting.html#unsuccessful-trident-deployment-using-tridentctl["デバッグモードをオンにする"]問題のトラブルシューティングを行います。
 
 
 
@@ -188,7 +188,7 @@ tridentctl install --windows -n trident
 .強制的に切り離す
 [%collapsible]
 ====
-強制デタッチの詳細については、以下を参照してください。link:..trident-get-started/kubernetes-customize-deploy.html["Tridentオペレータのインストールをカスタマイズする"] 。
+強制分離の詳細については、link:kubernetes-customize-deploy.html["Tridentオペレータのインストールをカスタマイズする"]を参照してください。
 
 [listing]
 ----

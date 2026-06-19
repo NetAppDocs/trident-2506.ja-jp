@@ -12,7 +12,7 @@ summary: Trident の REST API と対話したい場合は、REST エンドポイ
 
 
 [role="lead"]
-その間link:tridentctl.html["tridentctl コマンドとオプション"]これらはTrident REST API と対話する最も簡単な方法ですが、必要に応じて REST エンドポイントを直接使用することもできます。
+link:../trident-managing-k8s/tridentctl.html["tridentctl コマンドとオプション"]は Trident REST API と対話する最も簡単な方法ですが、必要に応じて REST エンドポイントを直接使用することもできます。
 
 
 

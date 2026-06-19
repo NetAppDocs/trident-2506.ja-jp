@@ -1,6 +1,6 @@
 ---
 sidebar: sidebar 
-permalink: trident-get-started/kubernetes-deploy-operator-mirror.html 
+permalink: trident-install/kubernetes-deploy-operator-mirror.html 
 keywords: deploy, Trident, methods, operator, tridentctl, mirrored, registry, registries 
 summary: Tridentオペレーターを手動でデプロイして、 Trident をインストールできます。このプロセスは、 Tridentに必要なコンテナ イメージがプライベート レジストリに保存されているインストールに適用されます。 
 ---
@@ -38,10 +38,10 @@ Tridentオペレーターを手動でデプロイして、 Trident をインス�
 
 == Tridentオペレーターを手動で展開し、 Tridentをインストールする
 
-レビューlink:../trident-get-started/kubernetes-deploy.html["インストールの概要"]インストールの前提条件を満たしていること、および環境に適したインストール オプションが選択されていることを確認します。
+link:../trident-install/kubernetes-deploy.html["インストールの概要"]を確認して、インストールの前提条件を満たしていること、および環境に適したインストールオプションが選択されていることを確認します。
 
 .開始する前に
-Linuxホストにログインし、正常に動作していることを確認し、link:requirements.html["サポートされているKubernetesクラスター"^]必要な権限を持っていることを確認します。
+Linux ホストにログインし、正常に動作しているlink:../trident-get-started/requirements.html["サポートされているKubernetesクラスター"]を管理していること、および必要な権限があることを確認します。
 
 
 NOTE: OpenShiftでは、 `oc`の代わりに `kubectl`以下のすべての例で、まず*system:admin*としてログインします。 `oc login -u system:admin`または `oc login -u kube-admin`。
@@ -186,7 +186,7 @@ tridentImage: "<your-registry>/trident:25.06.0"
 
 === ステップ6: 作成する `TridentOrchestrator`Tridentをインストールする
 
-これで、 `TridentOrchestrator`そしてTridentをインストールします。オプションで、さらにlink:kubernetes-customize-deploy.html["Tridentのインストールをカスタマイズする"]の属性を使用して `TridentOrchestrator`スペック次の例は、 Tridentイメージと CSI イメージが異なるレジストリに配置されているインストールを示しています。
+これで `TridentOrchestrator`を作成し、Tridentをインストールできます。オプションで、link:../trident-install/kubernetes-customize-deploy.html["Tridentのインストールをカスタマイズする"]をさらに `TridentOrchestrator`仕様の属性を使ってカスタマイズできます。次の例は、TridentとCSIイメージが異なるレジストリに配置されているインストール方法を示しています。
 
 [listing]
 ----

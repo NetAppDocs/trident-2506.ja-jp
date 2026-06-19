@@ -12,7 +12,7 @@ summary: オペレータを使用すると、既存のTridentインストール�
 
 
 [role="lead"]
-Tridentオペレーターを使用して、手動でも Helm を使用してもTrident をアップグレードできます。 Tridentオペレータのインストールから別のTridentオペレータのインストールにアップグレードしたり、 `tridentctl` Tridentオペレータ バージョンへのインストール。レビューlink:upgrade-trident.html#select-an-upgrade-method["アップグレード方法を選択してください"]Tridentオペレータ インストールをアップグレードする前に。
+Trident オペレーターを使用して、手動または Helm を使用して Trident をアップグレードできます。Trident オペレーターのインストールから別の Trident オペレーターのインストールにアップグレードすることも、 `tridentctl`のインストールから Trident オペレーターバージョンにアップグレードすることもできます。Trident オペレーターのインストールをアップグレードする前にlink:upgrade-trident.html#step-3-select-an-upgrade-method["アップグレード方法を選択してください"]を確認してください。
 
 
 
@@ -26,7 +26,6 @@ NOTE: 名前空間を対象とした演算子を使用してインストール�
 .タスク概要
 Trident は、オペレーターをインストールし、Kubernetes バージョンに関連付けられたオブジェクトを作成するために使用できるバンドル ファイルを提供します。
 
-* Kubernetes 1.24を実行しているクラスターの場合は、link:https://github.com/NetApp/trident/tree/stable/v25.02/deploy/bundle_pre_1_25.yaml["バンドル_pre_1_25.yaml"^] 。
 * Kubernetes 1.25以降を実行しているクラスターの場合は、link:https://github.com/NetApp/trident/tree/stable/v25.02/deploy/bundle_post_1_25.yaml["バンドルポスト1_25.yaml"^] 。
 
 
@@ -85,7 +84,7 @@ helm mapkubeapis trident  --namespace trident
 
 
 .手順
-. もしあなたがlink:../trident-get-started/kubernetes-deploy-helm.html#deploy-the-trident-operator-and-install-trident-using-helm["Helmを使用してTridentをインストールしました"]、使用することができます `helm upgrade trident netapp-trident/trident-operator --version 100.2506.0`ワンステップでアップグレードできます。  Helm リポジトリを追加していない場合、またはアップグレードに使用できない場合は、次の手順を実行します。
+. link:../trident-install/kubernetes-deploy-helm.html#deploy-the-trident-operator-and-install-trident-using-helm["Helmを使用してTridentをインストールしました"]の場合は、 `helm upgrade trident netapp-trident/trident-operator --version 100.2506.0`を使用してワンステップでアップグレードできます。Helmリポジトリを追加していない場合、またはアップグレードに使用できない場合：
 +
 .. 最新のTridentリリースをダウンロードするには、link:https://github.com/NetApp/trident/releases/latest["GitHubの_Assets_セクション"^] 。
 .. 使用 `helm upgrade`コマンドの場所 `trident-operator-25.06.0.tgz`アップグレードするバージョンを反映します。
@@ -110,7 +109,7 @@ NOTE: 初期インストール時にカスタムオプションを設定する�
 Tridentオペレーターの最新リリースにアップグレードするには、 `tridentctl`インストール。既存のバックエンドと PVC は自動的に利用できるようになります。
 
 
-NOTE: インストール方法を切り替える前に、link:../trident-get-started/kubernetes-deploy.html#moving-between-installation-methods["インストール方法の変更"] 。
+NOTE: インストール方法を切り替える前に、link:../trident-install/kubernetes-deploy.html#moving-between-installation-methods["インストール方法の変更"]を確認してください。
 
 .手順
 . 最新のTridentリリースをダウンロードしてください。

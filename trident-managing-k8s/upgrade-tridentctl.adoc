@@ -18,7 +18,7 @@ summary: '既存のTridentインストールを簡単にアップグレードす
 Trident をアンインストールして再インストールすると、アップグレードとして機能します。 Trident をアンインストールしても、 Tridentデプロイメントで使用される永続ボリューム要求 (PVC) と永続ボリューム (PV) は削除されません。すでにプロビジョニングされている PV は、 Tridentがオフラインの間も引き続き使用可能であり、 Trident はオンラインに戻った後、その間に作成された PVC のボリュームをプロビジョニングします。
 
 .開始する前に
-レビューlink:upgrade-trident.html#select-an-upgrade-method["アップグレード方法を選択してください"]アップグレードする前に `tridentctl`。
+link:upgrade-trident.html#step-3-select-an-upgrade-method["アップグレード方法を選択してください"]を使用してアップグレードする前に `tridentctl`を確認してください。
 
 .手順
 . アンインストールコマンドを実行する `tridentctl`CRD と関連オブジェクトを除く、 Tridentに関連付けられたすべてのリソースを削除します。
@@ -27,7 +27,7 @@ Trident をアンインストールして再インストールすると、アッ
 ----
 ./tridentctl uninstall -n <namespace>
 ----
-. Trident を再インストールします。参照link:../trident-get-started/kubernetes-deploy-tridentctl.html["tridentctlを使用してTridentをインストールする"]。
+. Trident を再インストールします。link:../trident-install/kubernetes-deploy-tridentctl.html["tridentctlを使用してTridentをインストールする"]を参照してください。
 
 
 
