@@ -274,7 +274,7 @@ Trident用にSolidFireストレージを構成するためのベスト プラク
 
 NOTE: 最大 IOPS とバースト IOPS は最大 200,000 まで設定できますが、ボリュームの実際の最大パフォーマンスは、クラスターの使用状況とノードごとのパフォーマンスによって制限されます。
 
-ブロック サイズと帯域幅は IOPS の数に直接影響します。ブロック サイズが大きくなるにつれて、システムはより大きなブロック サイズを処理するために必要なレベルまで帯域幅を増加させます。帯域幅が増加すると、システムが達成できる IOPS の数は減少します。参照 https://www.netapp.com/pdf.html?item=/media/10502-tr-4644pdf.pdf["SolidFireサービス品質"^]QoS とパフォーマンスの詳細については、こちらをご覧ください。
+ブロックサイズと帯域幅は、IOPS数に直接的な影響を与えます。ブロックサイズが大きくなるにつれて、システムはより大きなブロックサイズを処理するために必要なレベルまで帯域幅を増加させます。帯域幅が増加すると、システムが達成できるIOPS数は減少します。QoS とパフォーマンスの詳細については、 https://www.netapp.com/pdf.html?item=/media/10502-tr-4644.pdf["SolidFireサービス品質"^]を参照してください。
 
 
 
@@ -304,7 +304,7 @@ CHAP 認証 (イニシエーターが意図したボリューム ユーザーで
 
 *エレメントソフトウェア*
 
-* https://www.netapp.com/pdf.html?item=/media/10507-tr4639pdf.pdf["Linux用SolidFireの設定"^]
+* https://www.netapp.com/pdf.html?item=/media/10507-tr4639.pdf["Linux用SolidFireの設定"^]
 
 
 *NetApp HCI*
@@ -317,9 +317,9 @@ CHAP 認証 (イニシエーターが意図したボリューム ユーザーで
 
 * https://docs.netapp.com/us-en/ontap-apps-dbs/mysql/mysql-overview.html["ONTAP上の MySQL のベストプラクティス"^]
 * https://www.netapp.com/pdf.html?item=/media/10510-tr-4605.pdf["SolidFire上の MySQL のベストプラクティス"^]
-* https://www.netapp.com/pdf.html?item=/media/10513-tr-4635pdf.pdf["NetApp SolidFireと Cassandra"^]
-* https://www.netapp.com/pdf.html?item=/media/10511-tr4606pdf.pdf["SolidFireにおけるOracleのベストプラクティス"^]
-* https://www.netapp.com/pdf.html?item=/media/10512-tr-4610pdf.pdf["SolidFireにおけるPostgreSQLのベストプラクティス"^]
+* https://www.netapp.com/pdf.html?item=/media/10513-tr-4635.pdf["NetApp SolidFireと Cassandra"^]
+* https://www.netapp.com/pdf.html?item=/media/10511-tr4606.pdf["SolidFireにおけるOracleのベストプラクティス"^]
+* https://www.netapp.com/pdf.html?item=/media/10512-tr-4610.pdf["SolidFireにおけるPostgreSQLのベストプラクティス"^]
 
 
 すべてのアプリケーションに特定のガイドラインがあるわけではないので、 NetAppチームと協力し、 https://www.netapp.com/search/["NetAppライブラリ"^]最新のドキュメントを見つけます。

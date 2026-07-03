@@ -289,7 +289,7 @@ NOTE: その `ontap-nas-economy`Docker Swarm は複数のノードにわたる�
 * FlexGroupボリュームではクローン作成はサポートされていません。
 
 
-FlexGroupとFlexGroupに適したワークロードの詳細については、 https://www.netapp.com/pdf.html?item=/media/12385-tr4571pdf.pdf["NetApp FlexGroupボリュームのベストプラクティスと実装ガイド"^] 。
+FlexGroupsおよびFlexGroupsに適したワークロードの詳細については、 https://www.netapp.com/pdf.html?item=/media/12385-tr4571.pdf["NetApp FlexGroupボリュームのベストプラクティスと実装ガイド"^]を参照してください。
 
 同じ環境で高度な機能と大規模なスケールを実現するには、Dockerボリュームプラグインの複数のインスタンスを実行することができます。 `ontap-nas`そしてもう一つは `ontap-nas-economy`。
 
