@@ -19,6 +19,7 @@ NOTE: PSS は Pod Security Policies (PSP) に代わるものです。 PSP は Ku
 
 
 
+[[required-kubernetes-security-context-and-related-fields]]
 == 必要な Kubernetes セキュリティコンテキストと関連フィールド
 
 [cols=","]
@@ -53,6 +54,7 @@ NOTE: PSS は Pod Security Policies (PSP) に代わるものです。 PSP は Ku
 |===
 
 
+[[pod-security-standards-pss]]
 == ポッドセキュリティ標準（PSS）
 
 [cols=",,"]
@@ -68,6 +70,7 @@ WARNING: 名前空間ラベルを変更すると、ポッドがスケジュー�
 
 
 
+[[pod-security-policies-psp]]
 == ポッドセキュリティポリシー（PSP）
 
 [cols=",,"]
@@ -148,6 +151,7 @@ WARNING: 名前空間ラベルを変更すると、ポッドがスケジュー�
 |===
 
 
+[[security-context-constraints-scc]]
 == セキュリティコンテキスト制約（SCC）
 
 [cols=",,"]

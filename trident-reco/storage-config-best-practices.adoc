@@ -16,6 +16,7 @@ NetAppポートフォリオの各ストレージ プラットフォームには�
 
 
 
+[[platform-overview]]
 == プラットフォームの概要
 
 Trident はONTAPおよび Element と連携します。すべてのアプリケーションやシナリオに他のプラットフォームよりも適したプラットフォームは存在しませんが、プラットフォームを選択する際には、アプリケーションのニーズとデバイスを管理するチームを考慮する必要があります。
@@ -24,6 +25,7 @@ Trident はONTAPおよび Element と連携します。すべてのアプリケ�
 
 
 
+[[ontap-and-cloud-volumes-ontap-best-practices]]
 == ONTAPとCloud Volumes ONTAP のベストプラクティス
 
 ONTAPおよびCloud Volumes ONTAP for Tridentを構成するためのベスト プラクティスについて説明します。
@@ -32,6 +34,7 @@ ONTAPおよびCloud Volumes ONTAP for Tridentを構成するためのベスト �
 
 
 
+[[use-svms-dedicated-to-trident]]
 === Trident専用のSVMを使用する
 
 ストレージ仮想マシン (SVM) は、 ONTAPシステム上のテナント間の分離と管理の分離を実現します。SVM をアプリケーション専用にすることで、権限の委任が可能になり、リソース消費を制限するためのベスト プラクティスを適用できるようになります。
@@ -49,6 +52,7 @@ SVM に専用の管理 LIF を使用するか、共有の管理 LIF を使用す
 
 
 
+[[limit-the-maximum-volume-count]]
 === 最大音量数を制限する
 
 ONTAPストレージ システムには最大ボリューム数があり、これはソフトウェア バージョンとハードウェア プラットフォームによって異なります。参照 https://hwu.netapp.com/["NetApp Hardware Universe"^]正確な制限を確認するには、特定のプラットフォームとONTAPバージョンを参照してください。ボリューム数が使い果たされると、 Tridentだけでなく、すべてのストレージ要求のプロビジョニング操作が失敗します。
@@ -72,6 +76,7 @@ vserver modify -vserver <svm_name> -max-volumes <num_of_volumes>
 
 
 
+[[clone-a-volume]]
 === ボリュームをクローニングする
 
 NetApp Tridentは、 `ontap-nas` 、 `ontap-san` 、 `solidfire-san` 、 そして `gcp-cvs`ストレージ ドライバー。使用する際は `ontap-nas-flexgroup`または `ontap-nas-economy`ドライバーの場合、クローン作成はサポートされません。既存のボリュームから新しいボリュームを作成すると、新しいスナップショットが作成されます。
@@ -81,6 +86,7 @@ WARNING: 異なる StorageClass に関連付けられている PVC の複製は�
 
 
 
+[[limit-the-maximum-size-of-volumes-created-by-trident]]
 === Tridentによって作成されるボリュームの最大サイズを制限する
 
 Tridentで作成できるボリュームの最大サイズを設定するには、 `limitVolumeSize`パラメータ `backend.json`意味。
@@ -89,18 +95,21 @@ Tridentで作成できるボリュームの最大サイズを設定するには�
 
 
 
+[[limit-the-maximum-size-of-flexvols-created-by-trident]]
 === Tridentによって作成される FlexVol の最大サイズを制限する
 
 ontap-san-economyおよびontap-nas-economyドライバのプールとして使用されるFlexVolの最大サイズを設定するには、 `limitVolumePoolSize`パラメータ `backend.json`意味。
 
 
 
+[[configure-trident-to-use-bidirectional-chap]]
 === 双方向CHAPを使用するようにTridentを設定する
 
 バックエンド定義で CHAP イニシエーターとターゲットのユーザー名とパスワードを指定し、 Trident でSVM 上で CHAP を有効にすることができます。使用して `useCHAP`バックエンド構成のパラメータを指定すると、 Trident はCHAP を使用してONTAPバックエンドの iSCSI 接続を認証します。
 
 
 
+[[create-and-use-an-svm-qos-policy]]
 === SVM QoSポリシーを作成して使用する
 
 SVM に適用されたONTAP QoS ポリシーを活用すると、 Trident でプロビジョニングされたボリュームで消費可能な IOPS の数が制限されます。これは、 http://docs.netapp.com/ontap-9/topic/com.netapp.doc.pow-perf-mon/GUID-77DF9BAF-4ED7-43F6-AECE-95DFB0680D2F.html?cp=7_1_2_1_2["いじめを防ぐ"^]または制御不能なコンテナがTrident SVM 外部のワークロードに影響を与えないようにします。
@@ -131,6 +140,7 @@ IMPORTANT: ONTAPバージョンが 9.8 より前の場合にのみ、QoS ポリ�
 
 
 
+[[create-qos-policy-groups-for-trident]]
 === Tridentの QoS ポリシー グループを作成する
 
 サービス品質 (QoS) は、競合するワークロードによって重要なワークロードのパフォーマンスが低下しないことを保証します。  ONTAP QoS ポリシー グループはボリュームの QoS オプションを提供し、ユーザーが 1 つ以上のワークロードのスループット上限を定義できるようにします。 QoSの詳細については、以下を参照してください。 https://docs.netapp.com/ontap-9/topic/com.netapp.doc.pow-perf-mon/GUID-77DF9BAF-4ED7-43F6-AECE-95DFB0680D2F.html["QoSによるスループットの保証"^] 。バックエンドまたはストレージ プールで QoS ポリシー グループを指定すると、そのプールまたはバックエンドで作成された各ボリュームに適用されます。
@@ -172,6 +182,7 @@ QoSポリシーグループの詳細については、以下を参照してく�
 
 
 
+[[limit-storage-resource-access-to-kubernetes-cluster-members]]
 === Kubernetes クラスター メンバーへのストレージ リソース アクセスを制限する
 
 Tridentによって作成された NFS ボリューム、iSCSI LUN、および FC LUN へのアクセスを制限することは、Kubernetes デプロイメントのセキュリティ体制の重要な要素です。そうすることで、Kubernetes クラスターの一部ではないホストがボリュームにアクセスして予期せずデータを変更する可能性を防ぐことができます。
@@ -188,6 +199,7 @@ Kubernetes と外部ホストの両方からのアクセスが必要なボリュ
 
 
 
+[[use-a-dedicated-export-policy]]
 === 専用のエクスポートポリシーを使用する
 
 各バックエンドに対して、Kubernetes クラスター内に存在するノードへのアクセスのみを許可するエクスポート ポリシーが存在することを確認する必要があります。Trident はエクスポート ポリシーを自動的に作成および管理できます。このようにして、 Trident はKubernetes クラスター内のノードにプロビジョニングするボリュームへのアクセスを制限し、ノードの追加/削除を簡素化します。
@@ -202,6 +214,7 @@ Kubernetes と外部ホストの両方からのアクセスが必要なボリュ
 
 
 
+[[disable-showmount-for-the-application-svm]]
 === 無効にする `showmount`アプリケーションSVM
 
 その `showmount`この機能により、NFS クライアントは SVM に対して利用可能な NFS エクスポートのリストを照会できるようになります。 Kubernetesクラスタにデプロイされたポッドは、 `showmount -e`に対してコマンドを実行し、アクセスできないマウントも含め、使用可能なマウントのリストを受け取ります。これ自体はセキュリティ侵害にはなりませんが、権限のないユーザーが NFS エクスポートに接続する際に役立つ可能性のある不要な情報を提供します。
@@ -214,18 +227,21 @@ vserver nfs modify -vserver <svm_name> -showmount disabled
 ----
 
 
+[[solidfire-best-practices]]
 == SolidFireのベストプラクティス
 
 Trident用にSolidFireストレージを構成するためのベスト プラクティスを学びます。
 
 
 
+[[create-solidfire-account]]
 === Solidfireアカウントを作成する
 
 各SolidFireアカウントは一意のボリューム所有者を表し、独自のチャレンジ ハンドシェイク認証プロトコル (CHAP) 資格情報のセットを受け取ります。アカウントに割り当てられたボリュームには、アカウント名と相対 CHAP 資格情報を使用するか、ボリューム アクセス グループを通じてアクセスできます。  1 つのアカウントには最大 2,000 個のボリュームを割り当てることができますが、1 つのボリュームは 1 つのアカウントにのみ属することができます。
 
 
 
+[[create-a-qos-policy]]
 === QoSポリシーを作成する
 
 多数のボリュームに適用できる標準化されたサービス品質設定を作成して保存する場合は、 SolidFireのサービス品質 (QoS) ポリシーを使用します。
@@ -278,6 +294,7 @@ NOTE: 最大 IOPS とバースト IOPS は最大 200,000 まで設定できま�
 
 
 
+[[solidfire-authentication]]
 === SolidFire認証
 
 Element は、CHAP とボリューム アクセス グループ (VAG) の 2 つの認証方法をサポートしています。 CHAP は、CHAP プロトコルを使用して、バックエンドに対してホストを認証します。ボリューム アクセス グループは、プロビジョニングするボリュームへのアクセスを制御します。  NetApp、よりシンプルでスケーリングの制限がないため、認証には CHAP を使用することを推奨しています。
@@ -291,6 +308,7 @@ CHAP 認証 (イニシエーターが意図したボリューム ユーザーで
 
 
 
+[[where-to-find-more-information]]
 == さらに詳しい情報はどこで見つかりますか?
 
 ベスト プラクティスのドキュメントの一部を以下に示します。検索 https://www.netapp.com/search/["NetAppライブラリ"^]最新バージョンについては。

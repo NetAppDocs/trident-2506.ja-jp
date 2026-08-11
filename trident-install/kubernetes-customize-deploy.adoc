@@ -16,6 +16,7 @@ Tridentオペレータを使用すると、以下の属性を使用してTrident
 
 
 
+[[understanding-controller-pods-and-node-pods]]
 == コントローラーポッドとノードポッドについて
 
 Trident は単一のコントローラー ポッドとして実行され、クラスター内の各ワーカー ノード上のノード ポッドも実行されます。ノード ポッドは、 Tridentボリュームをマウントする可能性があるすべてのホストで実行されている必要があります。
@@ -28,6 +29,7 @@ Kuberneteslink:https://kubernetes.io/docs/concepts/scheduling-eviction/assign-po
 
 
 
+[[configuration-options]]
 == 構成オプション
 
 
@@ -147,6 +149,7 @@ NOTE: ポッドパラメータのフォーマットの詳細については、�
 
 
 
+[[details-about-force-detach]]
 === 強制デタッチの詳細
 
 強制デタッチは、 `ontap-san` 、 `ontap-san-economy` 、 `ontap-nas` 、 そして `ontap-nas-economy`のみ。強制デタッチを有効にする前に、Kubernetes クラスターで非正常なノード シャットダウン (NGNS) を有効にする必要があります。Kubernetes 1.28 以降では、NGNS はデフォルトで有効になっています。詳細については、link:https://kubernetes.io/docs/concepts/cluster-administration/node-shutdown/#non-graceful-node-shutdown["Kubernetes: 非正常なノードシャットダウン"^] 。
@@ -175,6 +178,7 @@ NOTE: Tridentコントローラは、ノードが再認定されるまで（ノ�
 
 
 
+[[sample-configurations]]
 == サンプル構成
 
 属性は<<構成オプション>>定義するとき `TridentOrchestrator`インストールをカスタマイズします。

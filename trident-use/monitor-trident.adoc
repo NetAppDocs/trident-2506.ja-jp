@@ -16,6 +16,7 @@ Trident は、 Trident のパフォーマンスを監視するために使用で
 
 
 
+[[overview]]
 == 概要
 
 Tridentが提供するメトリックを使用すると、次のことが可能になります。
@@ -36,12 +37,14 @@ NOTE: デフォルトでは、Tridentのメトリクスはターゲットポー�
 
 
 
+[[step-1-define-a-prometheus-target]]
 == ステップ1: Prometheusターゲットを定義する
 
 メトリックを収集し、 Trident が管理するバックエンドや作成するボリュームなどの情報を取得するには、Prometheus ターゲットを定義する必要があります。これ https://netapp.io/2020/02/20/prometheus-and-trident/["ブログ"^]Prometheus と Grafana をTridentと組み合わせて使用​​してメトリックを取得する方法について説明します。このブログでは、Kubernetes クラスターで Prometheus をオペレーターとして実行する方法と、 Tridentメトリックを取得するための ServiceMonitor を作成する方法について説明します。
 
 
 
+[[step-2-create-a-prometheus-servicemonitor]]
 == ステップ2: Prometheus ServiceMonitorを作成する
 
 Tridentのメトリクスを利用するには、監視するPrometheus ServiceMonitorを作成する必要があります。 `trident-csi`サービスと `metrics`ポート。サンプルの ServiceMonitor は次のようになります。
@@ -73,6 +76,7 @@ Tridentから直接入手できるメトリクスに加えて、kubeletは多く
 
 
 
+[[step-3-query-trident-metrics-with-promql]]
 == ステップ3: PromQLでTridentメトリクスをクエリする
 
 PromQL は、時系列データまたは表形式のデータを返す式を作成するのに適しています。
@@ -81,6 +85,7 @@ PromQL は、時系列データまたは表形式のデータを返す式を作�
 
 
 
+[[get-trident-health-information]]
 === Tridentの健康情報を入手する
 
 * ** Tridentからの HTTP 2XX 応答の割合**
@@ -106,6 +111,7 @@ sum by (operation) (trident_operation_duration_milliseconds_sum{success="true"})
 ----
 
 
+[[get-trident-usage-information]]
 === Tridentの使用情報を取得する
 
 * **平均ボリュームサイズ**
@@ -124,6 +130,7 @@ sum (trident_volume_allocated_bytes) by (backend_uuid)
 ----
 
 
+[[get-individual-volume-usage]]
 === 個々のボリューム使用量を取得する
 
 
@@ -138,6 +145,7 @@ kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100
 ----
 
 
+[[learn-about-trident-autosupport-telemetry]]
 == Trident AutoSupportテレメトリについて学ぶ
 
 デフォルトでは、 Trident はPrometheus メトリックと基本的なバックエンド情報を毎日NetAppに送信します。
@@ -175,6 +183,7 @@ items:
 
 
 
+[[disable-trident-metrics]]
 == Tridentメトリックを無効にする
 
 メトリクスの報告を**無効にする**には、カスタムYAMLを生成する必要があります（ `--generate-custom-yaml`フラグ）を編集して削除します `--metrics`フラグが呼び出されないようにする `trident-main`容器。

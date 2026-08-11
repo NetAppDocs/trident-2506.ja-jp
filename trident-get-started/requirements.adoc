@@ -16,6 +16,7 @@ Trident をインストールする前に、これらの一般的なシステム
 
 
 
+[[critical-information-about-trident]]
 == Tridentに関する重要な情報
 
 * Tridentに関する以下の重要な情報を必ずお読みください。*
@@ -36,6 +37,7 @@ Trident をインストールする前に、これらの一般的なシステム
 ====
 
 
+[[supported-frontends-orchestrators]]
 == サポートされているフロントエンド（オーケストレーター）
 
 Trident は、次のような複数のコンテナ エンジンとオーケストレーターをサポートしています。
@@ -63,6 +65,7 @@ WARNING: TridentがインストールされているKubernetesクラスタを1.2
 
 
 
+[[supported-backends-storage]]
 == サポートされているバックエンド（ストレージ）
 
 Trident を使用するには、サポートされている以下のバックエンドの 1 つ以上が必要です。
@@ -78,6 +81,7 @@ Trident を使用するには、サポートされている以下のバックエ
 
 
 
+[[trident-support-for-kubevirt-and-openshift-virtualization]]
 == KubeVirt と OpenShift Virtualization のTridentサポート
 
 .サポートされているストレージ ドライバー:
@@ -104,6 +108,7 @@ Trident は、 KubeVirt および OpenShift Virtualization 用の次のONTAPド�
 
 
 
+[[feature-requirements]]
 == 機能の要件
 
 以下の表は、このリリースのTridentで利用できる機能と、それがサポートする Kubernetes のバージョンをまとめたものです。
@@ -170,6 +175,7 @@ Trident は、 KubeVirt および OpenShift Virtualization 用の次のONTAPド�
 |===
 
 
+[[tested-host-operating-systems]]
 == テスト済みのホストオペレーティングシステム
 
 Trident は特定のオペレーティング システムを公式にはサポートしていませんが、次のオペレーティング システムは動作することが分かっています。
@@ -191,6 +197,7 @@ NOTE: NVMe/TCP には RHEL 9 以降が必要です。
 
 
 
+[[host-configuration]]
 == ホスト構成
 
 Kubernetes クラスター内のすべてのワーカーノードは、ポッド用にプロビジョニングしたボリュームをマウントできる必要があります。ワーカーノードを準備するには、ドライバーの選択に基づいて NFS、iSCSI、または NVMe ツールをインストールする必要があります。
@@ -199,6 +206,7 @@ link:../trident-use/worker-node-prep.html["ワーカーノードを準備する"
 
 
 
+[[storage-system-configuration]]
 == ストレージシステムの構成
 
 Trident、バックエンド構成で使用できるようになる前に、ストレージ システムの変更が必要になる場合があります。
@@ -207,6 +215,7 @@ link:../trident-use/backends.html["バックエンドを構成する"]
 
 
 
+[[trident-ports]]
 == Tridentポート
 
 Trident は通信のために特定のポートにアクセスする必要があります。
@@ -215,12 +224,14 @@ link:../trident-reference/ports.html["Tridentポート"]
 
 
 
+[[container-images-and-corresponding-kubernetes-versions]]
 == コンテナイメージと対応するKubernetesバージョン
 
 エアギャップ インストールの場合、次のリストはTrident をインストールするために必要なコンテナー イメージのリファレンスです。使用 `tridentctl images`必要なコンテナ イメージのリストを確認するコマンド。
 
 
 
+[[container-images-required-for-trident-25-06-2]]
 === Trident 25.06.2 に必要なコンテナ イメージ
 
 [cols="2"]
@@ -242,6 +253,7 @@ link:../trident-reference/ports.html["Tridentポート"]
 |===
 
 
+[[container-images-required-for-trident-25-06]]
 === Trident 25.06 に必要なコンテナ イメージ
 
 [cols="2"]

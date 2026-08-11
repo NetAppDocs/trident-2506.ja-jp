@@ -16,6 +16,7 @@ Tridentは、 Kubernetesクラスタ内のノードにボリュームを選択�
 
 
 
+[[overview]]
 == 概要
 
 CSI トポロジ機能を使用すると、リージョンとアベイラビリティーゾーンに基づいて、ボリュームへのアクセスをノードのサブセットに制限できます。現在、クラウド プロバイダーは Kubernetes 管理者がゾーン ベースのノードを生成できるようにしています。ノードは、リージョン内の異なるアベイラビリティーゾーン、または複数のリージョンに配置できます。マルチゾーン アーキテクチャでのワークロードのボリュームのプロビジョニングを容易にするために、 Trident はCSI トポロジを使用します。
@@ -56,6 +57,7 @@ kubectl get nodes -o=jsonpath='{range .items[*]}[{.metadata.name}, {.metadata.la
 
 
 
+[[step-1-create-a-topology-aware-backend]]
 == ステップ1: トポロジー対応のバックエンドを作成する
 
 Tridentストレージ バックエンドは、可用性ゾーンに基づいてボリュームを選択的にプロビジョニングするように設計できます。各バックエンドはオプションで `supportedTopologies`サポートされているゾーンとリージョンのリストを表すブロック。このようなバックエンドを利用する StorageClasses の場合、ボリュームは、サポートされているリージョン/ゾーンでスケジュールされているアプリケーションによって要求された場合にのみ作成されます。
@@ -146,6 +148,7 @@ storage:
 
 
 
+[[step-2-define-storageclasses-that-are-topology-aware]]
 == ステップ2: トポロジーを考慮したストレージクラスを定義する
 
 クラスター内のノードに提供されるトポロジ ラベルに基づいて、トポロジ情報を格納するように StorageClasses を定義できます。これにより、PVC 要求の候補となるストレージ プールと、 Tridentによってプロビジョニングされたボリュームを利用できるノードのサブセットが決定されます。
@@ -176,6 +179,7 @@ parameters:
 
 
 
+[[step-3-create-and-use-a-pvc]]
 == ステップ3: PVCを作成して使用する
 
 StorageClass が作成され、バックエンドにマップされたので、PVC を作成できるようになりました。
@@ -284,12 +288,14 @@ pvc-san   Bound    pvc-ecb1e1a0-840c-463b-8b65-b3d033e2e62b   300Mi      RWO    
 ----
 
 
+[[update-backends-to-include-supportedtopologies]]
 == バックエンドを更新して含める `supportedTopologies`
 
 既存のバックエンドを更新して、 `supportedTopologies`使用して `tridentctl backend update`。これは、すでにプロビジョニングされているボリュームには影響せず、後続の PVC にのみ使用されます。
 
 
 
+[[find-more-information]]
 == 詳細情報の参照
 
 * https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/["コンテナのリソースを管理する"^]

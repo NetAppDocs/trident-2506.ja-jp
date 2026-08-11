@@ -16,6 +16,7 @@ Tridentでバックエンドを管理するさまざまな方法について学�
 
 
 
+[[options-for-managing-backends]]
 == バックエンドを管理するためのオプション
 
 の導入により `TridentBackendConfig`管理者は、バックエンドを管理する 2 つの独自の方法を利用できるようになりました。これにより、次の疑問が生じます。
@@ -26,6 +27,7 @@ Tridentでバックエンドを管理するさまざまな方法について学�
 
 
 
+[[manage-tridentctl-backends-using-tridentbackendconfig]]
 == 管理 `tridentctl`バックエンドを使用する `TridentBackendConfig`
 
 このセクションでは、以下の手順で作成されたバックエンドを管理するために必要な手順について説明します。 `tridentctl` Kubernetesインターフェースから直接作成することで `TridentBackendConfig`オブジェクト。
@@ -50,6 +52,7 @@ Tridentでバックエンドを管理するさまざまな方法について学�
 
 
 
+[[step-0-identify-the-backend]]
 === ステップ0: バックエンドを特定する
 
 を作成するには `TridentBackendConfig`既存のバックエンドにバインドする場合は、バックエンドの構成を取得する必要があります。この例では、次の JSON 定義を使用してバックエンドが作成されたと仮定します。
@@ -116,6 +119,7 @@ cat ontap-nas-backend.json
 ----
 
 
+[[step-1-create-a-kubernetes-secret]]
 === ステップ1: Kubernetesシークレットを作成する
 
 次の例に示すように、バックエンドの資格情報を含む Secret を作成します。
@@ -142,6 +146,7 @@ secret/backend-tbc-ontap-san-secret created
 ----
 
 
+[[step-2-create-a-tridentbackendconfig-cr]]
 === ステップ2: 作成する `TridentBackendConfig`CR
 
 次のステップは、 `TridentBackendConfig`既存のCRに自動的にバインドされる `ontap-nas-backend`(この例のように)。次の要件が満たされていることを確認してください。
@@ -204,6 +209,7 @@ tridentbackendconfig.trident.netapp.io/tbc-ontap-nas-backend created
 ----
 
 
+[[step-3-verify-the-status-of-the-tridentbackendconfig-cr]]
 === ステップ3: ステータスを確認する `TridentBackendConfig`CR
 
 その後 `TridentBackendConfig`作成された場合、そのフェーズは `Bound`。また、既存のバックエンドと同じバックエンド名と UUID を反映する必要があります。
@@ -226,12 +232,14 @@ tridentctl get backend -n trident
 
 
 
+[[manage-tridentbackendconfig-backends-using-tridentctl]]
 == 管理 `TridentBackendConfig`バックエンドを使用する `tridentctl`
 
  `tridentctl`作成されたバックエンドを一覧表示するために使用できます `TridentBackendConfig`。さらに、管理者は、次のようなバックエンドを完全に管理することもできます。 `tridentctl`削除することで `TridentBackendConfig`そして確認する `spec.deletionPolicy`設定されている `retain`。
 
 
 
+[[step-0-identify-the-backend]]
 === ステップ0: バックエンドを特定する
 
 例えば、次のバックエンドが次のように作成されたとします。 `TridentBackendConfig` :
@@ -253,6 +261,7 @@ tridentctl get backend ontap-san-backend -n trident
 
 
 
+[[step-1-confirm-deletionpolicy-is-set-to-retain]]
 === ステップ1: 確認 `deletionPolicy`設定されている `retain`
 
 の価値を見てみましょう `deletionPolicy`。これを設定する必要があります `retain`。これにより、 `TridentBackendConfig` CRが削除されても、バックエンドの定義はそのまま残り、 `tridentctl` 。
@@ -277,6 +286,7 @@ NOTE: 以下の場合を除き、次のステップに進まないでくださ�
 
 
 
+[[step-2-delete-the-tridentbackendconfig-cr]]
 === ステップ2: 削除する `TridentBackendConfig`CR
 
 最後のステップは、 `TridentBackendConfig` CR。確認後、 `deletionPolicy`設定されている `retain`削除を進めることができます。

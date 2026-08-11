@@ -20,6 +20,7 @@ Trident は、災害復旧のためにデータを複製するために、1 つ�
 
 
 
+[[replication-prerequisites]]
 == レプリケーションの前提条件
 
 始める前に、次の前提条件が満たされていることを確認してください。
@@ -53,6 +54,7 @@ NOTE: SnapMirrorを使用したボリューム レプリケーションは、 AS
 
 
 
+[[create-a-mirrored-pvc]]
 == ミラーPVCを作成する
 
 次の手順に従って、CRD の例を使用して、プライマリ ボリュームとセカンダリ ボリューム間のミラー関係を作成します。
@@ -197,6 +199,7 @@ Trident はTridentMirrorRelationship CRD をチェックし、関係が存在し
 
 
 
+[[volume-replication-states]]
 == ボリュームレプリケーションの状態
 
 Trident Mirror Relationship (TMR) は、PVC 間のレプリケーション関係の一方の端を表す CRD です。宛先 TMR には状態があり、これによってTrident に目的の状態が伝えられます。宛先 TMR の状態は次のとおりです。
@@ -213,6 +216,7 @@ Trident Mirror Relationship (TMR) は、PVC 間のレプリケーション関係
 
 
 
+[[promote-secondary-pvc-during-an-unplanned-failover]]
 == 計画外のフェイルオーバー中にセカンダリ PVC を昇格する
 
 セカンダリ Kubernetes クラスターで次の手順を実行します。
@@ -222,6 +226,7 @@ Trident Mirror Relationship (TMR) は、PVC 間のレプリケーション関係
 
 
 
+[[promote-secondary-pvc-during-a-planned-failover]]
 == 計画されたフェイルオーバー中にセカンダリ PVC を昇格する
 
 計画されたフェイルオーバー (移行) 中に、次の手順を実行してセカンダリ PVC を昇格します。
@@ -246,6 +251,7 @@ spec:
 
 
 
+[[restore-a-mirror-relationship-after-a-failover]]
 == フェイルオーバー後にミラー関係を復元する
 
 ミラー関係を復元する前に、新しいプライマリとして作成する側を選択します。
@@ -257,12 +263,14 @@ spec:
 
 
 
+[[additional-operations]]
 == 追加操作
 
 Trident は、プライマリ ボリュームとセカンダリ ボリュームで次の操作をサポートします。
 
 
 
+[[replicate-primary-pvc-to-a-new-secondary-pvc]]
 === プライマリPVCを新しいセカンダリPVCに複製する
 
 プライマリ PVC とセカンダリ PVC がすでに存在することを確認します。
@@ -275,12 +283,14 @@ Trident は、プライマリ ボリュームとセカンダリ ボリューム�
 
 
 
+[[resize-a-mirrored-primary-or-secondary-pvc]]
 === ミラーリングされたプライマリまたはセカンダリ PVC のサイズを変更する
 
 PVC は通常どおりサイズを変更できますが、データの量が現在のサイズを超えると、 ONTAP は宛先 flevxol を自動的に拡張します。
 
 
 
+[[remove-replication-from-a-pvc]]
 === PVCからレプリケーションを削除する
 
 レプリケーションを削除するには、現在のセカンダリ ボリュームに対して次のいずれかの操作を実行します。
@@ -291,24 +301,28 @@ PVC は通常どおりサイズを変更できますが、データの量が現�
 
 
 
+[[delete-a-pvc-that-was-previously-mirrored]]
 === PVC を削除する（以前にミラーリングされたもの）
 
 Trident はレプリケートされた PVC をチェックし、ボリュームの削除を試みる前にレプリケーション関係を解放します。
 
 
 
+[[delete-a-tmr]]
 === TMRを削除する
 
 ミラー関係の一方の TMR を削除すると、 Trident が削除を完了する前に、残りの TMR が _promoted_ 状態に移行します。削除対象として選択された TMR がすでに _promoted_ 状態にある場合、既存のミラー関係は存在せず、TMR は削除され、 Trident はローカル PVC を _ReadWrite_ に昇格します。この削除により、 ONTAPのローカル ボリュームのSnapMirrorメタデータが解放されます。このボリュームが将来ミラー関係で使用される場合は、新しいミラー関係を作成するときに、ボリュームのレプリケーション状態が確立された新しい TMR を使用する必要があります。
 
 
 
+[[update-mirror-relationships-when-ontap-is-online]]
 == ONTAPがオンラインのときにミラー関係を更新する
 
 ミラー関係は、確立された後はいつでも更新できます。使用することができます `state: promoted`または `state: reestablished`関係を更新するためのフィールド。宛先ボリュームを通常の ReadWrite ボリュームに昇格する場合、_promotedSnapshotHandle_ を使用して、現在のボリュームを復元する特定のスナップショットを指定できます。
 
 
 
+[[update-mirror-relationships-when-ontap-is-offline]]
 == ONTAPがオフラインのときにミラー関係を更新する
 
 CRD を使用すると、 Trident がONTAPクラスタに直接接続されていなくても、 SnapMirror の更新を実行できます。  TridentActionMirrorUpdate の次の例の形式を参照してください。

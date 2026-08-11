@@ -16,6 +16,7 @@ Kubernetes StorageClass オブジェクトを構成し、ボリュームのプ�
 
 
 
+[[configure-a-kubernetes-storageclass-object]]
 == Kubernetes StorageClassオブジェクトを構成する
 
 その https://kubernetes.io/docs/concepts/storage/storage-classes/["Kubernetes StorageClassオブジェクト"^]そのクラスに使用されるプロビジョナーとしてTrident を識別し、ボリュームをプロビジョニングする方法をTrident に指示します。例えば：
@@ -40,6 +41,7 @@ volumeBindingMode: Immediate
 
 
 
+[[create-a-storage-class]]
 == ストレージクラスを作成する
 
 StorageClass オブジェクトを作成したら、ストレージ クラスを作成できます。<<ストレージクラスのサンプル>>使用したり変更したりできるいくつかの基本的なサンプルを提供します。
@@ -96,6 +98,7 @@ basic-csi    csi.trident.netapp.io   15h
 ----
 
 
+[[storage-class-samples]]
 === ストレージクラスのサンプル
 
 Tridentは https://github.com/NetApp/trident/tree/master/trident-installer/sample-input/storage-class-samples["特定のバックエンド向けのシンプルなストレージクラス定義"^]。

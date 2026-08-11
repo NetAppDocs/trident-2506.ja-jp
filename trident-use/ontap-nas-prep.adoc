@@ -16,6 +16,7 @@ ONTAP NAS ドライバーを使用してONTAPバックエンドを構成する�
 
 
 
+[[requirements]]
 == 要件
 
 * すべてのONTAPバックエンドでは、 Trident少なくとも 1 つのアグリゲートを SVM に割り当てる必要があります。
@@ -26,6 +27,7 @@ ONTAP NAS ドライバーを使用してONTAPバックエンドを構成する�
 
 
 
+[[authenticate-the-ontap-backend]]
 == ONTAPバックエンドを認証する
 
 Trident は、 ONTAPバックエンドを認証する 2 つのモードを提供します。
@@ -41,6 +43,7 @@ WARNING: *資格情報と証明書の両方* を提供しようとすると、�
 
 
 
+[[enable-credential-based-authentication]]
 === 資格情報ベースの認証を有効にする
 
 Trident、 ONTAPバックエンドと通信するために、SVM スコープ/クラスタ スコープの管理者の認証情報が必要です。次のような標準の事前定義されたロールを利用することをお勧めします。 `admin`または `vsadmin`。これにより、将来のTridentリリースで使用される機能 API を公開する可能性のある将来のONTAPリリースとの前方互換性が確保されます。カスタム セキュリティ ログイン ロールを作成してTridentで使用することは可能ですが、お勧めしません。
@@ -86,6 +89,7 @@ credentials:
 
 
 
+[[enable-certificate-based-authentication]]
 === 証明書ベースの認証を有効にする
 
 新規および既存のバックエンドは証明書を使用してONTAPバックエンドと通信できます。バックエンド定義には 3 つのパラメータが必要です。
@@ -168,6 +172,7 @@ tridentctl update backend NasBackend -f cert-backend-updated.json -n trident
 
 
 
+[[update-authentication-methods-or-rotate-credentials]]
 === 認証方法を更新するか、資格情報をローテーションする
 
 既存のバックエンドを更新して、別の認証方法を使用したり、資格情報をローテーションしたりすることができます。これは両方向に機能します。ユーザー名/パスワードを使用するバックエンドは、証明書を使用するように更新できます。また、証明書を使用するバックエンドは、ユーザー名/パスワード ベースに更新できます。これを行うには、既存の認証方法を削除し、新しい認証方法を追加する必要があります。次に、必要なパラメータを含む更新されたbackend.jsonファイルを使用して実行します。 `tridentctl update backend` 。
@@ -207,6 +212,7 @@ NOTE: パスワードをローテーションする場合、ストレージ管�
 
 
 
+[[create-custom-ontap-role-for-trident]]
 === Trident用のカスタムONTAPロールを作成する
 
 最小限の権限を持つONTAPクラスタ ロールを作成すると、 Tridentで操作を実行するためにONTAP管理者ロールを使用する必要がなくなります。  Tridentバックエンド構成にユーザー名を含めると、 Trident は作成したONTAPクラスタ ロールを使用して操作を実行します。
@@ -266,6 +272,7 @@ ONTAP System Manager で次の手順を実行します。
 
 
 
+[[manage-nfs-export-policies]]
 == NFSエクスポートポリシーを管理する
 
 Trident は、 NFS エクスポート ポリシーを使用して、プロビジョニングするボリュームへのアクセスを制御します。
@@ -278,6 +285,7 @@ Trident、エクスポート ポリシーを操作するときに 2 つのオプ
 
 
 
+[[dynamically-manage-export-policies]]
 === エクスポートポリシーを動的に管理する
 
 Trident は、 ONTAPバックエンドのエクスポート ポリシーを動的に管理する機能を提供します。これにより、ストレージ管理者は、明示的なルールを手動で定義するのではなく、ワーカーノード IP に許可されるアドレス空間を指定できるようになります。これにより、エクスポート ポリシーの管理が大幅に簡素化され、エクスポート ポリシーを変更する際にストレージ クラスターで手動で介入する必要がなくなります。さらに、これにより、ボリュームをマウントしており、指定された範囲内の IP を持つワーカー ノードのみにストレージ クラスターへのアクセスが制限され、きめ細かな自動管理がサポートされます。
@@ -368,6 +376,7 @@ NOTE: 自動管理エクスポート ポリシーを持つバックエンドを�
 
 
 
+[[prepare-to-provision-smb-volumes]]
 == SMBボリュームのプロビジョニングの準備
 
 少しの追加の準備をすれば、SMBボリュームをプロビジョニングできます。 `ontap-nas`ドライバー。
@@ -445,6 +454,7 @@ NOTE: 参照link:https://docs.netapp.com/us-en/ontap/smb-config/create-share-tas
 
 
 
+[[enable-secure-smb]]
 === 安全なSMBを有効にする
 
 25.06リリース以降、 NetApp Tridentは、以下の方法で作成されたSMBボリュームの安全なプロビジョニングをサポートします。 `ontap-nas`そして `ontap-nas-economy`バックエンド。セキュア SMB を有効にすると、アクセス制御リスト (ACL) を使用して、Active Directory (AD) ユーザーおよびユーザー グループに SMB 共有への制御されたアクセスを提供できます。

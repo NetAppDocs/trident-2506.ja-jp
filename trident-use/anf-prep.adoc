@@ -16,6 +16,7 @@ Azure NetApp Filesバックエンドを構成する前に、次の要件が満�
 
 
 
+[[prerequisites-for-nfs-and-smb-volumes]]
 == NFSおよびSMBボリュームの前提条件
 
 Azure NetApp Files を初めて使用するか、新しい場所で使用する場合は、Azure NetApp Files をセットアップして NFS ボリュームを作成するために、いくつかの初期構成が必要です。参照 https://docs.microsoft.com/en-us/azure/azure-netapp-files/azure-netapp-files-quickstart-set-up-account-create-volumes["Azure: Azure NetApp Files をセットアップして NFS ボリュームを作成する"^]。
@@ -91,6 +92,7 @@ Azure NetApp Files を初めて使用するか、新しい場所で使用する�
 
 
 
+[[additional-requirements-for-smb-volumes]]
 == SMBボリュームの追加要件
 
 SMB ボリュームを作成するには、次のものが必要です。

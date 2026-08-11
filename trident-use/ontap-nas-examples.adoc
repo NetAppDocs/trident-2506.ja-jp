@@ -16,6 +16,7 @@ TridentインストールでONTAP NAS ドライバーを作成して使用する
 
 
 
+[[backend-configuration-options]]
 == バックエンド構成オプション
 
 バックエンドの構成オプションについては、次の表を参照してください。
@@ -127,6 +128,7 @@ NOTE: SVM で集計リストが更新されると、 Tridentコントローラ�
 |===
 
 
+[[backend-configuration-options-for-provisioning-volumes]]
 == ボリュームのプロビジョニングのためのバックエンド構成オプション
 
 デフォルトのプロビジョニングは、以下のオプションを使用して制御できます。 `defaults`構成のセクション。例については、以下の構成例を参照してください。
@@ -182,6 +184,7 @@ NOTE: Tridentで QoS ポリシー グループを使用するには、 ONTAP 9.8
 
 
 
+[[volume-provisioning-examples]]
 === ボリュームプロビジョニングの例
 
 デフォルトを定義した例を次に示します。
@@ -229,6 +232,7 @@ image::../media/volume-show-nas.png[volume show コマンドの出力を表示�
 
 
 
+[[minimal-configuration-examples]]
 == 最小限の構成例
 
 次の例は、ほとんどのパラメータをデフォルトのままにする基本構成を示しています。これはバックエンドを定義する最も簡単な方法です。
@@ -411,6 +415,7 @@ labels:
 ====
 
 
+[[examples-of-backends-with-virtual-pools]]
 == 仮想プールを備えたバックエンドの例
 
 以下に示すサンプルのバックエンド定義ファイルでは、すべてのストレージプールに対して特定のデフォルトが設定されています。 `spaceReserve`どれも、 `spaceAllocation`偽で、そして `encryption`偽です。仮想プールはストレージ セクションで定義されます。
@@ -596,6 +601,7 @@ storage:
 ====
 
 
+[[map-backends-to-storageclasses]]
 == バックエンドをStorageClassesにマッピングする
 
 以下のStorageClass定義は、<<仮想プールを備えたバックエンドの例>> 。使用して `parameters.selector`フィールドでは、各 StorageClass はボリュームをホストするために使用できる仮想プールを呼び出します。ボリュームには、選択した仮想プールで定義された側面が設定されます。
@@ -671,6 +677,7 @@ Trident はどの仮想プールが選択されるか決定し、ストレージ
 
 
 
+[[update-datalif-after-initial-configuration]]
 == アップデート `dataLIF`初期設定後
 
 次のコマンドを実行して、更新された dataLIF を含む新しいバックエンド JSON ファイルを提供することにより、初期構成後に dataLIF を変更できます。
@@ -684,10 +691,12 @@ NOTE: PVC が 1 つまたは複数のポッドに接続されている場合、�
 
 
 
+[[secure-smb-examples]]
 == セキュアな中小企業の例
 
 
 
+[[backend-configuration-with-ontap-nas-driver]]
 === ontap-nas ドライバーを使用したバックエンド構成
 
 [source, yaml]
@@ -710,6 +719,7 @@ spec:
 ----
 
 
+[[backend-configuration-with-ontap-nas-economy-driver]]
 === ontap-nas-economy ドライバーを使用したバックエンド構成
 
 [source, yaml]
@@ -732,6 +742,7 @@ spec:
 ----
 
 
+[[backend-configuration-with-storage-pool]]
 === ストレージプールを使用したバックエンド構成
 
 [source, yaml]
@@ -759,6 +770,7 @@ spec:
 ----
 
 
+[[storage-class-example-with-ontap-nas-driver]]
 === ontap-nas ドライバーを使用したストレージクラスの例
 
 [source, yaml]
@@ -784,6 +796,7 @@ NOTE: 必ず追加してください `annotations`安全な SMB を有効にし�
 
 
 
+[[storage-class-example-with-ontap-nas-economy-driver]]
 === ontap-nas-economy ドライバーを使用したストレージクラスの例
 
 [source, yaml]
@@ -806,6 +819,7 @@ volumeBindingMode: Immediate
 ----
 
 
+[[pvc-example-with-a-single-ad-user]]
 === 単一の AD ユーザーによる PVC の例
 
 [source, yaml]
@@ -831,6 +845,7 @@ spec:
 ----
 
 
+[[pvc-example-with-multiple-ad-users]]
 === 複数の AD ユーザーによる PVC の例
 
 [source, yaml]

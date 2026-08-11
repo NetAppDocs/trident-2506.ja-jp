@@ -16,6 +16,7 @@ Tridentインストーラーを使用してインストールをカスタマイ�
 
 
 
+[[learn-about-the-installer]]
 == インストーラーについて学ぶ
 
 Tridentインストーラーを使用すると、属性をカスタマイズできます。たとえば、 Tridentイメージをプライベートリポジトリにコピーした場合は、次のようにイメージ名を指定できます。 `--trident-image` 。  Tridentイメージと必要なCSIサイドカーイメージをプライベートリポジトリにコピーした場合は、 `--image-registry`スイッチは次の形式をとる `<registry FQDN>[:port]`。

@@ -16,6 +16,7 @@ summary: '使用中のボリュームに影響を与えることなく、 Triden
 
 
 
+[[upgrade]]
 == Upgrade
 
 Trident for Docker をアップグレードするには、以下の手順を実行します。
@@ -77,6 +78,7 @@ IMPORTANT: 古いバージョンのTrident (20.10 より前) からTrident 20.10
 
 
 
+[[uninstall]]
 == アンインストール
 
 Trident for Docker をアンインストールするには、以下の手順を実行します。

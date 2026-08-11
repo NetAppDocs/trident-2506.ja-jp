@@ -16,12 +16,14 @@ TridentおよびTrident を使用して作成されたボリュームの保護�
 
 
 
+[[trident-replication-and-recovery]]
 == Tridentの複製と回復
 
 災害発生時にTrident を復元するためのバックアップを作成できます。
 
 
 
+[[trident-replication]]
 === Trident複製
 
 Trident は、 Kubernetes CRD を使用して自身の状態を保存および管理し、Kubernetes クラスター etcd を使用してメタデータを保存します。
@@ -37,6 +39,7 @@ NOTE: NetApp、 FlexVol が存在する SVM を別の SVM とのSnapMirror関係
 
 
 
+[[trident-recovery]]
 === Tridentの回復
 
 Kubernetes CRD と Kubernetes クラスター etcd スナップショットを使用して、 Trident を回復できます。
@@ -50,6 +53,7 @@ Kubernetes CRD と Kubernetes クラスター etcd スナップショットを�
 
 
 
+[[svm-replication-and-recovery]]
 == SVMのレプリケーションとリカバリ
 
 Tridentはレプリケーション関係を設定することはできませんが、ストレージ管理者は https://docs.netapp.com/us-en/ontap/data-protection/snapmirror-svm-replication-concept.html["ONTAPSnapMirror"^]SVM を複製します。
@@ -66,6 +70,7 @@ SnapMirror SVM レプリケーション機能を使用する場合は、次の�
 
 
 
+[[svm-replication]]
 === SVMレプリケーション
 
 使用できますlink:https://docs.netapp.com/us-en/ontap/data-protection/snapmirror-svm-replication-workflow-concept.html["ONTAP: SnapMirror SVM レプリケーション"^]SVM レプリケーション関係を作成します。
@@ -79,6 +84,7 @@ SnapMirror を使用すると、複製する内容を制御するオプション
 
 
 
+[[svm-recovery-using-trident]]
 === Tridentを使用したSVM回復
 
 Trident はSVM の障害を自動的に検出しません。災害が発生した場合、管理者は新しい SVM へのTridentフェイルオーバーを手動で開始できます。
@@ -102,6 +108,7 @@ NOTE: 指定した場合 `-identity-preserve true`宛先 SVM がアクティブ�
 
 
 
+[[volume-replication-and-recovery]]
 == ボリュームの複製と回復
 
 TridentはSnapMirrorのレプリケーション関係を設定することはできませんが、ストレージ管理者はlink:https://docs.netapp.com/us-en/ontap/data-protection/snapmirror-disaster-recovery-concept.html["ONTAP SnapMirrorのレプリケーションとリカバリ"^]Tridentによって作成されたボリュームを複製します。
@@ -113,6 +120,7 @@ NOTE: インポートはサポートされていません `ontap-nas-economy`、
 
 
 
+[[snapshot-data-protection]]
 == スナップショットデータ保護
 
 以下を使用してデータを保護および復元できます。

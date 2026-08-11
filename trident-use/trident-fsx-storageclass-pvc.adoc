@@ -16,10 +16,12 @@ Kubernetes StorageClass オブジェクトを構成し、ボリュームのプ�
 
 
 
+[[create-a-storage-class]]
 == ストレージクラスを作成する
 
 
 
+[[configure-a-kubernetes-storageclass-object]]
 === Kubernetes StorageClassオブジェクトを構成する
 
 その https://kubernetes.io/docs/concepts/storage/storage-classes/["Kubernetes StorageClassオブジェクト"^]オブジェクトは、そのクラスに使用されるプロビジョナーとしてTrident を識別し、ボリュームをプロビジョニングする方法をTridentに指示します。NFS を使用するボリュームの Storageclass を設定するには、この例を使用します (属性の完全なリストについては、以下のTrident属性セクションを参照してください)。
@@ -72,6 +74,7 @@ mountOptions:
 
 
 
+[[create-a-storage-class]]
 === ストレージクラスを作成する
 
 .手順
@@ -97,6 +100,7 @@ basic-csi    csi.trident.netapp.io   15h
 ----
 
 
+[[create-the-pvc]]
 == PVCを作成する
 
 あ https://kubernetes.io/docs/concepts/storage/persistent-volumes["_永続ボリュームクレーム_"^](PVC) は、クラスター上の PersistentVolume へのアクセス要求です。
@@ -107,6 +111,7 @@ PVC を作成したら、ボリュームをポッドにマウントできます�
 
 
 
+[[sample-manifests]]
 === サンプルマニフェスト
 
 .PersistentVolumeClaim サンプルマニフェスト
@@ -151,6 +156,7 @@ storageClassName: protection-gold
 ====
 
 
+[[create-pvc]]
 === PVCを作成する
 
 .手順
@@ -177,6 +183,7 @@ pvc-storage Bound  pv-name 2Gi      RWO                       5m
 
 
 
+[[trident-attributes]]
 == Tridentの属性
 
 これらのパラメータは、特定のタイプのボリュームをプロビジョニングするためにどの Trident 管理ストレージ プールを使用するかを決定します。

@@ -16,12 +16,14 @@ NetAppのストレージ製品ポートフォリオは、Kubernetes クラスタ
 
 
 
+[[trident]]
 == Trident
 
 https://docs.netapp.com/us-en/trident/["Trident"^]企業は、パブリック クラウドとオンプレミス内およびそれら間で Kubernetes 上で実行される、データ豊富なコンテナ化されたワークロードの管理、保護、移動を容易に行うことができます。 Trident は、パブリック クラウドとオンプレミスの実績のある拡張可能なNetAppストレージ ポートフォリオからTridentを使用して、永続的なコンテナ ストレージをプロビジョニングおよび提供します。また、データ保護、災害/データ復旧、データ監査、Kubernetes ワークロードの移行ユースケースのためのスナップショット、バックアップと復元、アクティビティ ログ、アクティブ クローニングなど、アプリケーションに対応した高度なデータ管理機能も豊富に用意されています。
 
 
 
+[[ontap]]
 == ONTAP
 
 ONTAP は、あらゆるアプリケーションに高度なデータ管理機能を提供する、 NetApp のマルチプロトコル統合ストレージ オペレーティング システムです。  ONTAPシステムには、オールフラッシュ、ハイブリッド、またはオール HDD 構成があり、エンジニアリング ハードウェア (FASおよびAFF)、ホワイト ボックス (ONTAP Select)、クラウドのみ (Cloud Volumes ONTAP) など、さまざまな導入モデルが用意されています。
@@ -31,24 +33,28 @@ NOTE: Trident は、上記のすべてのONTAP導入モデルをサポートし�
 
 
 
+[[cloud-volumes-ontap]]
 == Cloud Volumes ONTAP
 
 Cloud Volumes ONTAPは、クラウド上でONTAPデータ管理ソフトウェアを実行するソフトウェア型のストレージ アプライアンスです。Cloud Volumes ONTAPは、本番ワークロード、ディザスタリカバリ、DevOps、ファイル共有、およびデータベース管理に使用できます。ストレージ効率、高可用性、データレプリケーション、データ階層化、アプリケーションの一貫性を提供することで、エンタープライズストレージをクラウドへと拡張します。
 
 
 
+[[amazon-fsx-for-netapp-ontap]]
 == Amazon FSx for NetApp ONTAP
 
 https://docs.aws.amazon.com/fsx/latest/ONTAPGuide/what-is-fsx-ontap.html["Amazon FSx for NetApp ONTAP"^]は、 NetApp ONTAPストレージ オペレーティング システムを搭載したファイル システムを起動および実行できる、完全に管理された AWS サービスです。  FSx for ONTAP を使用すると、使い慣れたNetApp の機能、パフォーマンス、管理機能を活用しながら、AWS にデータを保存するシンプルさ、俊敏性、セキュリティ、スケーラビリティを活用できます。  FSx for ONTAP は、多くのONTAPファイル システム機能と管理 API をサポートしています。
 
 
 
+[[element-software]]
 == エレメントソフトウェア
 
 https://www.netapp.com/data-management/element-software/["要素"^]ストレージ管理者は、パフォーマンスを保証し、簡素化され合理化されたストレージ フットプリントを実現することで、ワークロードを統合できます。ストレージ管理のあらゆる側面を自動化する API と組み合わせることで、Element はストレージ管理者が少ない労力でより多くのことを実行できるようにします。
 
 
 
+[[netapp-hci]]
 == NetApp HCI
 
 https://www.netapp.com/virtual-desktop-infrastructure/netapp-hci/["NetApp HCI"^]日常的なタスクを自動化し、インフラストラクチャ管理者がより重要な機能に集中できるようにすることで、データセンターの管理と拡張を簡素化します。
@@ -57,12 +63,14 @@ NetApp HCI はTridentによって完全にサポートされています。  Tri
 
 
 
+[[azure-netapp-files]]
 == Azure NetApp Files
 
 https://azure.microsoft.com/en-us/products/netapp/["Azure NetApp Files"^]は、NetAppを基盤とするエンタープライズクラスのAzureファイル共有サービスです。NetAppに期待されるパフォーマンスと豊富なデータ管理機能により、最も要求の厳しいファイルベースのワークロードをAzureでネイティブに実行できます。
 
 
 
+[[google-cloud-netapp-volumes]]
 == Google Cloud NetApp Volumes
 
 https://www.netapp.com/google-cloud/netapp-volumes/["Google Cloud NetApp Volumes"^]は、オールフラッシュのパフォーマンスでNFS経由でNASボリュームを提供するクラウドネイティブファイルサービスです。このサービスにより、レガシー アプリケーションを含むあらゆるワークロードをGCPクラウドで実行できるようになります。一貫したハイパフォーマンス、即時クローン作成、データ保護、Google Compute Engine（GCE）インスタンスへの安全なアクセスを提供する、フルマネージドサービスです。

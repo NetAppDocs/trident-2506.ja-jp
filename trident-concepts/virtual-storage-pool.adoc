@@ -16,6 +16,7 @@ summary: 仮想プールは、Trident のストレージ バックエンドと K
 
 
 
+[[learn-about-virtual-pools]]
 == 仮想プールについて学ぶ
 
 ストレージ管理者は、JSON または YAML 定義ファイルで、任意のTridentバックエンド上の仮想プールを定義できます。

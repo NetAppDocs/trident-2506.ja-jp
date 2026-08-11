@@ -16,6 +16,7 @@ Trident が通信に使用するポートについて詳しく説明します。
 
 
 
+[[trident-ports]]
 == Tridentポート
 
 Trident は、Kubernetes 内の通信に次のポートを使用します。

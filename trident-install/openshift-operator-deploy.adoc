@@ -19,6 +19,7 @@ Red Hat OpenShift を使用する場合は、Red Hat 認定オペレータを使
 
 
 
+[[find-and-install-the-trident-operator]]
 == Tridentオペレーターを見つけてインストールする
 
 .手順
@@ -86,6 +87,7 @@ image::../media/openshift-operator-08.png[インストール済み]
 
 
 
+[[uninstall-trident-operator]]
 == Tridentオペレーターをアンインストールする
 
 .手順

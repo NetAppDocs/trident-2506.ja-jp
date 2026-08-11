@@ -16,6 +16,7 @@ NetApp TridentとTrident Protect に関する優れたブログを以下でご�
 
 
 
+[[trident-blogs]]
 == Tridentブログ
 
 * 2025年5月9日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Automatic-Trident-backend-configuration-for-FSx-for-ONTAP-with-the-Amazon-EKS/ba-p/460586["Amazon EKS アドオンを使用した FSx for ONTAPのTridentバックエンドの自動構成"^]
@@ -28,7 +29,6 @@ NetApp TridentとTrident Protect に関する優れたブログを以下でご�
 * 2025年3月5日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Unlock-Seamless-iSCSI-Storage-Integration-A-Guide-to-FSxN-on-ROSA-Clusters-for/ba-p/459124["シームレスな iSCSI ストレージ統合を実現する: AWS 向け ROSA クラスター上の FSxN ガイド"^]
 * 2025年2月27日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Deploying-cloud-identity-with-Trident-GKE-and-Google-Cloud-NetApp-Volumes/ba-p/458912["Trident、GKE、 Google Cloud NetApp Volumesを使用したクラウド ID の導入"^]
 * 2024年12月12日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Introducing-Fibre-Channel-support-in-Trident/ba-p/457427["Tridentにファイバーチャネルのサポートを導入"^]
-* 2024年11月26日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Trident-25-01-Enhancing-the-Kubernetes-Storage-Experience-with-New-Features-and/ba-p/456885["Trident 25.01: 新機能と機能強化によるKubernetesストレージエクスペリエンスの強化"^]
 * 2024年11月11日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/NetApp-Trident-with-Google-Cloud-NetApp-Volumes/ba-p/456484["NetApp TridentとGoogle Cloud NetApp Volumes"^]
 * 2024年10月29日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Amazon-FSx-for-NetApp-ONTAP-with-Red-Hat-OpenShift-Service-on-AWS-ROSA-using/ba-p/456167["Tridentを使用したAmazon FSx for NetApp ONTAPと Red Hat OpenShift Service on AWS (ROSA) の連携"^]
 * 2024年10月29日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Live-Migration-of-VMs-with-OpenShift-Virtualization-on-ROSA-and-Amazon-FSx-for/ba-p/456213["ROSA とAmazon FSx for NetApp ONTAP上の OpenShift Virtualization を使用した VM のライブマイグレーション"^]
@@ -39,6 +39,7 @@ NetApp TridentとTrident Protect に関する優れたブログを以下でご�
 
 
 
+[[trident-protect-blogs]]
 == Trident Protectブログ
 
 * 2025年5月16日:link:https://community.netapp.com/t5/Tech-ONTAP-Blogs/Automating-registry-failover-for-disaster-recovery-with-Trident-protect-post/ba-p/460777["Trident Protect の復元後フックを使用して災害復旧のためのレジストリ フェイルオーバーを自動化する"^]

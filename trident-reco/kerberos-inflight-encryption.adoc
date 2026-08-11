@@ -23,6 +23,7 @@ NFS 暗号化を使用するボリュームを作成、削除、サイズ変更�
 
 
 
+[[configure-in-flight-kerberos-encryption-with-on-premise-ontap-volumes]]
 == オンプレミスのONTAPボリュームでインフライト Kerberos 暗号化を構成する
 
 管理対象クラスターとオンプレミスのONTAPストレージ バックエンド間のストレージ トラフィックで Kerberos 暗号化を有効にできます。
@@ -40,6 +41,7 @@ NOTE: オンプレミスのONTAPストレージバックエンドを使用した
 
 
 
+[[add-or-modify-ontap-export-policies]]
 === ONTAPエクスポートポリシーを追加または変更する
 
 既存のONTAPエクスポート ポリシーにルールを追加するか、 ONTAPストレージ VM ルート ボリュームと、アップストリーム Kubernetes クラスターと共有されているすべてのONTAPボリュームに対して Kerberos 暗号化をサポートする新しいエクスポート ポリシーを作成する必要があります。追加するエクスポート ポリシー ルール、または作成する新しいエクスポート ポリシーは、次のアクセス プロトコルとアクセス許可をサポートする必要があります。
@@ -77,6 +79,7 @@ ONTAPエクスポート ポリシーとエクスポート ポリシー ルール
 
 
 
+[[create-a-storage-backend]]
 === ストレージバックエンドを作成する
 
 Kerberos 暗号化機能を含むTridentストレージ バックエンド構成を作成できます。
@@ -144,6 +147,7 @@ tridentctl logs
 
 
 
+[[create-a-storage-class]]
 === ストレージクラスを作成する
 
 Kerberos 暗号化を使用してボリュームをプロビジョニングするためのストレージ クラスを作成できます。
@@ -202,12 +206,14 @@ ontap-nas-sc    csi.trident.netapp.io   15h
 
 
 
+[[provision-volumes]]
 === プロビジョニングボリューム
 
 ストレージ バックエンドとストレージ クラスを作成したら、ボリュームをプロビジョニングできるようになります。手順については、 https://docs.netapp.com/us-en/trident/trident-use/vol-provision.html["ボリュームをプロビジョニングする"^] 。
 
 
 
+[[configure-in-flight-kerberos-encryption-with-azure-netapp-files-volumes]]
 == Azure NetApp Filesボリュームでインフライト Kerberos 暗号化を構成する
 
 マネージド クラスターと単一のAzure NetApp Filesストレージ バックエンドまたはAzure NetApp Filesストレージ バックエンドの仮想プール間のストレージ トラフィックに対して Kerberos 暗号化を有効にできます。
@@ -221,6 +227,7 @@ ontap-nas-sc    csi.trident.netapp.io   15h
 
 
 
+[[create-a-storage-backend]]
 === ストレージバックエンドを作成する
 
 Kerberos 暗号化機能を含むAzure NetApp Filesストレージ バックエンド構成を作成できます。
@@ -347,6 +354,7 @@ tridentctl logs
 
 
 
+[[create-a-storage-class]]
 === ストレージクラスを作成する
 
 Kerberos 暗号化を使用してボリュームをプロビジョニングするためのストレージ クラスを作成できます。
@@ -391,6 +399,7 @@ sc-nfs       csi.trident.netapp.io   15h
 
 
 
+[[provision-volumes]]
 === プロビジョニングボリューム
 
 ストレージ バックエンドとストレージ クラスを作成したら、ボリュームをプロビジョニングできるようになります。手順については、 https://docs.netapp.com/us-en/trident/trident-use/vol-provision.html["ボリュームをプロビジョニングする"^] 。

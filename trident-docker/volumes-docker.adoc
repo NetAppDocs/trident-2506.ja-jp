@@ -16,6 +16,7 @@ summary: 'ボリュームを作成するには、標準の `docker volume`必要
 
 
 
+[[create-a-volume]]
 == ボリュームの作成
 
 * デフォルト名を使用してドライバー付きのボリュームを作成します。
@@ -48,6 +49,7 @@ TIP: ボリューム サイズは、オプションの単位 (例: 10G、20GB、
 
 
 
+[[remove-a-volume]]
 == ボリュームを削除する
 
 * 他の Docker ボリュームと同じようにボリュームを削除します。
@@ -66,6 +68,7 @@ Trident for Docker をアップグレードするには、以下の手順を実�
 
 
 
+[[clone-a-volume]]
 == ボリュームをクローニングする
 
 使用する際は `ontap-nas`、 `ontap-san` 、 `solidfire-san` 、 そして `gcp-cvs storage drivers`Trident はボリュームを複製できます。使用する際は `ontap-nas-flexgroup`または `ontap-nas-economy`ドライバーの場合、クローン作成はサポートされません。既存のボリュームから新しいボリュームを作成すると、新しいスナップショットが作成されます。
@@ -92,6 +95,7 @@ docker volume create -d <driver_name> --name <new_name> -o from=<source_docker_v
 
 
 
+[[example]]
 === 例
 
 [source, console]
@@ -128,6 +132,7 @@ docker volume rm volFromSnap
 ----
 
 
+[[access-externally-created-volumes]]
 == 外部で作成されたボリュームにアクセスする
 
 外部で作成されたブロックデバイス（またはそのクローン）にTridentを使用するコンテナからアクセスできるのは、そのブロックデバイスにパーティションがなく、そのファイルシステムがTridentでサポートされている場合のみです（例： `ext4` -フォーマット済み `/dev/sdc1`Trident経由ではアクセスできなくなります)。

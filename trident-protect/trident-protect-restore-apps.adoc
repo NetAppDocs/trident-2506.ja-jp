@@ -26,6 +26,7 @@ Trident Protect を使用して、スナップショットまたはバックア�
 ====
 
 
+[[restore-from-a-backup-to-a-different-namespace]]
 == バックアップから別の名前空間に復元する
 
 BackupRestore CR を使用してバックアップを別の名前空間に復元すると、 Trident Protect はアプリケーションを新しい名前空間に復元し、復元されたアプリケーションのアプリケーション CR を作成します。復元されたアプリケーションを保護するには、オンデマンド バックアップまたはスナップショットを作成するか、保護スケジュールを確立します。
@@ -148,6 +149,7 @@ tridentctl-protect create backuprestore <my_restore_name> \
 ====
 
 
+[[restore-from-a-backup-to-the-original-namespace]]
 == バックアップから元の名前空間に復元する
 
 いつでもバックアップを元の名前空間に復元できます。
@@ -267,6 +269,7 @@ tridentctl-protect create backupinplacerestore <my_restore_name> \
 ====
 
 
+[[restore-from-a-backup-to-a-different-cluster]]
 == バックアップから別のクラスターに復元する
 
 元のクラスターに問題がある場合は、バックアップを別のクラスターに復元できます。
@@ -387,6 +390,7 @@ tridentctl-protect create backuprestore <restore_name> \
 ====
 
 
+[[restore-from-a-snapshot-to-a-different-namespace]]
 == スナップショットから別の名前空間に復元する
 
 カスタム リソース (CR) ファイルを使用して、スナップショットからデータを別の名前空間または元のソース名前空間に復元できます。SnapshotRestore CR を使用してスナップショットを別の名前空間に復元すると、 Trident Protect はアプリケーションを新しい名前空間に復元し、復元されたアプリケーションのアプリケーション CR を作成します。復元されたアプリケーションを保護するには、オンデマンド バックアップまたはスナップショットを作成するか、保護スケジュールを確立します。
@@ -514,6 +518,7 @@ tridentctl-protect create snapshotrestore <my_restore_name> \
 ====
 
 
+[[restore-from-a-snapshot-to-the-original-namespace]]
 == スナップショットから元の名前空間に復元する
 
 いつでもスナップショットを元の名前空間に復元できます。
@@ -630,6 +635,7 @@ tridentctl-protect create snapshotinplacerestore <my_restore_name> \
 ====
 
 
+[[check-the-status-of-a-restore-operation]]
 == 復元操作のステータスを確認する
 
 コマンド ラインを使用して、進行中、完了、または失敗した復元操作のステータスを確認できます。

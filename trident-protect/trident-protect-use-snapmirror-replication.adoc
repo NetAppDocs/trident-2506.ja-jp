@@ -18,6 +18,7 @@ Trident Protect を使用すると、 NetApp SnapMirrorテクノロジーの非�
 
 
 
+[[namespace-annotations-and-labels-during-restore-and-failover-operations]]
 == 復元およびフェイルオーバー操作中の名前空間の注釈とラベル
 
 復元およびフェイルオーバー操作中に、宛先名前空間のラベルと注釈は、ソース名前空間のラベルと注釈と一致するように作成されます。宛先名前空間に存在しないソース名前空間のラベルまたは注釈が追加され、既存のラベルまたは注釈はソース名前空間の値と一致するように上書きされます。宛先名前空間にのみ存在するラベルまたは注釈は変更されません。
@@ -38,6 +39,7 @@ NOTE: 復元またはフェイルオーバー操作を実行する場合、 `res
 
 
 
+[[example]]
 === 例
 
 次の例は、それぞれ異なる注釈とラベルを持つソース名前空間と宛先名前空間を示しています。操作の前後の宛先名前空間の状態や、宛先名前空間で注釈とラベルがどのように結合または上書きされるかを確認できます。
@@ -103,6 +105,7 @@ NOTE: データ保護操作中にファイルシステムをフリーズおよ�
 
 
 
+[[execution-hooks-during-failover-and-reverse-operations]]
 == フェイルオーバーおよびリバース操作中の実行フック
 
 AppMirror 関係を使用してアプリケーションを保護する場合、フェイルオーバーおよびリバース操作中に注意する必要がある実行フックに関連する特定の動作があります。
@@ -115,6 +118,7 @@ AppMirror 関係を使用してアプリケーションを保護する場合、�
 
 
 
+[[set-up-a-replication-relationship]]
 == レプリケーション関係を設定する
 
 レプリケーション関係の設定には、次の作業が含まれます。
@@ -446,6 +450,7 @@ kubectl get amr -n my-app-namespace <relationship name> -o=jsonpath='{.status}' 
 
 
 
+[[fail-over-to-destination-cluster]]
 === 宛先クラスタへのフェイルオーバー
 
 Trident Protect を使用すると、複製されたアプリケーションを宛先クラスターにフェイルオーバーできます。この手順により、レプリケーション関係が停止され、宛先クラスターでアプリがオンラインになります。Trident Protect は、ソース クラスター上のアプリが動作中であった場合、そのアプリを停止しません。
@@ -470,6 +475,7 @@ kubectl get amr -n my-app-namespace <relationship name> -o=jsonpath='{.status}' 
 
 
 
+[[resync-a-failed-over-replication-relationship]]
 === フェイルオーバーしたレプリケーション関係を再同期する
 
 再同期操作により、レプリケーション関係が再確立されます。再同期操作を実行すると、元のソース アプリケーションが実行中のアプリケーションになり、宛先クラスター上の実行中のアプリケーションに加えられた変更はすべて破棄されます。
@@ -494,6 +500,7 @@ kubectl apply -f trident-protect-relationship.yaml -n my-app-namespace
 
 
 
+[[reverse-resync-a-failed-over-replication-relationship]]
 === フェイルオーバーされたレプリケーション関係を逆再同期する
 
 フェールオーバーされたレプリケーション関係を逆再同期すると、宛先アプリケーションがソース アプリケーションになり、ソースが宛先になります。フェイルオーバー中に宛先アプリケーションに加えられた変更は保持されます。
@@ -507,6 +514,7 @@ kubectl apply -f trident-protect-relationship.yaml -n my-app-namespace
 
 
 
+[[reverse-application-replication-direction]]
 == アプリケーションのレプリケーション方向を逆にする
 
 レプリケーションの方向を逆にすると、 Trident Protect は、元のソース ストレージ バックエンドへのレプリケーションを継続しながら、アプリケーションを宛先ストレージ バックエンドに移動します。Trident Protect は、ソース アプリケーションを停止し、宛先アプリにフェールオーバーする前にデータを宛先に複製します。
@@ -593,6 +601,7 @@ NOTE: フェイルオーバー手順のステップ2では、 `spec.promotedSnap
 
 
 
+[[result]]
 === 結果
 
 逆レプリケーションにより、次のアクションが発生します。
@@ -607,6 +616,7 @@ NOTE: フェイルオーバー手順のステップ2では、 `spec.promotedSnap
 
 
 
+[[fail-back-applications-to-the-original-source-cluster]]
 === アプリケーションを元のソースクラスタにフェイルバックする
 
 Trident Protect を使用すると、次の一連の操作によって、フェイルオーバー操作後の「フェイルバック」を実現できます。元のレプリケーション方向を復元するこのワークフローでは、 Trident Protect は、レプリケーション方向を反転する前に、アプリケーションの変更を元のソース アプリケーションに複製 (再同期) します。
@@ -629,6 +639,7 @@ CAUTION: 通常の再同期操作は実行しないでください。フェイ�
 
 
 
+[[delete-a-replication-relationship]]
 === レプリケーション関係を削除する
 
 レプリケーション関係はいつでも削除できます。アプリケーション レプリケーション関係を削除すると、関係のない 2 つの別個のアプリケーションが作成されます。

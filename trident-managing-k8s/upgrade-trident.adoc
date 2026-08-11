@@ -16,6 +16,7 @@ summary: Trident は4 か月ごとにリリースされ、毎年 3 つのメジ�
 
 
 
+[[considerations-before-upgrading]]
 == アップグレード前の考慮事項
 
 Tridentの最新リリースにアップグレードする場合は、次の点を考慮してください。
@@ -34,6 +35,7 @@ Tridentの最新リリースにアップグレードする場合は、次の点�
 
 
 
+[[step-1-select-a-version]]
 == ステップ1: バージョンを選択する
 
 Tridentのバージョンは日付ベース `YY.MM`命名規則。「YY」は年の最後の 2 桁、「MM」は月です。ドットリリースは `YY.MM.X`規則では、「X」はパッチ レベルです。アップグレード元のバージョンに基づいて、アップグレード後のバージョンを選択します。
@@ -52,6 +54,7 @@ NOTE: OpenShift Container Platform でTridentオペレーターを使用して�
 
 
 
+[[step-2-determine-the-original-installation-method]]
 == ステップ2: 元のインストール方法を決定する
 
 最初にTrident をインストールする際に使用したバージョンを確認するには:
@@ -72,6 +75,7 @@ NOTE: OpenShift Container Platform でTridentオペレーターを使用して�
 
 
 
+[[step-3-select-an-upgrade-method]]
 == ステップ3: アップグレード方法を選択する
 
 通常は、最初のインストールと同じ方法でアップグレードする必要がありますが、link:../trident-install/kubernetes-deploy.html#moving-between-installation-methods["インストール方法を切り替える"]。Trident をアップグレードするには 2 つのオプションがあります。

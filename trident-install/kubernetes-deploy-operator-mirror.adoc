@@ -16,6 +16,7 @@ Tridentオペレーターを手動でデプロイして、 Trident をインス�
 
 
 
+[[critical-information-about-trident-25-06]]
 == Trident 25.06に関する重要な情報
 
 * Tridentに関する以下の重要な情報を必ずお読みください。*
@@ -36,6 +37,7 @@ Tridentオペレーターを手動でデプロイして、 Trident をインス�
 ====
 
 
+[[manually-deploy-the-trident-operator-and-install-trident]]
 == Tridentオペレーターを手動で展開し、 Tridentをインストールする
 
 link:../trident-install/kubernetes-deploy.html["インストールの概要"]を確認して、インストールの前提条件を満たしていること、および環境に適したインストールオプションが選択されていることを確認します。
@@ -72,6 +74,7 @@ kubectl run -i --tty ping --image=busybox --restart=Never --rm -- \
 ====
 
 
+[[step-1-download-the-trident-installer-package]]
 === ステップ1: Tridentインストーラーパッケージをダウンロードする
 
 Tridentインストーラー パッケージには、 Tridentオペレーターを展開し、 Trident をインストールするために必要なものがすべて含まれています。最新バージョンのTridentインストーラをダウンロードして解凍します。link:https://github.com/NetApp/trident/releases/latest["GitHubの_Assets_セクション"^] 。
@@ -84,6 +87,7 @@ cd trident-installer
 ----
 
 
+[[step-2-create-the-tridentorchestrator-crd]]
 === ステップ2: 作成する `TridentOrchestrator`CRD
 
 作成する `TridentOrchestrator`カスタム リソース定義 (CRD)。あなたは `TridentOrchestrator`カスタムリソースは後で。適切なCRD YAMLバージョンを使用する `deploy/crds`を作成する `TridentOrchestrator`CRD:
@@ -94,6 +98,7 @@ kubectl create -f deploy/crds/<VERSION>.yaml
 ----
 
 
+[[step-3-update-the-registry-location-in-the-operator]]
 === ステップ3: オペレータのレジストリの場所を更新する
 
 で `/deploy/operator.yaml`、 アップデート `image: docker.io/netapp/trident-operator:25.06.0`イメージレジストリの場所を反映します。あなたのlink:../trident-get-started/requirements.html#container-images-and-corresponding-kubernetes-versions["TridentとCSIの画像"]1 つのレジストリまたは異なるレジストリに配置できますが、すべての CSI イメージは同じレジストリに配置する必要があります。例えば：
@@ -104,6 +109,7 @@ kubectl create -f deploy/crds/<VERSION>.yaml
 
 
 
+[[step-4-deploy-the-trident-operator]]
 === ステップ4: Tridentオペレーターを展開する
 
 Tridentインストーラーは、オペレーターをインストールし、関連オブジェクトを作成するために使用できるバンドル ファイルを提供します。バンドル ファイルを使用すると、オペレーターを展開し、デフォルト構成を使用してTrident をインストールするのが簡単になります。
@@ -157,6 +163,7 @@ IMPORTANT: Kubernetes クラスターにはオペレーターのインスタン�
 
 
 
+[[step-5-update-the-image-registry-location-in-the-tridentorchestrator]]
 === ステップ5: イメージレジストリの場所を更新します `TridentOrchestrator`
 
 あなたのlink:../trident-get-started/requirements.html#container-images-and-corresponding-kubernetes-versions["TridentとCSIの画像"]1 つのレジストリまたは異なるレジストリに配置できますが、すべての CSI イメージは同じレジストリに配置する必要があります。アップデート `deploy/crds/tridentorchestrator_cr.yaml`レジストリ構成に基づいて追加の場所の仕様を追加します。
@@ -184,6 +191,7 @@ tridentImage: "<your-registry>/trident:25.06.0"
 ====
 
 
+[[step-6-create-the-tridentorchestrator-and-install-trident]]
 === ステップ6: 作成する `TridentOrchestrator`Tridentをインストールする
 
 これで `TridentOrchestrator`を作成し、Tridentをインストールできます。オプションで、link:../trident-install/kubernetes-customize-deploy.html["Tridentのインストールをカスタマイズする"]をさらに `TridentOrchestrator`仕様の属性を使ってカスタマイズできます。次の例は、TridentとCSIイメージが異なるレジストリに配置されているインストール方法を示しています。
@@ -236,12 +244,14 @@ Events:
 ----
 
 
+[[verify-the-installation]]
 == インストールの確認
 
 インストールを確認する方法はいくつかあります。
 
 
 
+[[using-tridentorchestrator-status]]
 === 使用 `TridentOrchestrator`状態
 
 の状態 `TridentOrchestrator`インストールが成功したかどうかを示し、インストールされているTridentのバージョンを表示します。インストール中は、 `TridentOrchestrator`変更から `Installing`に `Installed`。あなたが観察すると `Failed`状態になり、オペレータが自力で回復できない場合、link:../troubleshooting.html["ログを確認する"] 。
@@ -274,6 +284,7 @@ Events:
 |===
 
 
+[[using-pod-creation-status]]
 === ポッド作成ステータスの使用
 
 作成されたポッドのステータスを確認することで、 Trident のインストールが完了したかどうかを確認できます。
@@ -291,6 +302,7 @@ trident-operator-766f7b8658-ldzsv          1/1     Running   0           3m
 ----
 
 
+[[using-tridentctl]]
 === 使用 `tridentctl`
 
 使用できます `tridentctl`インストールされているTridentのバージョンを確認します。

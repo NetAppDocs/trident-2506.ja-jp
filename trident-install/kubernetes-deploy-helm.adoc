@@ -16,6 +16,7 @@ Tridentオペレーターをデプロイし、Helm を使用してTrident をイ
 
 
 
+[[critical-information-about-trident-25-06]]
 == Trident 25.06に関する重要な情報
 
 * Tridentに関する以下の重要な情報を必ずお読みください。*
@@ -36,6 +37,7 @@ Tridentオペレーターをデプロイし、Helm を使用してTrident をイ
 ====
 
 
+[[deploy-the-trident-operator-and-install-trident-using-helm]]
 == Tridentオペレーターをデプロイし、Helm を使用してTrident をインストールする
 
 Tridentの使用link:https://artifacthub.io/packages/helm/netapp-trident/trident-operator["ヘルムチャート"^]Tridentオペレーターの展開とTridentのインストールを 1 つの手順で行うことができます。
@@ -43,7 +45,7 @@ Tridentの使用link:https://artifacthub.io/packages/helm/netapp-trident/trident
 link:../trident-install/kubernetes-deploy.html["インストールの概要"]を確認して、インストールの前提条件を満たしていること、および環境に適したインストールオプションが選択されていることを確認します。
 
 .開始する前に
-link:../trident-install/kubernetes-deploy.html#before-you-deploy["展開の前提条件"]に加えてlink:https://v3.helm.sh/["Helm バージョン 3"^]が必要です。
+link:kubernetes-deploy.html#before-you-begin["展開の前提条件"]に加えてlink:https://v3.helm.sh/["Helm バージョン 3"^]が必要です。
 
 .手順
 . Trident Helm リポジトリを追加します。
@@ -68,6 +70,7 @@ NOTE: すでにTridentの名前空間を作成している場合は、 `--create
 
 
 
+[[pass-configuration-data-during-install]]
 == インストール中に構成データを渡す
 
 インストール中に構成データを渡す方法は 2 つあります。
@@ -94,6 +97,7 @@ helm install <name> netapp-trident/trident-operator --version 100.2506.0  --crea
 ----
 
 
+[[configuration-options]]
 == 構成オプション
 
 この表と `values.yaml`Helm チャートの一部であるファイルは、キーとそのデフォルト値のリストを提供します。
@@ -257,6 +261,7 @@ Kubernetes API サーバーと通信するときにコントローラーが使�
 |===
 
 
+[[understanding-controller-pods-and-node-pods]]
 === コントローラーポッドとノードポッドについて
 
 Trident は単一のコントローラー ポッドとして実行され、クラスター内の各ワーカー ノード上のノード ポッドも実行されます。ノード ポッドは、 Tridentボリュームをマウントする可能性があるすべてのホストで実行されている必要があります。
